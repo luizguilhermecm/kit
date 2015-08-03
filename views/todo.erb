@@ -4,13 +4,21 @@
         <title>keep it</title>
      </head>
     <body>
+        <h3> keep it </h3>
 
         <form id="new_todo"  method="get" action="/new_todo">
+            <labeL for="tags">tags:</labeL>
+            <input name="tags" id="tags" type="text" size=40 />
             <labeL for="text">text:</labeL>
             <input name="text" id="text" type="text" size=40 />
             <input type="submit" value="go">
         </form>
-        </div>
+
+        <hr>
+
+        <% if @feedback != nil %>
+        <%= @feedback %>
+        <% end %>
     </body>
 
     </body>

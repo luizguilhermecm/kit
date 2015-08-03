@@ -4,6 +4,7 @@
 require 'sinatra'
 require 'sinatra/session'
 require 'pg'
+require './kit_config'
 
 require_relative 'kit_todo'
 
@@ -33,7 +34,7 @@ class Kit < Sinatra::Base
 
   get '/' do
       if session?
-          redirect '/main'
+          redirect '/todo'
       else
           erb :index
       end
