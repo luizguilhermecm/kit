@@ -36,7 +36,7 @@ class Kit < Sinatra::Base
 
   get '/' do
       if session?
-          redirect '/todo'
+          redirect to('/todo')
       else
           erb :index
       end
@@ -44,18 +44,18 @@ class Kit < Sinatra::Base
 
   get '/logout' do
       session_end!
-      'Fim'
+      redirect to('/')
   end
 
   get '/login' do
       if session?
-          redirect '/todo'
+          redirect to('/todo')
       elsif params[:pass] == "snk"
           session_start!
           session[:user] = "snk"
-          redirect '/'
+          redirect to('/')
       else
-          redirect '/'
+          redirect to('/')
       end
   end
 
