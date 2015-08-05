@@ -11,9 +11,8 @@ require_relative 'kit_todo'
 class Kit < Sinatra::Base
   register Sinatra::Session
   set :bind, '0.0.0.0'
+  set :port, 80 # to deploy on tcp port 80, sudo needed
   set :environment, :production
-  set :session_fail, '/login'
-  set :session_secret, 'whatThisMean?'
   set :host, DB_HOST
   set :dbname, DB_NAME
   set :user, DB_SYS_USER
@@ -21,8 +20,11 @@ class Kit < Sinatra::Base
 
   @@conn = PG.connect(:host => settings.host, :dbname => settings.dbname, :user => settings.user, :password => settings.password)
 
-
   enable :sessions
+
+  set :session_fail, '/login'
+  set :session_secret, 'whatThisMean?'
+
   configure :production do
     use Rack::Session::Pool
     set :erb, :trim => '-'
