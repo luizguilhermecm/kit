@@ -3,7 +3,13 @@
 
 require 'sinatra'
 require 'sinatra/session'
+require 'sinatra/base'
+require 'rubygems'
 require 'pg'
+require 'json'
+require 'digest/md5'
+require "i18n"
+
 require './kit_config'
 
 require_relative 'kit_todo'
