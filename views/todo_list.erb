@@ -1,0 +1,17 @@
+<table class="table">
+    <% @todos.each_with_index do |todo, index| %>
+        <tr>
+            <td>
+                <%= todo[:id] %>
+            </td>
+
+            <td>
+                <%= todo[:created_at] %>
+            </td>
+
+            <td>
+                <%= todo[:text] %>
+            </td>
+        </tr>
+    <% end if @todos%>
+</table>

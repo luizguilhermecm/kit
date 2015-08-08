@@ -1,25 +1,24 @@
-<html>
-    <head>
-        <meta name="robots" content="noindex" />
-        <title>keep it</title>
-     </head>
-    <body>
-        <h3> keep it </h3>
-
         <form id="new_todo"  method="get" action="/new_todo">
-            <labeL for="tags">tags:</labeL>
-            <input name="tags" id="tags" type="text" size=40 />
             <labeL for="text">text:</labeL>
-            <input name="text" id="text" type="text" size=40 />
+            <input name="text" id="text" type="text" size=100 />
             <input type="submit" value="go">
         </form>
 
-        <hr>
 
-        <% if @feedback != nil %>
-        <%= @feedback %>
-        <% end %>
-    </body>
+<table class="table">
+    <% @feedback.each do |f|  %>
+        <tr>
+            <td>
+                <%= f[:id] %>
+            </td>
 
-    </body>
-</html>
+            <td>
+                <%= f[:created_at] %>
+            </td>
+
+            <td>
+                <%= f[:text] %>
+            </td>
+        </tr>
+    <% end if @feedback %>
+</table>
