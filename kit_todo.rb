@@ -35,6 +35,7 @@ class Kit < Sinatra::Base
   end
 
   get '/todo_list' do
+      session!
 
       query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list ";
       ret = @@conn.exec(query)
