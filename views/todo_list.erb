@@ -2,6 +2,10 @@
     <% @todos.each_with_index do |todo, index| %>
         <tr>
             <td>
+                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
+            </td>
+
+            <td>
                 <%= todo[:id] %>
             </td>
 

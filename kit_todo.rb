@@ -37,7 +37,7 @@ class Kit < Sinatra::Base
   get '/todo_list' do
       session!
 
-      query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list ";
+      query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list WHERE flag_deleted = 'false' ";
       ret = @@conn.exec(query)
 
       @todos = []
@@ -55,4 +55,16 @@ class Kit < Sinatra::Base
 
       erb :todo_list
   end
+
+  get '/rm_todo' do
+      session!
+
+      id = params[:id]
+      query = " UPDATE todo_list SET flag_deleted = 't', deleted_at = (SELECT now()) WHERE id = $1 ";
+
+      @@conn.exec_params(query , [id])
+
+      redirect "/todo_list"
+  end
+
 end
