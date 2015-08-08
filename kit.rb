@@ -61,7 +61,7 @@ class Kit < Sinatra::Base
           session[:user] = "snk"
           redirect to('/')
       else
-          redirect to('/')
+          erb :error , :layout => false
       end
   end
 
