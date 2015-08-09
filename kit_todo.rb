@@ -49,7 +49,7 @@ class Kit < Sinatra::Base
               :text => t["text"],
               :created_at => t["data"],
           }
-          puts t
+          #puts t
 
       end
 
