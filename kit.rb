@@ -54,15 +54,48 @@ class Kit < Sinatra::Base
   end
 
   get '/login' do
+      erb :index
+  end
+
+  post '/login' do
       if session?
           redirect to('/todo')
-      elsif params[:pass] == "snk"
-          session_start!
-          session[:user] = "snk"
-          redirect to('/')
       else
-          erb :error , :layout => false
+        query = " SELECT id FROM users WHERE username = $1 AND passwd = $2 "
+        ret = @@conn.exec_params(query, [params[:username], params[:passwd]])
+
+        puts ret.first.to_s
+        if ret.first
+            session_start!
+            session[:username] = params[:username]
+            session[:uid] = ret.first["id"]
+            redirect to('/')
+        else
+
+            session_start!
+
+            log = "log_error: username: #{params[:username]} passwd: #{params[:passwd]} "
+            log += " with IP: " + request.ip
+            query = " INSERT INTO sys_log (log) VALUES ('#{log}') "
+            @@conn.exec(query)
+
+            session[:username] = params[:username]
+            session[:uid] = 0
+
+            redirect to('/')
+            #erb :error , layout: false
+        end
+        #puts ret.first
+
       end
+  end
+
+  get '/git_pull' do
+    session!
+    if session[:uid] != 0
+        `git pull`
+        redirect to('/')
+    end
   end
 
   run! if app_file == $0

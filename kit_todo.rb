@@ -5,8 +5,8 @@ class Kit < Sinatra::Base
 
       if params[:insert] != nil and params[:insert] != ""
 
-          query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list where id = $1 ";
-          last = @@conn.exec_params(query, [params[:insert]])
+          query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list where id = $1 and uid = $2";
+          last = @@conn.exec_params(query, [params[:insert], session[:uid]])
 
           @feedback = []
 
@@ -25,8 +25,8 @@ class Kit < Sinatra::Base
       session!
 
       text = params[:text]
-
-      ret = @@conn.exec_params(' INSERT INTO todo_list(text) VALUES($1) returning id', [text.to_s])
+      puts "user id" + session[:uid].to_s
+      ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid) VALUES($1, $2) returning id', [text.to_s, session[:uid]])
 
       id = ret.first
       puts id.to_s
@@ -37,8 +37,8 @@ class Kit < Sinatra::Base
   get '/todo_list' do
       session!
 
-      query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list WHERE flag_deleted = 'false' ";
-      ret = @@conn.exec(query)
+      query = " SELECT id, text, to_char(created_at, 'DD-MM-YYYY') as created_at FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ";
+      ret = @@conn.exec_params(query, [session[:uid]])
 
       @todos = []
 
@@ -60,9 +60,9 @@ class Kit < Sinatra::Base
       session!
 
       id = params[:id]
-      query = " UPDATE todo_list SET flag_deleted = 't', deleted_at = (SELECT now()) WHERE id = $1 ";
+      query = " UPDATE todo_list SET flag_deleted = 't', deleted_at = (SELECT now()) WHERE id = $1 AND uid = $2";
 
-      @@conn.exec_params(query , [id])
+      @@conn.exec_params(query , [id, session[:uid]])
 
       redirect "/todo_list"
   end
