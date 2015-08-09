@@ -102,7 +102,6 @@ class Kit < Sinatra::Base
     session!
     if session[:uid] != 0
         @output = IO.read('nohup.out')
-        puts @output
         erb :log
     else
         redirect to('/')
