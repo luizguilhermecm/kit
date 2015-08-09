@@ -37,7 +37,7 @@ class Kit < Sinatra::Base
   get '/todo_list' do
       session!
 
-      query = " SELECT id, text, to_char(created_at, 'DD-MM-YYYY') as created_at FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ";
+      query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
       ret = @@conn.exec_params(query, [session[:uid]])
 
       @todos = []
@@ -47,7 +47,7 @@ class Kit < Sinatra::Base
           @todos << {
               :id => t["id"],
               :text => t["text"],
-              :created_at => t["created_at"],
+              :created_at => t["data"],
           }
           puts t
 

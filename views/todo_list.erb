@@ -8,19 +8,13 @@
     <% @todos.each_with_index do |todo, index| %>
         <tr>
             <td>
-                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
+                <%= todo[:text] %>
             </td>
-
-            <td>
-                <%= todo[:id] %>
-            </td>
-
-            <td class="col-md-10">
+            <td  style="min-width:85px" >
                 <%= todo[:created_at] %>
             </td>
-
             <td>
-                <%= todo[:text] %>
+                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
             </td>
         </tr>
     <% end if @todos%>
