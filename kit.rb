@@ -98,5 +98,16 @@ class Kit < Sinatra::Base
     end
   end
 
+  get '/sinatra_log' do
+    session!
+    if session[:uid] != 0
+        @output = IO.read('nohup.out')
+        puts @output
+        erb :log
+    else
+        redirect to('/')
+    end
+  end
+
   run! if app_file == $0
 end
