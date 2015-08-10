@@ -37,7 +37,7 @@ class Kit < Sinatra::Base
   end
 
   not_found do
-    'Página não encontrada!'
+      erb :error
   end
 
   get '/' do
