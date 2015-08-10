@@ -101,11 +101,15 @@ class Kit < Sinatra::Base
   get '/sinatra_log' do
     session!
     if session[:uid] != 0
-        @output = IO.read('nohup.out')
+        #@output = IO.read('nohup.out')
+        @output = `tail -n 50 nohup.out`
         erb :log
     else
         redirect to('/')
     end
+  end
+  get '/sinatra_log/:filename' do |filename|
+      send_file "./#{filename}", :filename => filename, :type => 'Application/octet-stream'
   end
 
   run! if app_file == $0
