@@ -31,6 +31,9 @@ class Kit < Sinatra::Base
   set :session_fail, '/login'
   set :session_secret, 'whatThisMean?'
 
+
+  set :dump_errors, false
+
   configure :production do
     use Rack::Session::Pool
     set :erb, :trim => '-'
