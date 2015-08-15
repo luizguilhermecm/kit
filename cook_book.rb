@@ -1,6 +1,6 @@
 class Kit < Sinatra::Base
 
-  get '/cookbook' do
+  get '/cookbook_list' do
       session!
 
       if params[:insert] != nil and params[:insert] != ""
@@ -28,7 +28,7 @@ class Kit < Sinatra::Base
               }
           end
       end
-      erb :cookbook
+      erb :cookbook_list
   end
 
   get '/new_cookbook' do
