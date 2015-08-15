@@ -1,0 +1,21 @@
+<form id="new_cookbook"  method="get" action="/new_todo">
+    <labeL for="text">cookbook:</labeL>
+    <input name="text" id="text" type="text" size=100 />
+    <input type="submit" value="go">
+</form>
+
+<table class="table">
+    <% @cookbooks.each_with_index do |todo, index| %>
+        <tr>
+            <td>
+                <%= cookbook[:text] %>
+            </td>
+            <td  style="min-width:85px" >
+                <%= cookbook[:created_at] %>
+            </td>
+            <td>
+                <a href="/rm_cookbook?id=<%=todo[:id]%>">X</a>
+            </td>
+        </tr>
+    <% end if @cookbooks%>
+</table>
