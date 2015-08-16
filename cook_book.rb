@@ -1,13 +1,13 @@
 class Kit < Sinatra::Base
 
-  get '/cookbook_list' do
+  get '/cookbook' do
       session!
 
       if params[:insert] != nil and params[:insert] != ""
 
-          query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM cookbook_list where id = $1 and uid = $2";
+          query = " SELECT id, subject, description, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM cookbook_list where id = $1 and uid = $2";
           begin
-              last = @@conn.exec_params(query, [params[:insert], session[:uid]])
+              last = @@conn.exec_params(query, params[:insert], session[:uid])
           rescue => e
               puts "***************************"
               puts session[:username]
@@ -23,6 +23,8 @@ class Kit < Sinatra::Base
           last.each_with_index do |t, i|
               @feedback << {
                   :id => t["id"],
+                  :subject  => t["subject"],
+                  :description => t["description"],
                   :text => t["text"],
                   :created_at => t["created_at"],
               }
@@ -35,10 +37,12 @@ class Kit < Sinatra::Base
       session!
 
       text = params[:text]
+      description = params[:description]
+      subject = params[:subject]
       puts "user id" + session[:uid].to_s
 
       begin
-          ret = @@conn.exec_params(' INSERT INTO cookbook_list(text, uid) VALUES($1, $2) returning id', [text.to_s, session[:uid]])
+          ret = @@conn.exec_params(' INSERT INTO cookbook_list(text, uid, subject, description) VALUES($1, $2, $3, $4) returning id', [text.to_s, session[:uid], subject, description])
       rescue => e
         puts "***************************"
         puts session[:username]
@@ -52,13 +56,13 @@ class Kit < Sinatra::Base
       id = ret.first
       puts id.to_s
       #redirect "/"
-      redirect "/cookbook?insert=#{id["id"]}"
+      redirect "/cookbook#{id["id"]}"
   end
 
   get '/cookbook_list' do
       session!
 
-      query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data FROM cookbook_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
+      query = " SELECT id, subject, description, text, to_char(created_at, 'DD-MM-YY') as data FROM cookbook_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
       begin
         ret = @@conn.exec_params(query, [session[:uid]])
       rescue => e
@@ -80,6 +84,8 @@ class Kit < Sinatra::Base
           @cookbooks << {
               :id => t["id"],
               :text => t["text"],
+              :subject => t["subject"],
+              :description => t["description"],
               :created_at => t["data"],
           }
           #puts t
