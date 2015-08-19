@@ -1,12 +1,21 @@
+
+        <script src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/jquery.sparkline.min.js"></script>
+        <script src="/js/jquery-ui.min.js"></script>
+        <script src="/js/keymaster.js"></script>
+
+        <link rel="stylesheet" href="/js/jquery-ui.min.css">
+<script src="/js/kit_todo.js"></script>
 <form id="new_todo"  method="get" action="/new_todo">
     <labeL for="text">ToDo:</labeL>
     <input name="text" id="text" type="text" size=100 />
     <input type="submit" value="go">
 </form>
 
-<table class="table">
+<table class="table" id="todo_list_table">
     <% @todos.each_with_index do |todo, index| %>
-        <tr>
+        <input type="hidden" class="todo_id" value="<%= todo[:id] %>">
+        <tr id="<%=index%>">
             <td>
                 <%= todo[:text] %>
             </td>
@@ -14,8 +23,10 @@
                 <%= todo[:created_at] %>
             </td>
             <td>
-                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
+                <!--<a href="/rm_todo?id=<%=todo[:id]%>">X</a>-->
+                <a href="javascript:edit_todo_item(<%=index%>, <%=todo[:id]%>)">E</a>
             </td>
         </tr>
+        </div>
     <% end if @todos%>
 </table>

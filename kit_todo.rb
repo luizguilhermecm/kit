@@ -31,6 +31,30 @@ class Kit < Sinatra::Base
       erb :todo
   end
 
+  get '/edit_todo' do
+      session!
+
+      idx = params[:idx]
+      text = params[:text]
+      puts "user id" + session[:uid].to_s
+      begin
+          ret = @@conn.exec_params(' UPDATE todo_list SET text = $1 WHERE id = $2 AND uid = $3 returning id', [text.to_s, idx.to_i, session[:uid]])
+      rescue => e
+        puts "***************************"
+        puts session[:username]
+        puts session[:uid]
+        puts request.ip
+        puts e
+        puts "***************************"
+        redirect to('/todo_list')
+      end
+
+      id = ret.first
+      puts id.to_s
+      #redirect "/"
+      redirect "/todo?insert=#{id["id"]}"
+
+  end
   get '/new_todo' do
       session!
 
