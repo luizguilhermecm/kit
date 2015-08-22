@@ -13,7 +13,6 @@ require "i18n"
 require './kit_config'
 
 require_relative 'kit_todo'
-require_relative 'cook_book'
 
 class Kit < Sinatra::Base
   register Sinatra::Session
