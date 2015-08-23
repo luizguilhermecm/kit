@@ -82,9 +82,23 @@ class Kit < Sinatra::Base
   get '/todo_list' do
       session!
 
-      query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
+      tag_id = params[:tag_id].to_i
+      puts tag_id
+      if tag_id != 0
+        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1  and tag_id = $2 ORDER BY created_at DESC ";
+      else
+        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
+      end
+
+      puts query;
       begin
-        ret = @@conn.exec_params(query, [session[:uid]])
+        if tag_id != 0
+            puts tag_id
+            puts query
+            ret = @@conn.exec_params(query, [session[:uid], tag_id])
+        else
+            ret = @@conn.exec_params(query, [session[:uid]])
+        end
       rescue => e
         puts "***************************"
         puts session[:username]

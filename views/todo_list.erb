@@ -18,6 +18,9 @@
     </select>
     <input type="submit" value="go">
 </form>
+<% @tag_list.each_with_index do |tag, index| %>
+    <a class="tag label label-primary" href="/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+<% end if @tag_list%>
 
 <table class="table" >
     <% @todos.each_with_index do |todo, index| %>

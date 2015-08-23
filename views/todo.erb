@@ -15,7 +15,7 @@
     <% @tag_list.each_with_index do |tag, index| %>
         <tr>
             <td>
-                <%= tag[:tag] %>
+                <a href="/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
             </td>
             <td>
                 <%= tag[:description] %>
