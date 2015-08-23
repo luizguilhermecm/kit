@@ -61,6 +61,7 @@ class Kit < Sinatra::Base
   end
 
   post '/login' do
+
       if session?
           redirect to('/todo')
       else
@@ -70,11 +71,11 @@ class Kit < Sinatra::Base
         puts ret.first.to_s
         if ret.first
             session_start!
+            puts "starting session"
             session[:username] = params[:username]
             session[:uid] = ret.first["id"]
             redirect to('/')
         else
-
             session_start!
 
             log = "log_error: username: #{params[:username]} passwd: #{params[:passwd]} "

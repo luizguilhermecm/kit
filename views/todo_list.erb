@@ -15,7 +15,7 @@
                 <select>
                 <% if @todo_tag %>
                     <% @todo_tag.each do |b| %>
-                        <option value="<%= b %>" <%= "selected='true'" if b == @todo_tag %>><%= b %></option>
+                        <option value="<%= b[:tag] %>" <%= "selected='true'" if b == @todo_tag %>><%= b[:tag] %></option>
                     <% end %>
                 <% end %>
                 </select>
