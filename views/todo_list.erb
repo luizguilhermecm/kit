@@ -1,6 +1,7 @@
 <form id="new_todo"  method="get" action="/new_todo">
     <labeL for="text">ToDo:</labeL>
     <input name="text" id="text" type="text" size=100 />
+    <input name="tag" id="tag" type="text" size=20 />
     <input type="submit" value="go">
 </form>
 
@@ -9,6 +10,15 @@
         <tr>
             <td>
                 <%= todo[:text] %>
+            </td>
+            <td>
+                <select>
+                <% if @todo_tag %>
+                    <% @todo_tag.each do |b| %>
+                        <option value="<%= b %>" <%= "selected='true'" if b == @todo_tag %>><%= b %></option>
+                    <% end %>
+                <% end %>
+                </select>
             </td>
             <td  style="min-width:85px" >
                 <%= todo[:created_at] %>
