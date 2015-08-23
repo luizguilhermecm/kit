@@ -38,7 +38,7 @@ class Kit < Sinatra::Base
       tag = params[:tag]
 
       begin
-          ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid, tag) VALUES($1, $2) returning id', [text.to_s, session[:uid], tag.to_s])
+          ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid, tag) VALUES($1, $2, $3) returning id', [text.to_s, session[:uid], tag.to_s])
       rescue => e
         puts "***************************"
         puts session[:username]
