@@ -35,10 +35,10 @@ class Kit < Sinatra::Base
       session!
 
       text = params[:text]
-      puts "user id" + session[:uid].to_s
+      tag = params[:tag]
 
       begin
-          ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid) VALUES($1, $2) returning id', [text.to_s, session[:uid]])
+          ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid, tag) VALUES($1, $2) returning id', [text.to_s, session[:uid], tag.to_s])
       rescue => e
         puts "***************************"
         puts session[:username]
@@ -50,8 +50,6 @@ class Kit < Sinatra::Base
       end
 
       id = ret.first
-      puts id.to_s
-      #redirect "/"
       redirect "/todo?insert=#{id["id"]}"
   end
 
@@ -71,7 +69,9 @@ class Kit < Sinatra::Base
         redirect to('/')
       end
 
+      @todo_tag = []
 
+      @todo_tag = get_todo_tags
 
       @todos = []
 
@@ -80,6 +80,7 @@ class Kit < Sinatra::Base
           @todos << {
               :id => t["id"],
               :text => t["text"],
+              :tag => @todo_tag,
               :created_at => t["data"],
           }
           #puts t
@@ -87,6 +88,32 @@ class Kit < Sinatra::Base
       end
 
       erb :todo_list
+  end
+
+  def get_todo_tags
+    query = " SELECT DISTINCT tag FROM todo_list WHERE uid = $1 ORDER BY tag ASC ";
+      begin
+        ret = @@conn.exec_params(query, [session[:uid]])
+      rescue => e
+        puts "***************************"
+        puts session[:username]
+        puts session[:uid]
+        puts request.ip
+        puts e
+        puts "***************************"
+        redirect to('/')
+      end
+
+      todo_tag = []
+      ret.each_with_index do |t, i|
+
+          todo_tag << {
+              :tag => t["tag"],
+          }
+
+      end
+
+      return todo_tag
   end
 
   get '/rm_todo' do
