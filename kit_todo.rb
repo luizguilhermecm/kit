@@ -3,6 +3,10 @@ class Kit < Sinatra::Base
   get '/todo' do
       session!
 
+      @tag_list = []
+
+      @tag_list = get_todo_tags
+
       if params[:insert] != nil and params[:insert] != ""
 
           query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list where id = $1 and uid = $2";
@@ -35,10 +39,10 @@ class Kit < Sinatra::Base
       session!
 
       text = params[:text]
-      tag = params[:tag]
+      tag_id = params[:tag_id]
 
       begin
-          ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid, tag) VALUES($1, $2, $3) returning id', [text.to_s, session[:uid], tag.to_s])
+          ret = @@conn.exec_params(' INSERT INTO todo_list(text, uid, tag_id) VALUES($1, $2, $3) returning id', [text.to_s, session[:uid], tag_id.to_i])
       rescue => e
         puts "***************************"
         puts session[:username]
@@ -53,10 +57,32 @@ class Kit < Sinatra::Base
       redirect "/todo?insert=#{id["id"]}"
   end
 
+  get '/new_tag' do
+      session!
+
+      tag_name = params[:tag_name]
+      tag_desc = params[:tag_desc]
+
+      begin
+          @@conn.exec_params(' INSERT INTO todo_tag(tag, description, user_id) VALUES($1, $2, $3) returning id', [tag_name.to_s, tag_desc.to_s, session[:uid]])
+      rescue => e
+        puts "***************************"
+        puts session[:username]
+        puts session[:uid]
+        puts request.ip
+        puts e
+        puts "***************************"
+        redirect to('/')
+      end
+
+      redirect to('/')
+  end
+
+
   get '/todo_list' do
       session!
 
-      query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
+      query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
       begin
         ret = @@conn.exec_params(query, [session[:uid]])
       rescue => e
@@ -69,9 +95,9 @@ class Kit < Sinatra::Base
         redirect to('/')
       end
 
-      @todo_tag = []
+      @tag_list = []
 
-      @todo_tag = get_todo_tags
+      @tag_list = get_todo_tags
 
       @todos = []
 
@@ -80,7 +106,7 @@ class Kit < Sinatra::Base
           @todos << {
               :id => t["id"],
               :text => t["text"],
-              :tag => @todo_tag,
+              :tag_id => t["tag_id"],
               :created_at => t["data"],
           }
           #puts t
@@ -91,7 +117,7 @@ class Kit < Sinatra::Base
   end
 
   def get_todo_tags
-    query = " SELECT DISTINCT tag FROM todo_list WHERE uid = $1 ORDER BY tag ASC ";
+    query = " SELECT id, tag, description FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
       begin
         ret = @@conn.exec_params(query, [session[:uid]])
       rescue => e
@@ -108,7 +134,9 @@ class Kit < Sinatra::Base
       ret.each_with_index do |t, i|
 
           todo_tag << {
+              :id => t["id"],
               :tag => t["tag"],
+              :description => t["description"],
           }
 
       end
@@ -134,6 +162,27 @@ class Kit < Sinatra::Base
       end
 
       redirect "/todo_list"
+  end
+
+  get '/update_todo_tag/' do
+      session!
+
+      tag_id = params[:tag_id]
+      todo_id = params[:todo_id]
+
+      query = " UPDATE todo_list SET tag_id = $1 WHERE id = $2 AND uid = $3";
+
+      begin
+        @@conn.exec_params(query , [tag_id, todo_id, session[:uid]])
+      rescue => e
+        puts "***************************"
+        puts session[:username]
+        puts session[:uid]
+        puts request.ip
+        puts e
+        puts "***************************"
+      end
+
   end
 
 end

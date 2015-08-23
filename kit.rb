@@ -61,13 +61,22 @@ class Kit < Sinatra::Base
   end
 
   post '/login' do
-
+      puts "/login"
       if session?
           redirect to('/todo')
       else
         query = " SELECT id FROM users WHERE username = $1 AND passwd = $2 "
-        ret = @@conn.exec_params(query, [params[:username], params[:passwd]])
-
+        begin
+            ret = @@conn.exec_params(query, [params[:username], params[:passwd]])
+        rescue => e
+            puts "***************************"
+            puts params[:username]
+            puts params[:passwd]
+            puts request.ip
+            puts e
+            puts "***************************"
+            redirect to('/')
+        end
         puts ret.first.to_s
         if ret.first
             session_start!

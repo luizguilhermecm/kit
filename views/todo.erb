@@ -4,6 +4,29 @@
     <input type="submit" value="go">
 </form>
 
+<form id="new_tag" method="get" action="/new_tag">
+    <labeL for="tag_name">Tag:</labeL>
+    <input name="tag_name" id="tag_name" type="text" size=20 />
+    <labeL for="tag_desc">Tag Description:</labeL>
+    <input name="tag_desc" id="tag_desc" type="text" size=80 />
+    <input type="submit" value="go">
+</form>
+<table class="table" >
+    <% @tag_list.each_with_index do |tag, index| %>
+        <tr>
+            <td>
+                <%= tag[:tag] %>
+            </td>
+            <td>
+                <%= tag[:description] %>
+            </td>
+            <td>
+                <a href="/rm_tag?id=<%=tag[:id]%>">X</a>
+            </td>
+        </tr>
+        </div>
+    <% end if @tag_list%>
+</table>
 
 <table class="table">
     <% @feedback.each do |f|  %>

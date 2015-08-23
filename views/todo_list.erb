@@ -1,7 +1,21 @@
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery.sparkline.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="/js/jquery-ui.min.css">
+
+<script src="/js/todo_tag.js"></script>
+
 <form id="new_todo"  method="get" action="/new_todo">
     <labeL for="text">ToDo:</labeL>
     <input name="text" id="text" type="text" size=100 />
-    <input name="tag" id="tag" type="text" size=20 />
+    <select name="tag_id" id="tag_id">
+        <% if @tag_list %>
+            <% @tag_list.each do |b| %>
+                <option value="<%= b[:id] %>" <%= "selected='true'" if b[:tag] == 'TODO' %>><%= b[:tag] %></option>
+            <% end %>
+        <% end %>
+    </select>
     <input type="submit" value="go">
 </form>
 
@@ -12,10 +26,11 @@
                 <%= todo[:text] %>
             </td>
             <td>
-                <select>
-                <% if @todo_tag %>
-                    <% @todo_tag.each do |b| %>
-                        <option value="<%= b[:tag] %>" <%= "selected='true'" if b == @todo_tag %>><%= b[:tag] %></option>
+                <span class="tag_span"></span>
+                <select onchange="update_tag_id(this,<%= todo[:id]%>)">
+                <% if @tag_list %>
+                    <% @tag_list.each do |b| %>
+                        <option value="<%= b[:id] %>" <%= "selected='true'" if b[:id] == todo[:tag_id] %>><%= b[:tag] %></option>
                     <% end %>
                 <% end %>
                 </select>
