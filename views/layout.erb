@@ -11,6 +11,7 @@
         <link href="css/freelancer.css" rel="stylesheet">
 
 
+
         <meta name="robots" content="noindex" />
         <title>keep it</title>
      </head>
@@ -40,10 +41,12 @@
         </div>
         <!-- /.container -->
     </nav>
-    <a href="/">kit</a> | <a href="/todo_list">Todo List</a> | <a href="/todo">Todo</a> | <a href="/logout">logout</a>
-    <hr>
 
 <!-- Page Content -->
+<br>
+<br>
+<br>
+
     <div class="container">
 
         <div class="row">
@@ -58,6 +61,7 @@
                 <div class="list-group">
                     <a href="/todo" class="list-group-item">ToDo</a>
                     <a href="/todo_list" class="list-group-item">ToDo List</a>
+                    <a href="/todo_tag" class="list-group-item">ToDo Tags</a>
                     <a href="/logout" class="list-group-item">Logout</a>
                 </div>
                 <% if session[:uid] != 0 %>
@@ -83,3 +87,4 @@
 
     </body>
 </html>
+

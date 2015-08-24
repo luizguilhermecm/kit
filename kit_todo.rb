@@ -9,7 +9,7 @@ class Kit < Sinatra::Base
 
       if params[:insert] != nil and params[:insert] != ""
 
-          query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM todo_list where id = $1 and uid = $2";
+          query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at, tag_id FROM todo_list where id = $1 and uid = $2";
           begin
               last = @@conn.exec_params(query, [params[:insert], session[:uid]])
           rescue => e
@@ -22,10 +22,10 @@ class Kit < Sinatra::Base
               redirect to('/')
           end
 
-          @feedback = []
+          @todos = []
 
           last.each_with_index do |t, i|
-              @feedback << {
+              @todos << {
                   :id => t["id"],
                   :text => t["text"],
                   :created_at => t["created_at"],
@@ -75,7 +75,7 @@ class Kit < Sinatra::Base
         redirect to('/')
       end
 
-      redirect to('/')
+      redirect to('/todo_tag')
   end
 
 
@@ -198,5 +198,16 @@ class Kit < Sinatra::Base
       end
 
   end
+
+  get '/todo_tag' do
+      session!
+
+      @tag_list = []
+
+      @tag_list = get_todo_tags
+
+      erb :todo_tag
+  end
+
 
 end

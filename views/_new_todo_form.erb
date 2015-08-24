@@ -1,0 +1,12 @@
+<form id="new_todo"  method="get" action="/new_todo">
+    <labeL for="text">ToDo:</labeL>
+    <input name="text" id="text" type="text" size=100 />
+    <select name="tag_id" id="tag_id">
+        <% if @tag_list %>
+            <% @tag_list.each do |b| %>
+                <option value="<%= b[:id] %>" <%= "selected='true'" if b[:tag] == 'TODO' %>><%= b[:tag] %></option>
+            <% end %>
+        <% end %>
+    </select>
+    <input type="submit" value="go">
+</form>

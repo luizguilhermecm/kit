@@ -1,0 +1,25 @@
+<table class="table" >
+    <% @todos.each_with_index do |todo, index| %>
+        <tr>
+            <td>
+                <%= todo[:text] %>
+            </td>
+            <td>
+                <select onchange="update_tag_id(this,<%= todo[:id]%>)">
+                <% if @tag_list %>
+                    <% @tag_list.each do |b| %>
+                        <option value="<%= b[:id] %>" <%= "selected='true'" if b[:id] == todo[:tag_id] %>><%= b[:tag] %></option>
+                    <% end %>
+                <% end %>
+                </select>
+            </td>
+            <td  style="min-width:85px" >
+                <%= todo[:created_at] %>
+            </td>
+            <td>
+                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
+            </td>
+        </tr>
+        </div>
+    <% end if @todos%>
+</table>

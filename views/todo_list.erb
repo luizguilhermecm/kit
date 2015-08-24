@@ -1,50 +1,18 @@
-<script src="/js/jquery-1.9.1.min.js"></script>
-<script src="/js/jquery.sparkline.min.js"></script>
-<script src="/js/jquery-ui.min.js"></script>
+        <!-- jQuery -->
+        <script src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/jquery.sparkline.min.js"></script>
+        <script src="/js/jquery-ui.min.js"></script>
 
-<link rel="stylesheet" href="/js/jquery-ui.min.css">
+        <link rel="stylesheet" href="/js/jquery-ui.min.css">
+        <!-- end jQuery -->
 
-<script src="/js/todo_tag.js"></script>
+        <!-- kit javascripts -->
+        <script src="/js/todo_tag.js"></script>
+        <!-- end kit javascripts -->
+<%= erb :_new_todo_form , layout: false %>
 
-<form id="new_todo"  method="get" action="/new_todo">
-    <labeL for="text">ToDo:</labeL>
-    <input name="text" id="text" type="text" size=100 />
-    <select name="tag_id" id="tag_id">
-        <% if @tag_list %>
-            <% @tag_list.each do |b| %>
-                <option value="<%= b[:id] %>" <%= "selected='true'" if b[:tag] == 'TODO' %>><%= b[:tag] %></option>
-            <% end %>
-        <% end %>
-    </select>
-    <input type="submit" value="go">
-</form>
 <% @tag_list.each_with_index do |tag, index| %>
     <a class="tag label label-primary" href="/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
 <% end if @tag_list%>
 
-<table class="table" >
-    <% @todos.each_with_index do |todo, index| %>
-        <tr>
-            <td>
-                <%= todo[:text] %>
-            </td>
-            <td>
-                <span class="tag_span"></span>
-                <select onchange="update_tag_id(this,<%= todo[:id]%>)">
-                <% if @tag_list %>
-                    <% @tag_list.each do |b| %>
-                        <option value="<%= b[:id] %>" <%= "selected='true'" if b[:id] == todo[:tag_id] %>><%= b[:tag] %></option>
-                    <% end %>
-                <% end %>
-                </select>
-            </td>
-            <td  style="min-width:85px" >
-                <%= todo[:created_at] %>
-            </td>
-            <td>
-                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
-            </td>
-        </tr>
-        </div>
-    <% end if @todos%>
-</table>
+<%= erb :_list_at_todos, layout: false %>
