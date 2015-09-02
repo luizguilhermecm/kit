@@ -87,7 +87,7 @@ class Kit < Sinatra::Base
       if tag_id != 0
         query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1  and tag_id = $2 ORDER BY created_at DESC ";
       else
-        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 ORDER BY created_at DESC ";
+        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 and tag_id <> 10 ORDER BY created_at DESC ";
       end
 
       puts query;
