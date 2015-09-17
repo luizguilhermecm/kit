@@ -1,0 +1,18 @@
+
+<fieldset>
+    <form id="form_todo" action="/new_todo">
+    <legend>Novo TODO:</legend>
+        <labeL for="todo">TODO:</labeL>
+            <input name="todo" id="todo" type="text" size=80 />
+            <input type="submit" value="add">
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>TODO List:</legend>
+    <div class="todo_list">
+        <% @todos.each_with_index do |todo, index| %>
+            <p> <%= todo[:id] %> - <%= todo[:todo] %> </p>
+        <% end if @todos%>
+    </div>
+</fieldset>

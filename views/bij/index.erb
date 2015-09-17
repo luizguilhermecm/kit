@@ -1,0 +1,395 @@
+<html>
+    <head>
+        <script src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/jquery.sparkline.min.js"></script>
+        <script src="/js/jquery-ui.min.js"></script>
+        <script src="/js/keymaster.js"></script>
+        <script src="/js/qc.js"></script>
+        <script src="/js/qcShortcuts.js"></script>
+
+        <link rel="stylesheet" href="/js/jquery-ui.min.css">
+        <style>
+            .q_candidate_words mark {
+                background-color:33FF99;
+            }
+            .q_words_key mark {
+                background-color:CCCCFF;
+            }
+             .q_words mark {
+                background-color:FF9933;
+            }
+            body {line-height: 1.4; font-family:tahoma;font-size:90%;background-color: #eae4d3;}
+            .resposta{display:none;font-weight:bold;}
+            .cabecalho{font-weight:normal;line-height: 180%;}
+            hr{border:1px solid black;}
+            .questao{padding:20px;}
+            body {font-family:tahoma;font-size:90%;background-color: #eae4d3;}
+            .acertou{background-color:#98FB98;font-weight:bold;}
+            .errou{background-color:#FA8072;font-weight:bold;}
+            .mensagem{display:none;margin-top:10px;}
+            .organizar_disciplina{display:none;}
+            .organizar_assunto{display:none;}
+            .organizar_assunto_b{display:none;}
+            .organizar_nsdk{display:none;}
+            .word_class{display:none;}
+            .hot_key{display:none;}
+            .comentario_snk{display:none;}
+            .resposta_cespe{display:none;}
+            #sumario{display:none;}
+            .comentarios{display:none;background-color:#D8D8D8;margin:20px;}
+            .comentarios{font-size:80%;padding:30px 30px 10px 30px; font-style:italic;}
+            .comentario-autor {font-weight:bold; margin-right: 10px;}
+            .comentario-data {font-weight:bold; margin-right: 10px;}
+            .comentario-voto {font-weight:bold;color:green;}
+            .comentario-ler {color:black;border:1px solid gray;padding:10px;margin-bottom: 20px}
+            table.sumario td {padding-right:10px;padding-left:10px;}
+            table.sumario tr table tr:hover {background-color:#F5A9BC;}
+            table.sumario{margin:20px;}
+            table{font-family: verdana;font-size:90%;border-collapse:collapse;}
+            table,
+            td,
+            th {
+                border: 1px solid #D8D8D8;
+            }
+            #sumario a {text-decoration:none; color:black;}
+            .taxado {text-decoration:line-through;}
+            .barra{display:inline-block;width:102px;height:8px;border:1px solid black;padding:1px;text-align:left;}
+            .progresso{display:inline-block;height:6px;border:1px solid green;background-color:green;}
+            .sumario-disciplina{font-style:bold;font-size:110%;}
+            .sumario-materia{}
+            .sumario-barra{text-align:center;}
+             #help {
+                z-index: 999;
+                width: 85%;
+                height: 80%;
+                margin: auto;
+                position: fixed;
+                padding:20px;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.8);
+                display: none;
+                color: white;
+                border: 1px solid white;
+            }
+            #help td { color:white;}
+            #help table {
+                border-collapse: collapse;
+                font-family: courier;
+                width:90%;
+            }
+            #help table,#help td,#help th {
+                border: 1px solid white;
+                padding: 5px;
+            }
+
+        </style>
+
+    </head>
+    <body>
+    <a href="/">Questoes</a> | <a href="/estatisticas">Estatisticas</a> | <a href="/classificador">Classificador</a> | <a href="/contador">Contador</a> | <a href="/cards">Cards</a> | <a href="/todo_list">TODO</a>
+
+<div id="content">
+    <input type="hidden" id="qtde_paginas" value="<%= @qtde_paginas %>">
+    <!-- http://localhost:4567/?banca=---&ano=---&orgao=---&prova=---&disciplina=---&assunto=---&status=0&filtro_iqid=&filtro_id=&filtro_sql=&filtro_and_lower_1=&filtro_and_lower_2=&filtro_or_lower_1=&filtro_or_lower_2=&alternativa=&primeira_pagina=1&pagina_atual=1-->
+    <br><br>
+    <div>Questões encontradas: <%= @qtde %> | <%= @qtde_resolvidas %>  <a href="javascript:void(0)" id="link_sumario" onclick="$('#sumario').toggle()" name="sumario">...</a></div>
+    <div id="sumario">
+        <table class='sumario'>
+            <% @sumario.each do |key, value| %>
+                <tr class='sumario-disciplina'>
+                <td>
+                    <a href="javascript:void(0)" onclick="$('#disciplina').val('<%= key %>');$('form').submit();"><%= key %></a></td>
+                <td><%= @sumario[key][:qtde] %></td>
+                <td><%= @sumario[key][:qtde_resolvida] %></td>
+                <td><%= (100*@sumario[key][:qtde].to_i/@qtde.to_f).round(2) %>%</td></td>
+            <td class='sumario-barra'>
+                <div class='barra'>
+                    <div class='progresso' style='width:<%= (100*@sumario[key][:qtde].to_i/@qtde.to_f).round(2) %>px;'>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr><td colspan=5>
+
+                <table width="96%" style="margin:2%;">
+
+
+                    <% @sumario[key][:assuntos].each_with_index do |assunto, index_ano| %>
+
+                        <% if index_ano == 0 %>
+                        <tr class='sumario-materia'>
+                        <td colspan=5></td>
+                        <% assunto[:hash_ano_qtde].keys.each do |ano| %>
+                            <td colspan=2 align=center><%= ano %></td>
+                    <% end %>
+                        <td></td>
+                    </tr>
+                <% end %>
+
+                    <tr class='sumario-materia'>
+                        <td><%= (100*assunto[:qtde].to_i/@sumario[key][:qtde].to_f).round(2) %>%</td></td>
+                    <td class='item-sumario'>
+                        <a href="javascript:void(0)" onclick="$('#disciplina').val('<%= key %>');$('#assunto').val('<%= assunto[:assunto] %>');$('form').submit();"><%= assunto[:assunto] == "" ? "Sem assunto" : assunto[:assunto] %></a></td>
+                    <td><%= assunto[:qtde] %></td>
+                    <td><%= assunto[:qtde_resolvida] %></td>
+                    <td class='sumario-barra'>
+                        <div class='barra'>
+                            <div class='progresso' style='width:<%= (100*assunto[:qtde].to_i/@sumario[key][:qtde].to_f).round(2) %>px;'>
+                            </div>
+                        </div>
+                    </td>
+                    <% assunto[:hash_ano_qtde].values.each do |qtde| %>
+                        <td width="1%">
+                        <%= qtde %>
+                    </td>
+                    <td width="1%">
+                        <%= (100*(qtde.to_f/assunto[:qtde].to_f)).round(2) %>%
+                    </td>
+                <% end %>
+                    <td>
+                        <span class="spark" val="[<%=assunto[:hash_ano_qtde].values.join(',')%>]"></span>
+                    </td>
+                </tr>
+
+            <% end %>
+            </table>
+        </td><tr>
+        <% end %>
+        </table>
+    </div>
+    <br><br>
+
+
+    <% @questoes.each_with_index do |questao, index| %>
+
+        <input type="hidden" class="id_questao" value="<%= questao[:id] %>">
+    <a name="questao<%=index+1%>"></a>
+
+    <hr>
+
+    <div class="questao">
+        <div style="float:left;vertical-align:middle;"><img src="img/thumb-up.png" /> <span style="top:-5px;position:relative;" class='qtde_acertos'><%= questao[:qtde_acertos] %></span> <img src="img/thumb-down.png" /> <span style="top:-5px;position:relative;" class='qtde_erros'><%= questao[:qtde_erros] %></span></div>
+        <input class="bad_flag_button" type="button" value="bad_flag" onclick="bad_flag_button()"> <span class="bad_flag_comment"></span>
+        <input class="check_flag_button" type="button" value="check_flag" onclick="check_flag_button()"> <span class="check_flag_comment"></span>
+        <br>
+        <br>
+        <span class='cabecalho'>
+            <span style="border:1px solid black;padding:3px;">v: <%= questao[:view_count] %></span>
+            <span style="border:1px solid black;padding:3px;">id: <a href="?filtro_id=<%= questao[:id]%>"><%= questao[:id] %></a></span>
+            <span style="border:1px solid black;padding:3px;">qid: <a href='<%= questao[:link]%>' targer='_blank'><%= questao[:qid] %></a></span>
+            <span style="border:1px solid black;padding:3px;"><a href="?filtro_id=<%= questao[:id]%>"><%= ((@page - 1) * @limite) + index + 1 %></a></span>
+
+            <b>Banca:</b> <%= questao[:banca] %> - <b>Ano:</b> <%= questao[:ano] %> - <b>Órgão:</b> <%= questao[:orgao] %> - <b>Prova:</b> <%= questao[:prova] %>
+        <b>Disciplina:</b> <span class='disciplina'><%= questao[:disciplina] %></span> - <b>Assunto:</b> <span class='assunto'><%= questao[:assunto] %></span> - <b>assunto_b:</b> <span class='assunto_b'><%= questao[:assunto_b] %></span>
+            <br>
+            <b>Full Name:</b> <%= questao[:prova_nome] %>
+        <div class="hot_key">
+                <input type="text" class="word_auto" size=80 autocomplete="off" placeholder="word" /> <span class="empty-message-assunto"></span>
+                <input type="hidden" class="word_id" />
+                <input class="hot_key_button" type="button" value="OK" onclick="snk_word()">
+                <span class="hot_key_message"></span>
+            </div>
+            <div class="comentario_snk">
+                <input type="text" class="comentario_value" size=80 autocomplete="off" placeholder="novo-comentario" /> <span class="empty-message-assunto"></span>
+                <input class="comment_button" type="button" value="OK" onclick="snk_comentario()" >
+                <span class="comentario_message"></span>
+            </div>
+
+            <div class="organizar_disciplina">
+                <input type="text" class="disciplina_auto" size=80 autocomplete="off" placeholser="disciplina" /> <span class="empty-message-assunto"></span>
+                <input type="hidden" class="disciplina_id" />
+                <input class="organizar_disciplina_button" type="button" value="OK" onclick="organizar_disciplina()">
+            </div>
+
+
+            <div class="organizar_assunto">
+                <input type="text" class="assunto_auto" size=80 autocomplete="off" placeholser="disciplina" /> <span class="empty-message-assunto"></span>
+                <input type="hidden" class="assunto_id" />
+                <input class="organizar_assunto_button" type="button" value="OK" onclick="organizar_assunto()"  />
+            </div>
+
+            <div class="organizar_assunto_b">
+                <input type="text" class="assunto_auto_b" size=80 autocomplete="off" placeholser="disciplina" /> <span class="empty-message-assunto"></span>
+                <input type="hidden" class="assunto_id_b" />
+                <input class="organizar_assunto_button_b" type="button" value="OK" onclick="organizar_assunto_b()">
+            </div>
+
+
+            <div class="organizar_nsdk">
+                <input type="text" class="nsdk_auto" size=80 autocomplete="off" placeholser="disciplina" /> <span class="empty-message-assunto"></span>
+                <input type="hidden" class="disciplina_id" />
+                <input type="hidden" class="assunto_id" />
+                <input class="organizar_nsdk_button" type="button" value="OK" onclick="organizar_nsdk()">
+            </div>
+
+
+        </span>
+
+        <div class="corpo_q">
+            <br><br>
+            <% if questao[:texto_associado] != "" %>
+                <%= questao[:texto_associado] %>
+            <br><br>
+        <% end %>
+            <%= questao[:enunciado] %>
+            <br><br>
+
+            <% if questao[:alternativa_a] != nil %>
+                <%= "<div class=alternativa_a>a) " + questao[:alternativa_a] + "</div>" if questao[:alternativa_a] != "" %>
+        <% end %>
+            <br>
+            <% if questao[:alternativa_b] != nil %>
+                <%= "<div class=alternativa_b>b) " + questao[:alternativa_b] + "</div>" if questao[:alternativa_b] != "" %>
+        <% end %>
+            <br>
+            <% if questao[:alternativa_c] != nil %>
+                <%= "<div class=alternativa_c>c) " + questao[:alternativa_c] + "</div>" if questao[:alternativa_c] != "" %>
+        <% end %>
+            <br>
+            <% if questao[:alternativa_d] != nil %>
+                <%= "<div class=alternativa_d>d) " + questao[:alternativa_d] + "</div>" if questao[:alternativa_d] != "" %>
+        <% end %>
+            <br>
+            <% if questao[:alternativa_e] != nil %>
+                <%= "<div class=alternativa_e>e) " + questao[:alternativa_e] + "</div>" if questao[:alternativa_e] != "" %>
+        <% end %>
+
+        </div>
+        <%= "<div class=resposta_cespe>" + questao[:gabarito] + "</div>" if questao[:alternativa_a] == "" %>
+
+        <!--
+                    <input type="button" value="Resposta" onclick="$(this).parent('.questao').find('.resposta').toggle()">
+                -->
+        <div class='mensagem'></div>
+        <span class="resposta"><%= questao[:gabarito] %></span>
+
+        <br>
+        <div class="gabarito_later">
+            <span class="gabarito_z"></span>
+        </div>
+        <br>
+
+        <div class="word_class">
+            <div class="q_candidate_words">
+                <% questao[:q_words_candidate].each do |w| %>
+                    <%= " <mark class='q_candidate_word'>"+ w[:word] + "</mark>"%>
+            <% end %>
+            </div>
+            <br>
+            <div class="q_words_key">
+                <% questao[:q_words].each do |w| %>
+                    <%= " <mark class='q_word_key'>"+ w[:word] + "</mark>"%>
+            <% end %>
+            </div>
+
+            <br>
+
+            <div class="q_words">
+                <% questao[:q_words].each do |w| %>
+                    <%= " <mark class='q_word'>"+ w[:word] + "</mark>"%>
+            <% end %>
+            </div>
+
+        </div>
+
+        <div class="comentarios"><%= questao[:comentario] %></div>
+
+    </div>
+
+    <% end if @questoes %>
+
+    <% if @qtde.to_i > 0 %>
+        <hr>
+    <div style="text-align:center;">
+        <% if @page != 1 %>
+            <input type="button" onclick="pagina_anterior()" id="botao_anterior" value="Página Anterior"> |
+    <% end %>
+        Página <%= @page %> de <%= @qtde_paginas %>
+    <% if @page != @qtde_paginas %>
+            | <input type="button" onclick="proxima_pagina()" value="Próxima Página" id="botao_proximo">
+    <% end %>
+    </div>
+<% end %>
+
+
+    <div id="help">
+        <table>
+            <tr>
+                <td colspan=2>Comandos de Teclado</td>
+            </tr>
+            <tr>
+                <td class=y>&lt;shift&gt; + /</td>
+                <td>coloca o foco no campo de busca Toda prova</td>
+            </tr>
+            <tr>
+                <td class=y>/</td>
+                <td>coloca o foco no campo de busca Enunciado/Alternativa</td>
+            </tr>
+            <tr>
+                <td class=y>j</td>
+                <td>ativa próxima questão</td>
+            </tr>
+            <tr>
+                <td class=y>k</td>
+                <td>ativa questão anterior</td>
+            </tr>
+            <tr>
+                <td class=y>n</td>
+                <td>próxima página</td>
+            </tr>
+            <tr>
+                <td class=y>p</td>
+                <td>página anterior</td>
+            </tr>
+            <tr>
+                <td class=y>a b c d e</td>
+                <td>marca a alternativa desejada</td>
+            </tr>
+            <tr>
+                <td class=y>&lt;shift&gt; + a b c d e</td>
+                <td>taxa a alternativa desejada</td>
+            </tr>
+            <tr>
+                <td class=y>g</td>
+                <td>exibe a alternativa correta da questão selecionada</td>
+            </tr>
+            <tr>
+                <td class=y>G</td>
+                <td>exibe a alternativa correta de todas as questões</td>
+            </tr>
+            <tr>
+                <td class=y>s</td>
+                <td>exibe o sumário das questões</td>
+            </tr>
+            <tr>
+                <td class=y>o</td>
+                <td>exibe o campo para categorizar/organizar a questão</td>
+            </tr>
+            <tr>
+                <td class=y>h</td>
+                <td>Help</td>
+            </tr>
+            <tr>
+                <td class=y>shift + m</td>
+                <td>Gabarito M (ir para mapa mental)</td>
+            </tr>
+            <tr>
+                <td class=y>shift + f</td>
+                <td>Gabarito F (nunca estudei e por isso não respondi)</td>
+            </tr>
+            <tr>
+                <td class=y>shift + z</td>
+                <td>Gabarito Z (questoes boas)</td>
+            </tr>
+            <tr>
+                <td class=y>shift + y</td>
+                <td>Questões que não preciso responder mas não quero ficar vendo </td>
+            </tr>
+        </table>
+    </div>
+    </body>
+</html>

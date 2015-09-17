@@ -13,6 +13,7 @@ require "i18n"
 require './kit_config'
 
 require_relative 'kit_todo'
+require_relative 'bijqc'
 
 class Kit < Sinatra::Base
   register Sinatra::Session

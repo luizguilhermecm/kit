@@ -1,0 +1,460 @@
+<html>
+    <head>
+        <meta name="robots" content="noindex" />
+        <title>Questões de Concursos</title>
+
+        <script src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/jquery-ui.min.js"></script>
+        <script src="/js/Chart.min.js"></script>
+        <script src="/js/estatisticas.js"></script>
+
+        <link rel="stylesheet" href="/js/jquery-ui.min.css">
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <!-- Bootstrap 3.3.2 -->
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <!-- Font Awesome Icons -->
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <!-- Ionicons -->
+        <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+        <!-- Theme style -->
+        <link href="dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+        <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+              page. However, you can choose any other skin. Make sure you
+              apply the skin class to the body tag so the changes take effect.
+        -->
+        <link href="dist/css/skins/skin-blue.min.css" rel="stylesheet" type="text/css" />
+
+
+        <style>
+            .resposta{display:none;font-weight:bold;}
+            .cabecalho{font-weight:normal;line-height: 180%;}
+            hr{border:1px solid black;}
+            .questao{padding:20px;}
+/*            body {font-family:tahoma;font-size:90%;}*/
+            .acertou{background-color:#98FB98;font-weight:bold;}
+            .errou{background-color:#FA8072;font-weight:bold;}
+            .mensagem{display:none;margin-top:10px;}
+            .organizar{display:none;}
+            .resposta_cespe{display:none;}
+            #sumario{display:none;}
+            table.sumario{margin:20px;}
+            table{font-family: verdana;font-size:90%;border-collapse:collapse;}
+            table,
+            td,
+            th {
+                border: 1px solid #D8D8D8;
+            }
+            #sumario a {text-decoration:none; color:black;}
+            #container_busca{border:1px solid black; padding:10px;}
+            .taxado {text-decoration:line-through;}
+            .barra{display:inline-block;width:102px;height:8px;border:1px solid black;padding:1px;text-align:left;}
+            .progresso{display:inline-block;height:6px;border:1px solid green;background-color:green;}
+            .sumario-disciplina{font-style:bold;font-size:110%;}
+            .sumario-materia{}
+            .sumario-barra{text-align:center;}
+            .comentarios{display:none;background-color:#D8D8D8;margin:20px;}
+            .comentarios{font-size:80%;padding:30px 30px 10px 30px; font-style:italic;}
+            .comentario-autor {font-weight:bold; margin-right: 10px;}
+            .comentario-data {font-weight:bold; margin-right: 10px;}
+            .comentario-voto {font-weight:bold;color:green;}
+            .comentario-ler {color:black;border:1px solid gray;padding:10px;margin-bottom: 20px}
+            .botao-buscar{width:100px;}
+            .botao-limpar{width:100px;}
+            #help {
+                z-index: 999;
+                width: 85%;
+                height: 80%;
+                margin: auto;
+                position: fixed;
+                padding:20px;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.8);
+                display: none;
+                color: white;
+                border: 1px solid white;
+            }
+            #help td { color:white;}
+            #help table {
+                border-collapse: collapse;
+                font-family: courier;
+                width:90%;
+            }
+            #help table,#help td,#help th {
+                border: 1px solid white;
+                padding: 5px;
+            }
+
+        </style>
+    </head>
+
+
+
+
+  <body class="skin-blue sidebar-collapse">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header">
+
+        <!-- Logo -->
+        <a href="/" class="logo"><b>G</b>Questões</a>
+
+        <!-- Header Navbar -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          <!-- Navbar Right Menu -->
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <!-- Messages: style can be found in dropdown.less-->
+              <li class="dropdown messages-menu">
+                <!-- Menu toggle button -->
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-envelope-o"></i>
+                  <span class="label label-success">4</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="header">You have 4 messages</li>
+                  <li>
+                    <!-- inner menu: contains the messages -->
+                    <ul class="menu">
+                      <li><!-- start message -->
+                        <a href="#">
+                          <div class="pull-left">
+                            <!-- User Image -->
+                            <img src="nsdk.png" class="img-circle" alt="User Image"/>
+                          </div>
+                          <!-- Message title and timestamp -->
+                          <h4>                            
+                            Support Team
+                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                          </h4>
+                          <!-- The message -->
+                          <p>Why not buy a new awesome theme?</p>
+                        </a>
+                      </li><!-- end message -->                      
+                    </ul><!-- /.menu -->
+                  </li>
+                  <li class="footer"><a href="#">See All Messages</a></li>
+                </ul>
+              </li><!-- /.messages-menu -->
+
+              <!-- Notifications Menu -->
+              <li class="dropdown notifications-menu">
+                <!-- Menu toggle button -->
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-bell-o"></i>
+                  <span class="label label-warning">10</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="header">You have 10 notifications</li>
+                  <li>
+                    <!-- Inner Menu: contains the notifications -->
+                    <ul class="menu">
+                      <li><!-- start notification -->
+                        <a href="#">
+                          <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                        </a>
+                      </li><!-- end notification -->                      
+                    </ul>
+                  </li>
+                  <li class="footer"><a href="#">View all</a></li>
+                </ul>
+              </li>
+              <!-- Tasks Menu -->
+              <li class="dropdown tasks-menu">
+                <!-- Menu Toggle Button -->
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-flag-o"></i>
+                  <span class="label label-danger">9</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="header">You have 9 tasks</li>
+                  <li>
+                    <!-- Inner menu: contains the tasks -->
+                    <ul class="menu">
+                      <li><!-- Task item -->
+                        <a href="#">
+                          <!-- Task title and progress text -->
+                          <h3>
+                            Design some buttons
+                            <small class="pull-right">20%</small>
+                          </h3>
+                          <!-- The progress bar -->
+                          <div class="progress xs">
+                            <!-- Change the css width attribute to simulate progress -->
+                            <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                              <span class="sr-only">20% Complete</span>
+                            </div>
+                          </div>
+                        </a>
+                      </li><!-- end task item -->                      
+                    </ul>
+                  </li>
+                  <li class="footer">
+                    <a href="#">View all tasks</a>
+                  </li>
+                </ul>
+              </li>
+              <!-- User Account Menu -->
+              <li class="dropdown user user-menu">
+                <!-- Menu Toggle Button -->
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <!-- The user image in the navbar-->
+                  <img src="nsdk.png" class="user-image" alt="User Image"/>
+                  <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                  <span class="hidden-xs">nsdk</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <!-- The user image in the menu -->
+                  <li class="user-header">
+                    <img src="nsdk.png" class="img-circle" alt="User Image" />
+                    <p>
+                      nsdk - Web Developer
+                      <small>Member since Nov. 2012</small>
+                    </p>
+                  </li>
+                  <!-- Menu Body -->
+                  <li class="user-body">
+                    <div class="col-xs-4 text-center">
+                      <a href="#">Followers</a>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                      <a href="#">Sales</a>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                      <a href="#">Friends</a>
+                    </div>
+                  </li>
+                  <!-- Menu Footer-->
+                  <li class="user-footer">
+                    <div class="pull-left">
+                      <a href="#" class="btn btn-default btn-flat">Profile</a>
+                    </div>
+                    <div class="pull-right">
+                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+
+          <!-- Sidebar user panel (optional) -->
+          <div class="user-panel">
+            <div class="pull-left image">
+              <img src="nsdk.png" class="img-circle" alt="User Image" />
+            </div>
+            <div class="pull-left info">
+              <p>nsdk</p>
+              <!-- Status -->
+              <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+          </div>
+
+          <!-- search form (Optional) -->
+          <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Search..."/>
+              <span class="input-group-btn">
+                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </form>
+          <!-- /.search form -->
+
+          <!-- Sidebar Menu -->
+          <ul class="sidebar-menu">
+            <li class="header">HEADER</li>
+            <!-- Optionally, you can add icons to the links -->
+            <li class="active"><a href="#"><span>Link</span></a><</li>
+            <li><a href="#"><span>Another Link</span></a></li>
+            <li class="treeview">
+              <a href="#"><span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li><a href="#">Link in level 2</a></li>
+                <li><a href="#">Link in level 2</a></li>
+              </ul>
+            </li>
+          </ul><!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Estatísticas
+            <!-- <small>Optional description</small> -->
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+            <li class="active">Here</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          
+          <!-- Your Page Content Here -->
+
+        <div class="row">
+
+         <div class="col-md-6">
+            <div class="box box-solid box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Total de Acertos e Erros</h3>
+              </div><!-- /.box-header -->
+               <div class="box-body">
+                <canvas id="chartTotalAcertosErros" width="500" height="300"></canvas>
+                <div id="legendaTotalAcertosErros" style="position:absolute"></div>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="box box-solid box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Acertos e Erros por Dia</h3>
+              </div><!-- /.box-header -->
+               <div class="box-body">
+                <canvas id="myChart" width="500" height="300"></canvas>
+                  <div id="legendDiv" style="position:absolute"></div>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="box box-solid box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Questões Resolvidas por Dia</h3>
+              </div><!-- /.box-header -->
+               <div class="box-body">
+                  <canvas id="chartQuestoesResolvidas" width="500" height="300"></canvas>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+
+
+          <div class="col-md-6">
+            <div class="box box-solid box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Questões por Ano</h3>
+              </div><!-- /.box-header -->
+               <div class="box-body">
+                  <labeL for="banca">Banca:</labeL>
+                  <select name="banca" id="banca" onchange="carregar_banca_assunto_por_ano()"><%= @bancas.join("") %></select>
+                  &nbsp;&nbsp;&nbsp;
+                  <labeL for="disciplina">Disciplina:</labeL>
+                  <select name="disciplina" id="disciplina" style="width:200px;" onchange="carregar_banca_assunto_por_ano()"><%= @disciplinas.join("") %></select>
+                  <br>
+                  <labeL for="orgao">Órgão:</label>
+                  <select name="orgao" id="orgao" onchange="carregar_banca_assunto_por_ano()"><%= @orgaos.join("") %></select>
+                  <br>
+                  <labeL for="assunto">Assunto:</labeL>
+                  <select name="assunto" id="assunto" style="width:80%;" onchange="carregar_banca_assunto_por_ano()"><%= @assuntos.join("") %></select>
+                  <br>
+                  <canvas id="chartBancaAssunto" width="500" height="300"></canvas>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="row">
+
+          <div class="col-md-12">
+            <div class="box box-solid box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Disciplinas</h3>
+              </div><!-- /.box-header -->
+               <div class="box-body">
+                  <labeL for="banca_d">Banca:</labeL>
+                  <select name="banca_d" id="banca_d" onchange="carregar_disciplinas()"><%= @bancas.join("") %></select>
+                  &nbsp;&nbsp;&nbsp;
+                  <labeL for="ano_d">Ano:</labeL>
+                  <select name="ano_d" id="ano_d" onchange="carregar_disciplinas()"><%= @anos.join("") %></select>
+                  <br>
+                  <labeL for="orgao_d">Órgão:</label>
+                  <select name="orgao_d" id="orgao_d" onchange="carregar_disciplinas()"><%= @orgaos.join("") %></select>
+                  <br>
+                  <labeL for="prova_d">Prova:</label>
+                  <select name="prova_d" id="prova_d" onchange="carregar_disciplinas()"><%= @provas.join("") %></select>
+                  <br>
+                  <canvas id="chartDisciplina" width="1000" height="600"></canvas>
+                  <div id="legendaDisciplina" style="position:absolute"></div>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-12">
+            <div class="box box-solid box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Assuntos</h3>
+              </div><!-- /.box-header -->
+               <div class="box-body">
+                  <labeL for="banca_a">Banca:</labeL>
+                  <select name="banca_a" id="banca_a" onchange="carregar_assuntos()"><%= @bancas.join("") %></select>
+                  &nbsp;&nbsp;&nbsp;
+                  <labeL for="ano_a">Ano:</labeL>
+                  <select name="ano_a" id="ano_a" onchange="carregar_assuntos()"><%= @anos.join("") %></select>
+                  <br>
+                  <labeL for="disciplina_a">Disciplina:</label>
+                  <select name="disciplina_a" id="disciplina_a" onchange="carregar_assuntos()"><%= @disciplinas.join("") %></select>
+                  <br>
+                  <canvas id="chartAssunto" width="1000" height="600"></canvas>
+                  <div id="legendaAssunto" style="position:absolute"></div>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+
+        </div>
+
+
+        </section><!-- /.content -->
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer">
+        <!-- To the right -->
+        <div class="pull-right hidden-xs">
+          Anything you want
+        </div>
+        <!-- Default to the left --> 
+        <strong>Copyright &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
+      </footer>
+
+    </div><!-- ./wrapper -->
+
+
+        <!-- Bootstrap 3.3.2 JS -->
+        <script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <!-- AdminLTE App -->
+        <script src="dist/js/app.min.js" type="text/javascript"></script>
+
+
+    </body>
+</html>

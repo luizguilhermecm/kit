@@ -1,0 +1,103 @@
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery.sparkline.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/keymaster.js"></script>
+<script src="/js/cards.js"></script>
+
+<link rel="stylesheet" href="/js/jquery-ui.min.css">
+
+<style>
+    .success{
+        background-color:#98FB98;
+        font-weight:bold;
+    }
+    .fail{
+        background-color:#FA8072;
+        font-weight:bold;
+    }
+    .card{
+        position: relative;
+    }
+    .card_main{
+        margin-top: 50px;
+        position: relative;
+    }
+    .separatorx{
+        color: #333;
+        position: relative;
+        line-height:150%;
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .card_front{
+        color: #999;
+        position: relative;
+        width: 600px;
+        margin: 0 auto;
+    }
+    .card_front_main{
+        color: #333;
+        position: relative;
+        line-height:150%;
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        box-shadow: 0 10px 10px 2px rgba(0,0,0,0.3);
+    }
+    .card_back{
+        display:none;
+        margin-top: 50px;
+        color: #333;
+        position: relative;
+        line-height:250%;
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        box-shadow: 0 10px 10px 2px rgba(0,0,0,0.3);
+    }
+    .revisao_message{
+        line-height:100%;
+    }
+</style>
+
+<% @cards.each_with_index do |card, index| %>
+    <input type="hidden" class="card_id" value="<%= card[:id] %>" />
+    <input type="hidden" class="days" value="" />
+    <a name="card<%=index%>"></a>
+    <div class="card">
+        <table align="center">
+            <tr>
+                <td class="card_front">
+                    <%= card[:front] %>
+                </td>
+            <tr>
+            </tr>
+                <td class="separator">
+                    <span class="revisao_message_separator"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="card_back">
+                    <%= card[:back] %>
+                </td>
+            </tr>
+            <tr>
+                <td class="card_back">
+                    <table  style="width:100%">
+                        <tr>
+                            <td class="n_days">
+                            </td>
+                            <td class="gabarito">
+                            </td>
+                            <td class="xururu">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <% end if @cards %>
+</fieldset>
+

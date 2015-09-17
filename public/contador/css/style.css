@@ -1,0 +1,46 @@
+html, body {
+    padding: 0;
+    background-color: 'white';
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-rendering: optimizelegibility;
+    top: 0;
+    left: 0;
+    float: left;
+}
+
+.reminder {
+    float: left;
+    display: block;
+    min-height: 30px;
+    color: black;
+    text-align: center;
+    margin-bottom:5px;
+    border:1px solid black; 
+    padding:10px;
+}
+
+.description {
+    display: block;
+    text-rendering: optimizelegibility;
+    text-align: left;
+    font-size: 10px;
+}
+
+.description > p {
+    line-height: 6px;
+    margin-top: 25px;
+    text-align: left;
+}
+
+.clocks {
+    min-height: 6px;
+}
+
+.clock {
+    float: left;
+    width: 30px;
+}
+
+.clock > svg {
+    display: block;
+}

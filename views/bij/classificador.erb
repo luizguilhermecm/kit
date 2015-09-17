@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <meta name="robots" content="noindex" />
+        <title>Questões de Concursos</title>
+
+        <script src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/jquery-ui.min.js"></script>
+        <script src="/js/keymaster.js"></script>
+        <link rel="stylesheet" href="/js/jquery-ui.min.css">
+
+
+        <style>
+            td{cursor:pointer;}
+        </style>
+
+    </head>
+    <body>
+
+            <form id="form_busca" action="/classificador">
+                <labeL for="filtro_iqid">QIDs:</labeL>
+                <input name="filtro_iqid" id="filtro_iqid" type="text" size=40 value="<%= @filtro_iqid %>"/>
+
+                <br>
+            
+                <labeL for="filtro_id">IDs:</labeL>
+                <input name="filtro_id" id="filtro_id" type="text" size=40 value="<%= @filtro_id %>"/>
+
+                <br>
+                <labeL for="filtro_sql1">SQL:</labeL>
+                <input name="filtro_sql1" id="filtro_sql1" type="text" size=40 value="<%= @filtro_sql1 %>"/>
+
+                <br>
+                <labeL for="filtro_sql2">SQL:</labeL>
+                <input name="filtro_sql2" id="filtro_sql2" type="text" size=40 value="<%= @filtro_sql2 %>"/>
+                <br>
+                <labeL for="filtro_sql3">SQL:</labeL>
+                <input name="filtro_sql3" id="filtro_sql3" type="text" size=40 value="<%= @filtro_sql3 %>"/>
+
+                <br>
+                <labeL for="filtro_sql4">SQL:</labeL>
+                <input name="filtro_sql4" id="filtro_sql4" type="text" size=40 value="<%= @filtro_sql4 %>"/>
+
+                <br>
+                <labeL for="filtro_sql5">SQL:</labeL>
+                <input name="filtro_sql5" id="filtro_sql5" type="text" size=40 value="<%= @filtro_sql5 %>"/>
+
+
+
+
+                <br>
+                <labeL for="filtro_sql6">SQL:</labeL>
+                <input name="filtro_sql6" id="filtro_sql6" type="text" size=40 value="<%= @filtro_sql6 %>"/>
+
+
+
+ 
+                <input type="submit" value="Buscar"> 
+
+            </form>
+        total: <%= @qtde %>
+
+        <input type="text" class="assunto_auto" size=80 autocomplete="off" /> <span class="empty-message-assunto"></span>
+        <input type="hidden" class="assunto_id" />
+        <input type="hidden" class="disciplina_id" />
+
+
+        <input type="button" value="Aplicar nos selecionados" onclick="aplicar()">
+
+
+
+
+        <br><br><br>
+
+        <table border=1 width="100%">
+        <% @questoes.each do |q| %>
+            <tr>
+                <td>
+                    <%= q[:enunciado] %><br><br><br>
+                    <%= "<div class=alternativa_e>e) " + q[:alternativa_gabarito].to_s + "</div>" if q[:alternativa_gabarito] != "" %>
+
+                    <br><br>
+                    Gabarito: <%= q[:gabarito] %>
+                </td>
+                <td><input type="checkbox" value='<%= q[:id] %>' /></td>
+            </tr>
+        <% end %>
+        </table>
+
+
+        <script>
+            $("tr td").on("click", function(){ $(this).parent("tr").find("input[type=checkbox]").click() });
+
+            $( ".assunto_auto" ).autocomplete({
+                source: "/buscar_assunto_classificador/",
+                minLength: 2,
+                select: function( event, ui ) {
+                    $(".assunto_id").val(ui.item.assunto);
+                    $(".disciplina_id").val(ui.item.disciplina);
+                },
+                response: function(event, ui) {
+                    if (ui.content.length === 0) {
+                        $(".empty-message-assunto").text("Nada encontrado.");
+                    }
+                    else {
+                        $(".empty-message-assunto").empty();
+                    }
+                }
+            });
+
+            function aplicar() {
+
+                if ($(".assunto_id").val() == "" || $(".disciplina_id").val() == "") {
+                    alert("selecione uma categoria");
+                    return;
+                }
+
+                ids = []; $("input:checked").each(function(){
+                    ids.push($(this).val());
+                });
+
+
+                $.ajax({
+                    url: "/classificador_ok",
+                    type: "POST",
+                    data: {
+                        "ids": ids,
+                        "assunto": $(".assunto_id").val(),
+                        "disciplina": $(".disciplina_id").val()
+                    }
+                }).done( function(res) {
+                    alert(ids.length);
+                });
+            }
+        </script>
+
+    </body>
+</html>

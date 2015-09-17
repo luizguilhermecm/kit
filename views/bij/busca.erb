@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <meta name="robots" content="noindex" />
+        <title>Questões de Concursos</title>
+
+        <style>
+            #container_busca{border:1px solid black; padding:10px;}
+            body {line-height: 1.2; font-family:tahoma;font-size:90%;background-color: #eae4d3;}
+       </style>
+
+
+     </head>
+
+    <body>
+    <a href="/">Questoes</a> | <a href="/estatisticas">Estatisticas</a> | <a href="/classificador">Classificador</a> | <a href="/contador">Contador</a> | <a href="/cards">Cards</a> | <a href="/todo_list">TODO</a>
+    <div id="container_busca">
+
+
+        <label for="banca">Toda Prova:</label>
+        <input type="text" class="prova_auto" id="prova_auto" size=120 autocomplete="off" />
+        <span class="empty-message-prova"></span>
+        <br><br>
+
+        <form id="form_busca" action="/buscar">
+            <labeL for="banca">Banca:</labeL>
+            <select name="banca" id="banca">
+                <% if @bancas %>
+                    <% @bancas.each do |b| %>
+                    <option value="<%= b %>" <%= "selected='true'" if b == @banca %>><%= b %></option>
+            <% end %>
+            <% end %>
+            </select>
+            <labeL for="ano">Ano:</labeL>
+            <select name="ano" id="ano">
+
+                <% @anos.each do |a| %>
+                    <option value="<%= a %>" <%= "selected='true'" if a == @ano %>><%= a %></option>
+                <% end if @anos %>
+            </select>
+            <labeL for="orgao">Órgão:</label>
+            <select name="orgao" id="orgao">
+
+                <% if @orgaos %>
+                    <% @orgaos.each do |o| %>
+                    <option value="<%= o %>" <%= "selected='true'" if o == @orgao %>><%= o %></option>
+            <% end %>
+
+            <% end %>
+            </select>
+            <br><br>
+            <labeL for="prova">Prova:</label>
+            <select name="prova" id="prova">
+
+                <% if @provas %>
+                    <% @provas.each do |p| %>
+                    <option value="<%= p %>" <%= "selected='true'" if p == @prova %>><%= p %></option>
+            <% end %>
+            <% end %>
+            </select>
+            <br><br>
+            <labeL for="disciplina">Disciplina:</labeL>
+            <select name="disciplina" id="disciplina">
+
+                <% if @disciplinas %>
+                    <% @disciplinas.each do |d| %>
+                    <option value="<%= d %>" <%= "selected='true'" if d == @disciplina %>><%= d %></option>
+            <% end %>
+            <% end %>
+            </select>
+            <labeL for="assunto">Assunto:</labeL>
+            <select name="assunto" id="assunto">
+                <% if @assuntos %>
+                    <% @assuntos.each do |a| %>
+                    <option value="<%= a %>" <%= "selected='true'" if a == @assunto %>><%= a %></option>
+            <% end %>
+            <% end %>
+            </select>
+            <br>
+
+            <br>
+            <labeL for="mark_words">Mark Words</labeL>
+            <select name="mark_words" id="mark_words">
+                <option value="<%=false%>" selected="true" >false</option>
+                <option value="<%=true%>" >true</option>
+            </select>
+
+            <br>
+            <labeL for="status">Status</labeL>
+            <select name="status" id="status">
+                <option value="0" selected="true" >Todas</option>
+                <option value="1" >Resolvidas </option>
+                <option value="2" >Errei </option>
+                <option value="3" >Não Resolvidas </option>
+                <option value="4" >Gabarito Z</option>
+                <option value="5" >Errei (max)</option>
+            </select>
+            <br>
+
+            <labeL for="filtro_iqid">QIDs:</labeL>
+            <input name="filtro_iqid" id="filtro_iqid" type="text" size=40 value="<%= @filtro_iqid %>"/>
+
+            <br>
+
+            <labeL for="filtro_id">IDs:</labeL>
+            <input name="filtro_id" id="filtro_id" type="text" size=40 value="<%= @filtro_id %>"/>
+
+            <br>
+            <labeL for="filtro_sql">SQL:</labeL>
+            <input name="filtro_sql" id="filtro_sql" type="text" size=40 value="<%= @filtro_sql %>"/>
+
+            <br>
+            <labeL for="alternativa_gabarito">AND(lower):</labeL>
+            <input name="filtro_and_lower_1" id="filtro_and_lower_1" type="text" size=40 value="<%= @filtro_and_lower_1 %>"/>
+            <input name="filtro_and_lower_2" id="filtro_and_lower_2" type="text" size=40 value="<%= @filtro_and_lower_2 %>"/>
+            <br>
+            <labeL for="alternativa_gabarito">OR(lower):</labeL>
+            <input name="filtro_or_lower_1" id="filtro_or_lower_1" type="text" size=40 value="<%= @filtro_or_lower_1 %>"/>
+            <input name="filtro_or_lower_2" id="filtro_or_lower_2" type="text" size=40 value="<%= @filtro_or_lower_2 %>"/>
+            <br>
+
+            <labeL for="alternativa">Enunciado/Alternativa:</labeL>
+            <input name="alternativa" id="alternativa" type="text" size=40 value="<%= @alternativa %>"/>
+
+            <labeL for="filtro_per_page">PerPage:</labeL>
+            <input name="filtro_per_page" id="filtro_per_page" type="text" size=6 value="<%= @per_page %>"/>
+
+            <br>
+
+            <input type="hidden" id="primeira_pagina" name="primeira_pagina" value="1">
+            <input type="hidden" id="pagina_atual" name="pagina_atual" value="<%= @page %>">
+            <input type="submit" value="Buscar"> <input type="button" value="Limpar" onclick="limpar_busca()">
+        </form>
+    </div>
+    </body>
+</html>

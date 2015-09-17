@@ -1,0 +1,54 @@
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery.sparkline.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/keymaster.js"></script>
+<script src="/js/qc.js"></script>
+<script src="/js/cards.js"></script>
+
+<link rel="stylesheet" href="/js/jquery-ui.min.css">
+
+<style>
+    .success{
+        background-color:#98FB98;
+        font-weight:bold;
+    }
+    .fail{
+        background-color:#FA8072;
+        font-weight:bold;
+    }
+</style>
+
+<fieldset>
+    <legend>Novo Card:</legend>
+    <div class="new_card">
+        <span class="new_card_message"></span>
+        <input type="hidden" class="deck_id" />
+        <p />
+        Deck: <input class="to_deck_name" type="text" size=80 autocomplete="off" placeholser="pergunta" /> <span class="empty-message-deck"></span>
+        <p />
+        Front: <input class="new_card_question_text" type="text" size=80 autocomplete="off" placeholser="pergunta" />
+        <p />
+        Back: <input class="new_card_answer_text" type="text" size=80 autocomplete="off" placeholser="resposta" />
+        <p />
+        <input class="new_card_button" type="button" value="Add" onclick="new_card()">
+        <p />
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Novo Deck:</legend>
+    <div class="new_deck">
+        <input class="new_deck_name" type="text" size=80 autocomplete="off" placeholser="deck name" />
+        <input class="new_deck_button" type="button" value="OK" onclick="new_deck()">
+        <span class="new_deck_message"></span>
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Deck List:</legend>
+    <div class="deck_list">
+        <% @decks.each_with_index do |deck, index| %>
+            <p> <%= deck[:name] %> - <%= deck[:qtde] %> <a href="/revisar_cards?deck_id=<%=deck[:id]%>">revisar</a></p>
+        <% end if @decks %>
+    </div>
+</fieldset>
