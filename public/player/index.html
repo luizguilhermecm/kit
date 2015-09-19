@@ -1,0 +1,298 @@
+<html manifest="http://luizgustavocm.com/manifest_player.cache">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>GPlayer</title>
+    <style>
+        #legenda_video_container {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        table {
+            border-collapse: collapse;
+            /* width:70%;text-align:left;*/
+            font-family: arial;
+            width: 100%;
+        }
+        table,
+        td,
+        th {
+            border: 1px solid white;
+            padding: 5px;
+        }
+        body {
+            color: white;
+            background-color: #F6F4F0;
+        }
+        .y {
+            color: yellow;
+            text-align: right;
+        }
+        #help {
+            overflow: auto;
+            font-size: 50%;
+        }
+        #principal {
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+        #readme {
+            z-index: 998;
+            overflow: auto;
+            width: 85%;
+            height: 80%;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            color: white;
+            border: 1px solid white;
+            font-size: 60%;
+            font-family: verdana;
+            padding: 5px;
+            text-align: left;
+        }
+        #help {
+            z-index: 999;
+            width: 85%;
+            height: 80%;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            color: white;
+            border: 1px solid white;
+        }
+        #legenda_video_container {
+            font-family: verdana;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            color: white;
+            width: 80%;
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #container {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+        .loading {
+            margin: auto;
+  position: absolute;
+  top: 50%; left: 0; bottom: 0; right: 0;
+  color:black;
+  display:none;
+        }
+        #status {
+            width:90%;
+            background-color: #1d1f21;
+            position: absolute;
+            text-align: center;
+            bottom:0px;
+            color:#dfc48c;
+            font-family: arial;
+            font-size:14px;
+        }
+    </style>
+    <script src="annyang.min.js"></script>
+    <script src="keymaster.js"></script>
+    <script src="screenfull.min.js"></script>
+    <script src="jquery-1.9.1.min.js"></script>
+    <script src="player.js"></script>
+</head>
+
+<body align=center>
+    <span class="loading">
+        <img src="loading.gif" /><br>
+        <span class="progresso"></span>
+    </span>
+
+    <input style="display:none" type="file" webkitdirectory directory multiple mozdirectory onchange="carregar_videos(this.files)" id="openfile_diretorio">
+    <input style="display:none" type="file" multiple onchange="carregar_videos(this.files)" id="openfile_arquivo">
+
+    <span style="display:none">
+        <canvas id="thecanvas"></canvas><br>
+        <span id="imagem_gerada">
+          <img id="thumbnail_img" width="90%" height="90%" />
+        </span>
+    </span>
+    <div id="principal">
+        <div id="container">
+            <video width="100%" height="100%" controls id='player' onended="proximo_video()">
+                Your browser does not support the video tag.
+            </video>
+            <div id="legenda_video_container">
+                <span id="legenda_video_texto"></span>
+            </div>
+            <div id="readme">
+            </div>
+            <div id="help">
+                <table>
+                    <tr>
+                        <td colspan=2>Comandos de Voz</td>
+                    </tr>
+                    <tr>
+                        <td>reproduzir</td>
+                        <td>Inicia o vídeo</td>
+                    </tr>
+                    <tr>
+                        <td>pausar</td>
+                        <td>Pausa o vídeo</td>
+                    </tr>
+                    <tr>
+                        <td>próximo</td>
+                        <td>Vai para o próximo vídeo</td>
+                    </tr>
+                    <tr>
+                        <td>adiantar x</td>
+                        <td>Adianta x segundos o vídeo (x: 1, 2, 3, 4, 5, 10)</td>
+                    </tr>
+                    <tr>
+                        <td>retroceder x</td>
+                        <td>Retroce x segundos o vídeo (x: 1, 2, 3, 4, 5, 10)</td>
+                    </tr>
+                </table>
+                <br>
+                <br>
+                <table>
+                    <tr>
+                        <td colspan=2>Comandos de Teclado</td>
+                    </tr>
+                    <tr>
+                        <td class=y>o</td>
+                        <td>Seleção de pasta dos vídeos</td>
+                    </tr>
+                    <tr>
+                        <td class=y>a</td>
+                        <td>Seleção dos arquivos de vídeos</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;space&gt;</td>
+                        <td>Play/Pause</td>
+                    </tr>
+                    <tr>
+                        <td class=y>f</td>
+                        <td>Full screen</td>
+                    </tr>
+                    <tr>
+                        <td class=y>i</td>
+                        <td>Informações sobre tempo do vídeo</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;left&gt;</td>
+                        <td>Volta 5s do vídeo</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;right&gt;</td>
+                        <td>Avança 5s do vídeo</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + &lt;left&gt;</td>
+                        <td>Diminui a velocidade do vídeo em 0.1</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + &lt;right&gt;</td>
+                        <td>Aumenta a velocidade do vídeo em 0.1</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + &lt;down&gt;</td>
+                        <td>Diminui a velocidade do vídeo em 0.5</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + &lt;up&gt;</td>
+                        <td>Aumenta a velocidade do vídeo em 0.5</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + 1</td>
+                        <td>Velocidade 1</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + 2</td>
+                        <td>Velocidade 2</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + 3</td>
+                        <td>Velocidade 3</td>
+                    </tr>
+                    <tr>
+                        <td class=y>&lt;shift&gt; + 4</td>
+                        <td>Velocidade 4</td>
+                    </tr>
+                    <tr>
+                        <td class=y>0</td>
+                        <td>Vai para o início do vídeo</td>
+                    </tr>
+                    <tr>
+                        <td class=y>1 a 9</td>
+                        <td>Vai para parte n do video, considerando o vídeo divido em 10 partes</td>
+                    </tr>
+                    <tr>
+                        <td class=y>g[n]g</td>
+                        <td>Carrega o enésimo vídeo</td>
+                    </tr>
+                    <tr>
+                        <td class=y>p</td>
+                        <td>Print da tela</td>
+                    </tr>
+                    <tr>
+                        <td class=y>.</td>
+                        <td>Abre um popup com print da tela</td>
+                    </tr>
+                    <tr>
+                        <td class=y>r</td>
+                        <td>Recarrega o vídeo do ponto onde parou em caso de travamento</td>
+                    </tr>
+                    <tr>
+                        <td class=y>t</td>
+                        <td>Exibe o .txt da pasta selecionada</td>
+                    </tr>
+                    <tr>
+                        <td class=y>h</td>
+                        <td>Help</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div id="container_selecao_videos" style="display:none"></div>
+    </div>
+</body>
+
+<script>
+    /*
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-47257919-1', 'luizgustavocm.com');
+            ga('send', 'pageview');
+        */
+</script>
+
+</html>
