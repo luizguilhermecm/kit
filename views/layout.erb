@@ -70,12 +70,10 @@
                     <a href="/player/index.html" class="list-group-item">GPlayer</a>
                 </div>
                 <% end %>
-                <% if session[:uid] != 0 %>
+                <% if session[:uid].to_i == 1 %>
                     <div class="list-group">
                         <a href="/git_pull" class="list-group-item">git pull</a>
-                        <% if session[:uid] == 1 %>
                         <a href="/sinatra_log" class="list-group-item">Sinatra Log</a>
-                        <% end %>
                     </div>
                <% end %>
                 <% end %>
