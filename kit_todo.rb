@@ -85,9 +85,9 @@ class Kit < Sinatra::Base
       tag_id = params[:tag_id].to_i
       puts tag_id
       if tag_id != 0
-        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1  and tag_id = $2 ORDER BY created_at DESC ";
+        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id, flag_do_it FROM todo_list WHERE flag_deleted = 'false' and uid = $1  and tag_id = $2 ORDER BY  flag_do_it is true DESC, created_at DESC ";
       else
-        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 and tag_id <> 10 ORDER BY created_at DESC ";
+        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, tag_id, flag_do_it FROM todo_list WHERE flag_deleted = 'false' and uid = $1 and tag_id <> 10 ORDER BY flag_do_it is true DESC, created_at DESC ";
       end
 
       puts query;
@@ -122,6 +122,7 @@ class Kit < Sinatra::Base
               :text => t["text"],
               :tag_id => t["tag_id"],
               :created_at => t["data"],
+              :flag_do_it => t["flag_do_it"],
           }
           #puts t
 
@@ -177,6 +178,30 @@ class Kit < Sinatra::Base
 
       redirect "/todo_list"
   end
+
+  get '/update_todo_flag_do_it/' do
+      session!
+
+      flag_do_it = params[:flag_do_it]
+      todo_id = params[:todo_id]
+
+      query = " UPDATE todo_list SET flag_do_it = $1 WHERE id = $2 AND uid = $3";
+
+      puts query
+      puts flag_do_it
+      begin
+        @@conn.exec_params(query , [flag_do_it, todo_id, session[:uid]])
+      rescue => e
+        puts "***************************"
+        puts session[:username]
+        puts session[:uid]
+        puts request.ip
+        puts e
+        puts "***************************"
+      end
+
+  end
+
 
   get '/update_todo_tag/' do
       session!

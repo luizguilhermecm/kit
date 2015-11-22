@@ -2,6 +2,9 @@
     <% @todos.each_with_index do |todo, index| %>
         <tr>
             <td>
+                <% if todo[:flag_do_it] == 't' %>
+                    <strong class="tag label label-danger" >doit</strong>
+                <% end %>
                 <%= todo[:text] %>
             </td>
             <td>
@@ -12,6 +15,9 @@
                     <% end %>
                 <% end %>
                 </select>
+            </td>
+            <td>
+            <input type="checkbox" name="flag_do_it" onchange="update_flag_do_it(this,<%= todo[:id]%>)" value="true"<%= "checked" if todo[:flag_do_it] == 't' %>>
             </td>
             <td  style="min-width:85px" >
                 <%= todo[:created_at] %>
