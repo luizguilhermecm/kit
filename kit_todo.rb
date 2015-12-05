@@ -185,12 +185,12 @@ class Kit < Sinatra::Base
       flag_do_it = params[:flag_do_it]
       todo_id = params[:todo_id]
 
-      query = " UPDATE todo_list SET flag_do_it = NOT flag_do_it WHERE id = $2 AND uid = $3";
+      query = " UPDATE todo_list SET flag_do_it = NOT flag_do_it WHERE id = $1 AND uid = $2";
 
       puts query
       puts flag_do_it
       begin
-        @@conn.exec_params(query , [flag_do_it, todo_id, session[:uid]])
+        @@conn.exec_params(query , [todo_id, session[:uid]])
       rescue => e
         puts "***************************"
         puts session[:username]
