@@ -185,7 +185,7 @@ class Kit < Sinatra::Base
       flag_do_it = params[:flag_do_it]
       todo_id = params[:todo_id]
 
-      query = " UPDATE todo_list SET flag_do_it = $1 WHERE id = $2 AND uid = $3";
+      query = " UPDATE todo_list SET flag_do_it = NOT flag_do_it WHERE id = $2 AND uid = $3";
 
       puts query
       puts flag_do_it
