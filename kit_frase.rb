@@ -3,8 +3,6 @@ class Kit < Sinatra::Base
     get '/frase' do
         session!
 
-        puts "log:frase"
-
         @frases = []
         @limit = 20
 
@@ -14,13 +12,19 @@ class Kit < Sinatra::Base
     get '/fr_search_frase' do
         session!
 
+        @mot = params[:mot].to_s.downcase.gsub(/drop/,'_drop_')
+        @mot = params[:mot].to_s.downcase.gsub(/table/,'_table_')
+        @mot = params[:mot].to_s.downcase.gsub(/from/,'_from_')
+        @mot = params[:mot].to_s.downcase.gsub(/alter/,'_alter_')
+        @mot = params[:mot].to_s.downcase.gsub(/select/,'_select_')
+        @mot = params[:mot].to_s.downcase.gsub(/update/,'_update_')
         @mot = params[:mot].to_s.gsub(/'/,'\'\'')
         @limit = params[:limit].to_i
 
         begin
-            query = "SELECT frase FROM fr_frase WHERE lower(frase) like \'%#{@mot.downcase}%\' limit #{@limit};"
-            puts query
+            query = "SELECT distinct(frase) FROM fr_frase WHERE lower(frase) like \'%#{@mot.downcase}%\' limit #{@limit};"
             ret = @@conn.exec_params(query)
+            @mot = params[:mot].to_s.gsub(/''/,'\'')
         rescue => e
             puts "***************************"
             puts session[:username]
@@ -28,7 +32,7 @@ class Kit < Sinatra::Base
             puts request.ip
             puts e
             puts "***************************"
-            redirect to('/')
+            redirect to('/frase')
         end
 
         @frases = []
