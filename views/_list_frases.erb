@@ -1,9 +1,18 @@
+
 <table class="table" >
     <% @frases.each_with_index do |frase, index| %>
         <tr>
-            <td>
+           <td>
                 <%= frase[:text] %>
             </td>
+            <td>
+                <input name="translate" id="translate_<%= frase[:id] %>" type="text" size=50 value="<%= frase[:translate]%>"/>
+                <input type="button" value="tt" onclick="update_frase(<%= frase[:id] %>)">
+            </td>
+            <td>
+                <%= frase[:id] %>
+            </td>
+
         </tr>
         </div>
     <% end if @frases%>

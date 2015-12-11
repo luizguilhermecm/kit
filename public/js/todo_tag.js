@@ -34,3 +34,20 @@ function update_tag_id(tag_id, todo_id) {
     }).done( function(res) {
     });
 }
+
+function update_frase(frase_id) {
+    console.log(frase_id)
+    html_id = "translate_"+frase_id
+    translate = document.getElementById(html_id).value
+    console.log(translate)
+
+   $.ajax({
+        url: "/update_frase",
+        type: "GET",
+        data: {
+            "frase_id": frase_id,
+            "translate": translate,
+        }
+    }).done( function(res) {
+    });
+}

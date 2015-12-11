@@ -22,7 +22,7 @@ class Kit < Sinatra::Base
         @limit = params[:limit].to_i
 
         begin
-            query = "SELECT distinct(frase) FROM fr_frase WHERE lower(frase) like \'%#{@mot.downcase}%\' limit #{@limit};"
+            query = "SELECT id, frase, translate FROM fr_frase WHERE lower(frase) like \'%#{@mot.downcase}%\' limit #{@limit};"
             ret = @@conn.exec_params(query)
             @mot = params[:mot].to_s.gsub(/''/,'\'')
         rescue => e
@@ -40,7 +40,9 @@ class Kit < Sinatra::Base
         ret.each_with_index do |f, i|
 
             @frases << {
+                :id => f["id"],
                 :text => f["frase"],
+                :translate => f["translate"],
             }
             #puts t
 
@@ -49,4 +51,24 @@ class Kit < Sinatra::Base
         erb :frase_list
     end
 
+    get '/update_frase' do
+        session!
+
+        translate = params[:translate].to_s
+        frase_id = params[:frase_id].to_i
+
+        translate = translate.gsub(/'/, '\'\'')
+        begin
+            query = "update fr_frase SET translate = $1 WHERE id = $2"
+            @@conn.exec_params(query, [translate, frase_id])
+        rescue => e
+            puts "***************************"
+            puts session[:username]
+            puts session[:uid]
+            puts request.ip
+            puts e
+            puts "***************************"
+            redirect to('/frase')
+        end
+    end
 end
