@@ -1,0 +1,10 @@
+<table class="table" >
+    <% @frases.each_with_index do |frase, index| %>
+        <tr>
+            <td>
+                <%= frase[:text] %>
+            </td>
+        </tr>
+        </div>
+    <% end if @frases%>
+</table>
