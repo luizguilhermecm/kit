@@ -4,7 +4,7 @@ class Kit < Sinatra::Base
         session!
 
         @frases = []
-        @limit = 20
+        @limit = 50
 
         erb :frase_list
     end
@@ -71,4 +71,24 @@ class Kit < Sinatra::Base
             redirect to('/frase')
         end
     end
+
+    get '/delete_frase' do
+        session!
+
+        frase_id = params[:frase_id].to_i
+
+        begin
+            query = "delete from fr_frase WHERE id = $1"
+            @@conn.exec_params(query, [frase_id])
+        rescue => e
+            puts "***************************"
+            puts session[:username]
+            puts session[:uid]
+            puts request.ip
+            puts e
+            puts "***************************"
+            redirect to('/frase')
+        end
+    end
+
 end

@@ -5,15 +5,20 @@
            <td>
                 <%= frase[:text] %>
             </td>
-            <td>
-                <input name="translate" id="translate_<%= frase[:id] %>" type="text" size=50 value="<%= frase[:translate]%>"/>
+            <td  style="max-width:25px" >
+                <a href="https://translate.google.com/#fr/pt/<%= frase[:text] %>">gt</a>
+            </td>
+            <td  style="max-width:180px" >
+                <input name="translate" id="translate_<%= frase[:id] %>" type="text" size=30 value="<%= frase[:translate]%>" />
                 <input type="button" value="tt" onclick="update_frase(<%= frase[:id] %>)">
             </td>
-            <td>
-                <%= frase[:id] %>
+            <td  style="max-width:25px" >
+                <a href="<%= frase[:id] %>">id</a>
             </td>
-
-        </tr>
+            <td  style="max-width:25px" >
+                <input type="button" value="X" onclick="delete_frase(<%= frase[:id] %>)">
+            </td>
+       </tr>
         </div>
     <% end if @frases%>
 </table>
