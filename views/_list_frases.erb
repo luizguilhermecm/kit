@@ -9,7 +9,8 @@
                 <a href="https://translate.google.com/#fr/pt/<%= frase[:text] %>">gt</a>
             </td>
             <td  style="max-width:180px" >
-                <input name="translate" id="translate_<%= frase[:id] %>" type="text" size=30 value="<%= frase[:translate]%>" />
+                <input name="translate" id="translate_<%= frase[:id] %>" type="text" size=30 value="<%= frase[:translate]%>"
+                onblur="update_frase(<%= frase[:id] %>)" />
                 <input type="button" value="tt" onclick="update_frase(<%= frase[:id] %>)">
             </td>
             <td  style="max-width:25px" >
