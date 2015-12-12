@@ -59,3 +59,38 @@ function delete_frase(frase_id) {
     }).done( function(res) {
     });
 }
+
+function update_word(word_id, frase_id) {
+    html_id = "pt_translate_"+frase_id+"_"+word_id
+    translate = document.getElementById(html_id).value
+
+   $.ajax({
+        url: "/update_word",
+        type: "GET",
+        data: {
+            "word_id": word_id,
+            "pt_translate": translate,
+        }
+    }).done( function(res) {
+    });
+}
+
+function update_word_cognato(flag_is_cognato, word_id, frase_id) {
+    if (flag_is_cognato.checked) {
+        var is_cognato = true;
+    } else {
+        var is_cognato= false;
+    }
+
+
+   $.ajax({
+        url: "/update_word_cognato",
+        type: "GET",
+        data: {
+            "word_id": word_id,
+            "is_cognato": is_cognato,
+        }
+    }).done( function(res) {
+    });
+}
+

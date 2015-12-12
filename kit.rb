@@ -127,5 +127,14 @@ class Kit < Sinatra::Base
         send_file "./#{filename}", :filename => filename, :type => 'Application/octet-stream'
     end
 
+    def logging e
+        puts "***************************"
+        puts session[:username]
+        puts session[:uid]
+        puts request.ip
+        puts e
+        puts "***************************"
+    end
+
     run! if app_file == $0
 end
