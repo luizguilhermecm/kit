@@ -33,7 +33,19 @@ class Kit < Sinatra::Base
         @frases = []
 
         begin
-            query = "SELECT id, word, pt_translation, is_cognato FROM fr_words WHERE word = $1;"
+
+            query = " select w.id as id , w.pt_translation as pt_translation, w.word as word, w.is_cognato as is_cognato, "
+            query += " wv.id, v.verb as verbo, vc.conj as conjugacao, vc.tempo || ' - [v] ' || vt.verb as tempo from fr_words w "
+            query += " left join fr_wv wv on wv.word_id = w.id "
+            query += " left join fr_verbos v on v.id = wv.verb_id  "
+            query += " left join fr_wvw wvw on wvw.word_id = w.id "
+            query += " left join fr_verbos_words vw on vw.word = w.word and (v.verb is null or vw.word <> v.verb) "
+            query += " left join fr_verbos v2 on v2.id = vw.verb_id and 1 <> 1 "
+            query += " left join fr_verbos vt on vt.id = vw.verb_id "
+            query += " left join fr_verbos_conj vc on vc.verb_id = vw.verb_id and (vc.conj like '%'''||w.word or vc.conj like '% '||w.word) "
+            query += " where w.word = $1; "
+            #puts query;
+            #query = "SELECT id, word, pt_translation, is_cognato FROM fr_words WHERE word = $1;"
             ret.each_with_index do |f, i|
                 words = []
                 words.concat(f["frase"].scan(/[[:word:]']+/))
@@ -54,6 +66,9 @@ class Kit < Sinatra::Base
                             :word => r["word"],
                             :pt_translation => r["pt_translation"],
                             :is_cognato => r["is_cognato"],
+                            :verbo => r["verbo"],
+                            :conjugacao => r["conjugacao"],
+                            :tempo => r["tempo"],
                         }
                     end
                 end
@@ -136,7 +151,10 @@ class Kit < Sinatra::Base
         translate = translate.gsub(/'/, '\'\'')
         begin
             query = "update fr_words SET pt_translation = $1 WHERE id = $2"
-            @@conn.exec_params(query, [translate, word_id])
+            puts query
+            puts "translate $1 : " + translate
+            puts "word_id $2 : " + word_id.to_s
+            #@@conn.exec_params(query, [translate, word_id])
         rescue => e
             logging e
             redirect to('/frase')

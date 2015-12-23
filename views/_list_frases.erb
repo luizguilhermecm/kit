@@ -42,6 +42,17 @@
             <td>
                 <input type="button" value="X" onclick="delete_word(<%= word[:id] %>)">
             </td>
+            <td>
+                <% if word[:verbo] %>
+                    [v]
+                    <%= word[:verbo]  %>
+                <% end %>
+                <% if word[:conjugacao] %>
+                    <%= word[:conjugacao] %>
+                    [<%= word[:tempo].downcase %>]
+                <% end %>
+            </td>
+
         </tr>
        <% end if frase[:words]%>
     <% end if @frases%>

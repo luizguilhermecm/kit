@@ -123,6 +123,7 @@ class Kit < Sinatra::Base
             redirect to('/')
         end
     end
+
     get '/sinatra_log/:filename' do |filename|
         send_file "./#{filename}", :filename => filename, :type => 'Application/octet-stream'
     end
