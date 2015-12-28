@@ -6,12 +6,12 @@
                 <%= frase[:text] %>
             </td>
             <td  style="max-width:25px" >
-                <a href="https://translate.google.com/#fr/pt/<%= frase[:text] %>">gt</a>
+                <a href="https://translate.google.com/#<%=@prefix%>/pt/<%= frase[:text] %>">gt</a>
             </td>
             <td  style="max-width:180px" >
                 <input name="translate" id="translate_<%= frase[:id] %>" type="text" size=30 value="<%= frase[:translate]%>"
-                onblur="update_frase(<%= frase[:id] %>)" />
-                <input type="button" value="tt" onclick="update_frase(<%= frase[:id] %>)">
+                onblur="update_frase(<%= frase[:id] %>, '<%= @target_table %>')" />
+                <input type="button" value="tt" onclick="update_frase(<%= frase[:id] %>, '<%= @target_table %>')">
             </td>
             <td  style="max-width:25px" >
                 <a href="<%= frase[:id] %>">id</a>
@@ -26,15 +26,15 @@
                 <%= word[:word] %>
             </td>
             <td>
-                <a href="https://translate.google.com/#fr/pt/<%= word[:word] %>">gt</a>
+                <a href="https://translate.google.com/#<%=@prefix%>/pt/<%= word[:word] %>">gt</a>
             </td>
             <td>
                 <input name="pt_translate" id="pt_translate_<%=frase[:id]%>_<%=word[:id]%>" type="text" size=30 value="<%= word[:pt_translation]%>"
-                onblur="update_word(<%= word[:id] %>,<%= frase[:id] %>)" />
-                <input type="button" value="tt" onblur="update_word(<%= word[:id] %>,<%= frase[:id] %>)" >
+                onblur="update_word(<%= word[:id] %>,<%= frase[:id] %>, '<%= @target_table %>')" />
+                <input type="button" value="tt" onclick="update_word(<%= word[:id] %>,<%= frase[:id] %>, '<%= @target_table %>')" >
             </td>
             <td>
-            <input type="checkbox" name="flag_is_cognato" onchange="update_word_cognato(this,<%= word[:id]%>,<%= frase[:id]%>)" value="true"<%= "checked" if word[:is_cognato] == 't' %>>
+            <input type="checkbox" name="flag_is_cognato" onchange="update_word_cognato(this,<%= word[:id]%>,<%= frase[:id]%>, '<%= @target_table %>')" value="true"<%= "checked" if word[:is_cognato] == 't' %>>
             </td>
             <td>
                 <a href="<%= word[:id] %>">id</a>

@@ -11,6 +11,7 @@ require 'digest/md5'
 require "i18n"
 
 require './kit_config'
+require './kit_logging'
 
 require_relative 'kit_todo'
 require_relative 'kit_frase'
@@ -22,10 +23,21 @@ class Kit < Sinatra::Base
     set :port, 80 # to deploy on tcp port 80, sudo needed
     set :environment, :production
     set :host, DB_HOST
-    set :dbname, DB_NAME
+    set :dbname, DB_NAME_KIT
+    set :db_wum, DB_NAME_WUM
     set :user, DB_SYS_USER
     set :password, DB_SYS_PASSWD
 
+    #log_level = KIT_LOG_DEBUG
+    #KIT_LOG_DEBUG = 48  # o mais verboso possivel
+    #KIT_LOG_VERBOSE = 40
+    #KIT_LOG_INFO = 32
+    #KIT_LOG_ERROR = 16
+    #KIT_LOG_PANIC = 0 # loga o mínimo possível
+
+    $logging_level = KIT_LOG_INFO
+
+    @@wum_conn = PG.connect(:host => settings.host, :dbname => settings.db_wum, :user => settings.user, :password => settings.password)
     @@conn = PG.connect(:host => settings.host, :dbname => settings.dbname, :user => settings.user, :password => settings.password)
 
     enable :sessions
@@ -127,6 +139,13 @@ class Kit < Sinatra::Base
     get '/sinatra_log/:filename' do |filename|
         send_file "./#{filename}", :filename => filename, :type => 'Application/octet-stream'
     end
+
+    get '/set_log_level/:log_level' do |log_level|
+        kit_log(KIT_LOG_PANIC, "new log level", log_level)
+        $logging_level = log_level
+        redirect to('/')
+    end
+
 
     def logging e
         puts "***************************"

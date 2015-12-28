@@ -6,10 +6,10 @@ class Kit < Sinatra::Base
       @tag_list = []
 
       @tag_list = get_todo_tags
-
       if params[:insert] != nil and params[:insert] != ""
 
           query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at, tag_id FROM todo_list where id = $1 and uid = $2";
+
           begin
               last = @@conn.exec_params(query, [params[:insert], session[:uid]])
           rescue => e

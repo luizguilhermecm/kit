@@ -1,21 +1,36 @@
-<form id="frase_search"  method="get" action="/fr_search_frase">
+<!-- jQuery -->
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery.sparkline.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="/js/jquery-ui.min.css">
+<!-- end jQuery -->
+
+
+<script src="/js/todo_tag.js"></script>
+
+
+
+<form id="word_search"  method="get" action="/search_words">
     <labeL for="mot">Mot:</labeL>
     <input name="mot" id="mot" type="text" size=50 value="<%= @mot %>"/>
     <labeL for="limit">Limit:</labeL>
     <input name="limit" id="limit" type="text" size=5 value="<%= @limit %>"/>
     <labeL for="offset">offset:</labeL>
     <input name="offset" id="offset" type="text" size=5 value="<%= @offset %>"/>
-
     <select name="target_table" id="target_table">
         <% if @table_list %>
             <% @table_list.each do |b| %>
-                <option value="<%= b[:name] %>" ><%= b[:name] %></option>
+                <option value="<%= b[:name] %>" <%= "selected='true'" if b[:name] == @target_table %>><%= b[:name] %></option>
             <% end %>
         <% end %>
     </select>
 
-    <input type="checkbox" name="pt_translation_not_null" value="true" <%= "checked" if @pt_translation_null%> >com traducao<br>
+    <input type="checkbox" name="orderbynb" value="true" <%= "checked" if @orderbynb%> >nb desc<br>
     <input type="checkbox" name="pt_translation_null" value="true" <%= "checked" if @pt_translation_null%> >sem traducao<br>
-
     <input type="submit" value="go">
 </form>
+
+<%= erb :_list_words, layout: false %>
+
+

@@ -34,7 +34,7 @@ function update_tag_id(tag_id, todo_id) {
     });
 }
 
-function update_frase(frase_id) {
+function update_frase(frase_id, target_table) {
     html_id = "translate_"+frase_id
     translate = document.getElementById(html_id).value
 
@@ -44,23 +44,25 @@ function update_frase(frase_id) {
         data: {
             "frase_id": frase_id,
             "translate": translate,
+            "target_table": target_table,
         }
     }).done( function(res) {
     });
 }
 
-function delete_frase(frase_id) {
+function delete_frase(frase_id, target_table) {
    $.ajax({
         url: "/delete_frase",
         type: "GET",
         data: {
             "frase_id": frase_id,
+            "target_table": target_table,
         }
     }).done( function(res) {
     });
 }
 
-function update_word(word_id, frase_id) {
+function update_word(word_id, frase_id, target_table) {
     html_id = "pt_translate_"+frase_id+"_"+word_id
     translate = document.getElementById(html_id).value
 
@@ -70,12 +72,13 @@ function update_word(word_id, frase_id) {
         data: {
             "word_id": word_id,
             "pt_translate": translate,
+            "target_table": target_table,
         }
     }).done( function(res) {
     });
 }
 
-function update_word_cognato(flag_is_cognato, word_id, frase_id) {
+function update_word_cognato(flag_is_cognato, word_id, frase_id, target_table) {
     if (flag_is_cognato.checked) {
         var is_cognato = true;
     } else {
@@ -89,6 +92,7 @@ function update_word_cognato(flag_is_cognato, word_id, frase_id) {
         data: {
             "word_id": word_id,
             "is_cognato": is_cognato,
+            "target_table": target_table,
         }
     }).done( function(res) {
     });
