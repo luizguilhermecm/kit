@@ -3,7 +3,7 @@ class Kit < Sinatra::Base
     get '/words' do
 
         kit_log(KIT_LOG_PANIC, "log level", $logging_level)
-        kit_log(KIT_LOG_INFO, '/words', session)
+        kit_log(KIT_LOG_INFO, '/words')
         session!
 
         @table_list = get_table_list_word
@@ -16,7 +16,7 @@ class Kit < Sinatra::Base
     end
 
     get '/frase' do
-        kit_log(KIT_LOG_INFO, '/frase', session)
+        kit_log(KIT_LOG_INFO, '/frase')
         session!
 
         @table_list = get_table_list_frase
@@ -46,7 +46,7 @@ class Kit < Sinatra::Base
     end
 
     get '/search_words' do
-        kit_log(KIT_LOG_INFO, '/search_words', session)
+        kit_log(KIT_LOG_INFO, '/search_words')
         session!
         @table_list = get_table_list_word
 
@@ -97,6 +97,7 @@ class Kit < Sinatra::Base
             ret = @@wum_conn.exec_params(query)
             @mot = params[:mot].to_s.gsub(/''/,'\'')
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/words')
         end
@@ -130,8 +131,6 @@ class Kit < Sinatra::Base
             @prefix = "fr"
         end
 
-
-
         @mot = params[:mot].to_s.downcase.gsub(/drop/,'_drop_')
         @mot = params[:mot].to_s.downcase.gsub(/table/,'_table_')
         @mot = params[:mot].to_s.downcase.gsub(/from/,'_from_')
@@ -139,6 +138,7 @@ class Kit < Sinatra::Base
         @mot = params[:mot].to_s.downcase.gsub(/select/,'_select_')
         @mot = params[:mot].to_s.downcase.gsub(/update/,'_update_')
         @mot = params[:mot].to_s.gsub(/'/,'\'\'')
+
         @limit = params[:limit].to_i
         @offset = params[:offset].to_i
 
@@ -166,14 +166,19 @@ class Kit < Sinatra::Base
         end
 
         begin
+            kit_log(KIT_LOG_VERBOSE, "begin SELECT FROM", @target_table)
             query = " SELECT id, frase, translate FROM #{@target_table} WHERE lower(frase) like \'%#{@mot.downcase}%\' "
             query += where
-            query += " limit #{@limit} "
-            query += " offset #{@offset} "
+            query += " limit #{@limit.to_s} "
+            query += " offset #{@offset.to_s} "
             kit_log(KIT_LOG_DEBUG, "query:", query)
             ret = @@wum_conn.exec_params(query)
             @mot = params[:mot].to_s.gsub(/''/,'\'')
+            kit_log(KIT_LOG_VERBOSE, "end SELECT FROM", @target_table);
+            kit_log(KIT_LOG_VERBOSE, "ret.fields", ret.fields)
+            kit_log(KIT_LOG_DEBUG, "ret.values", ret.values)
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/frase')
         end
@@ -181,25 +186,22 @@ class Kit < Sinatra::Base
         @frases = []
 
         begin
-
+            kit_log(KIT_LOG_VERBOSE, "begin SELECT words")
             if @target_table == "en_frase"
-
-            query = " select w.id as id , w.pt_translation as pt_translation, w.word as word, w.is_cognato as is_cognato, "
-            query += " '' as verbo, '' as conjugacao, '' as tempo from en_words w "
-            query += " where w.word = $1; "
-
+                query = " select w.id as id , w.pt_translation as pt_translation, w.word as word, w.is_cognato as is_cognato, "
+                query += " '' as verbo, '' as conjugacao, '' as tempo from en_words w "
+                query += " where w.word = $1; "
             else
-
-            query = " select w.id as id , w.pt_translation as pt_translation, w.word as word, w.is_cognato as is_cognato, "
-            query += " wv.id, v.verb as verbo, vc.conj as conjugacao, vc.tempo || ' - [v] ' || vt.verb as tempo from fr_words w "
-            query += " left join fr_wv wv on wv.word_id = w.id "
-            query += " left join fr_verbos v on v.id = wv.verb_id  "
-            query += " left join fr_wvw wvw on wvw.word_id = w.id "
-            query += " left join fr_verbos_words vw on vw.word = w.word and (v.verb is null or vw.word <> v.verb) "
-            query += " left join fr_verbos v2 on v2.id = vw.verb_id and 1 <> 1 "
-            query += " left join fr_verbos vt on vt.id = vw.verb_id "
-            query += " left join fr_verbos_conj vc on vc.verb_id = vw.verb_id and (vc.conj like '%'''||w.word or vc.conj like '% '||w.word) "
-            query += " where w.word = $1; "
+                query = " select w.id as id , w.pt_translation as pt_translation, w.word as word, w.is_cognato as is_cognato, "
+                query += " wv.id, v.verb as verbo, vc.conj as conjugacao, vc.tempo || ' - [v] ' || vt.verb as tempo from fr_words w "
+                query += " left join fr_wv wv on wv.word_id = w.id "
+                query += " left join fr_verbos v on v.id = wv.verb_id  "
+                query += " left join fr_wvw wvw on wvw.word_id = w.id "
+                query += " left join fr_verbos_words vw on vw.word = w.word and (v.verb is null or vw.word <> v.verb) "
+                query += " left join fr_verbos v2 on v2.id = vw.verb_id and 1 <> 1 "
+                query += " left join fr_verbos vt on vt.id = vw.verb_id "
+                query += " left join fr_verbos_conj vc on vc.verb_id = vw.verb_id and (vc.conj like '%'''||w.word or vc.conj like '% '||w.word) "
+                query += " where w.word = $1; "
             end
             #query = "SELECT id, word, pt_translation, is_cognato FROM fr_words WHERE word = $1;"
             ret.each_with_index do |f, i|
@@ -209,13 +211,13 @@ class Kit < Sinatra::Base
                 frase_words = []
 
                 words.each do |w|
-                    w = w.downcase
-                    kit_log(KIT_LOG_DEBUG, "query:", query, w)
+                    w = w.to_s.downcase
+                    kit_log(KIT_LOG_DEBUG, "words.each query:", query, w)
                     ret = @@wum_conn.exec_params(query, [w])
                     if ret.first == nil
                         insert_word_into_db w
-                        kit_log(KIT_LOG_DEBUG, "query:", query)
-                        ret = @@wum_conn.exec_params(query, [w], w)
+                        kit_log(KIT_LOG_DEBUG, "ret.first query:", query, w)
+                        ret = @@wum_conn.exec_params(query, [w])
                     end
 
                     ret.each do |r|
@@ -240,6 +242,7 @@ class Kit < Sinatra::Base
 
             end
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/frase')
         end
@@ -261,6 +264,7 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "query:", query, translate, frase_id)
             @@wum_conn.exec_params(query, [translate, frase_id])
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/frase')
         end
@@ -278,6 +282,7 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "query:", query, frase_id)
             @@wum_conn.exec_params(query, [frase_id])
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/frase')
         end
@@ -292,27 +297,27 @@ class Kit < Sinatra::Base
 
             if @target_table == "en_frase"
 
-            query = "\nUPDATE en_words SET nb = nb + #{nb} WHERE lower(word) = lower('#{param}'); "
-            query += " INSERT INTO  en_words (nb,word) "
-            query += " SELECT #{nb}, lower('#{param}') "
-            query += " WHERE  "
-            query += " NOT EXISTS (SELECT 1 FROM en_words WHERE lower(word) = lower('#{param}'))  "
-            query += " RETURNING ID ;"
+                query = "\nUPDATE en_words SET nb = nb + #{nb} WHERE lower(word) = lower('#{param}'); "
+                query += " INSERT INTO  en_words (nb,word) "
+                query += " SELECT #{nb}, lower('#{param}') "
+                query += " WHERE  "
+                query += " NOT EXISTS (SELECT 1 FROM en_words WHERE lower(word) = lower('#{param}'))  "
 
 
             else
 
-            query = "\nUPDATE #{@target_table} SET nb = nb + #{nb} WHERE lower(word) = lower('#{param}'); "
-            query += " INSERT INTO #{@target_table} (nb,word) "
-            query += " SELECT #{nb}, lower('#{param}') "
-            query += " WHERE  "
-            query += " NOT EXISTS (SELECT 1 FROM #{@target_table} WHERE lower(word) = lower('#{param}'))  "
-            query += " RETURNING ID ;"
+                query = "\nUPDATE #{@target_table} SET nb = nb + #{nb} WHERE lower(word) = lower('#{param}'); "
+                query += " INSERT INTO #{@target_table} (nb,word) "
+                query += " SELECT #{nb}, lower('#{param}') "
+                query += " WHERE  "
+                query += " NOT EXISTS (SELECT 1 FROM #{@target_table} WHERE lower(word) = lower('#{param}'))  "
+                query += " RETURNING ID ;"
             end
 
-            kit_log(KIT_LOG_DEBUG, "query:", query)
+            kit_log(KIT_LOG_DEBUG, "insert_word_into_db query:", query)
             @@wum_conn.exec(query)
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR] insert_word_into_db ")
             kit_log(KIT_LOG_ERROR, e, session)
             rediret to('/frase')
         end
@@ -340,6 +345,7 @@ class Kit < Sinatra::Base
 
             @target_table = save
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/frase')
         end
@@ -365,6 +371,7 @@ class Kit < Sinatra::Base
             @@wum_conn.exec_params(query, [is_cognato, word_id])
             @target_table = save
         rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/frase')
         end
