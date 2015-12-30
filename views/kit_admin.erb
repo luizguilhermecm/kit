@@ -1,0 +1,13 @@
+<p>kit_admin</p>
+
+<form id="log_level_form"  method="get" onchange="/update_log_level">
+    <labeL for="log_level">Logging Level:</labeL>
+    <select name="log_level" id="log_level">
+        <% if @log_levels %>
+            <% @log_levels.each do |level| %>
+                <option value="<%= level[:value] %>" <%= "selected='true'" if level[:value] == @kit_log_level %>><%= level[:value] %></option>
+            <% end %>
+        <% end %>
+    </select>
+    <input type="submit" value="go">
+</form>

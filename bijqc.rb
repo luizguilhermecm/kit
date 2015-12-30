@@ -32,7 +32,7 @@ LOGGING_LEVEL = QC_LOG_DEBUG
 
 
 
-def do_logging(msg, *params)
+def bijqc_do_logging(msg, *params)
     print "[LOG] "
     puts msg.to_s
     params.each_with_index do |p, i|
@@ -51,17 +51,17 @@ end
 def qc_log(log_level, msg, *params)
 
     if(LOGGING_LEVEL >= log_level)
-        do_logging(msg, *params)
+        bijqc_do_logging(msg, *params)
         #    elsif(log_level == QC_LOG_ERROR)
-        #        do_logging(msg, *params)
+        #        bijqc_do_logging(msg, *params)
         #    elsif(log_level == QC_LOG_INFO)
-        #        do_logging(msg, *params)
+        #        bijqc_do_logging(msg, *params)
         #    elsif(log_level == QC_LOG_VERBOSE)
-        #        do_logging(msg, *params)
+        #        bijqc_do_logging(msg, *params)
         #    elsif(log_level == QC_LOG_DEBUG)
-        #        do_logging(msg, *params)
+        #        bijqc_do_logging(msg, *params)
         #    else
-        #        do_logging("[error] log level does not exist", log_level)
+        #        bijqc_do_logging("[error] log level does not exist", log_level)
     end
 
 end

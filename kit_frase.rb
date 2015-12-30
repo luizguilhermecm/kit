@@ -97,8 +97,8 @@ class Kit < Sinatra::Base
             ret = @@wum_conn.exec_params(query)
             @mot = params[:mot].to_s.gsub(/''/,'\'')
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/words')
         end
 
@@ -178,8 +178,8 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_VERBOSE, "ret.fields", ret.fields)
             kit_log(KIT_LOG_DEBUG, "ret.values", ret.values)
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/frase')
         end
 
@@ -242,8 +242,8 @@ class Kit < Sinatra::Base
 
             end
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/frase')
         end
 
@@ -264,8 +264,8 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "query:", query, translate, frase_id)
             @@wum_conn.exec_params(query, [translate, frase_id])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/frase')
         end
     end
@@ -282,8 +282,8 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "query:", query, frase_id)
             @@wum_conn.exec_params(query, [frase_id])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/frase')
         end
     end
@@ -317,8 +317,8 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "insert_word_into_db query:", query)
             @@wum_conn.exec(query)
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR] insert_word_into_db ")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR] insert_word_into_db ")
+            kit_log(KIT_LOG_PANIC, e, session)
             rediret to('/frase')
         end
     end
@@ -345,8 +345,8 @@ class Kit < Sinatra::Base
 
             @target_table = save
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/frase')
         end
     end
@@ -371,8 +371,8 @@ class Kit < Sinatra::Base
             @@wum_conn.exec_params(query, [is_cognato, word_id])
             @target_table = save
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]")
+            kit_log(KIT_LOG_PANIC, e, session)
             redirect to('/frase')
         end
     end

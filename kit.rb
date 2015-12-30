@@ -11,11 +11,12 @@ require 'digest/md5'
 require "i18n"
 
 require './kit_config'
-require './kit_logging'
+require_relative './kit_logging'
 
 require_relative 'kit_todo'
 require_relative 'kit_frase'
 require_relative 'bijqc'
+require_relative 'kit_admin'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
@@ -137,10 +138,12 @@ class Kit < Sinatra::Base
     end
 
     get '/sinatra_log/:filename' do |filename|
+        session!
         send_file "./#{filename}", :filename => filename, :type => 'Application/octet-stream'
     end
 
     get '/set_log_level/:log_level' do |log_level|
+        session!
         kit_log(KIT_LOG_PANIC, "new log level", log_level)
         $logging_level = log_level
         redirect to('/')
