@@ -282,8 +282,7 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "query:", query, frase_id)
             @@wum_conn.exec_params(query, [frase_id])
         rescue => e
-            kit_log(KIT_LOG_PANIC, "[ERROR]")
-            kit_log(KIT_LOG_PANIC, e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]", e, session)
             redirect to('/frase')
         end
     end

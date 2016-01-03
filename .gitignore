@@ -2,3 +2,4 @@ DS_Store
 sqls.sql
 .DS_Store
 nohup.out
+uploads/**

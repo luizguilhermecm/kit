@@ -1,0 +1,15 @@
+<table class="table" >
+    <% @list.each_with_index do |item, index| %>
+        <tr>
+            <td>
+                <%= item %>
+            </td>
+            <td>
+                <a href="/kit_files/download/<%= item %>">download file</a>
+            </td>
+            <td>
+                <a href="/kit_files/delete/<%= item %>">delete file</a>
+            </td>
+        </tr>
+    <% end if @list %>
+</table>

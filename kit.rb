@@ -17,6 +17,7 @@ require_relative 'kit_todo'
 require_relative 'kit_frase'
 require_relative 'bijqc'
 require_relative 'kit_admin'
+require_relative 'kit_files'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
