@@ -97,23 +97,19 @@ class Kit < Sinatra::Base
         kit_log(KIT_LOG_INFO, '/update_log_level')
         is_admin
         session!
-        kit_log(KIT_LOG_INFO, "LOG_LEVEL", params[:log_level].to_s);
-        queryOld = " UPDATE kit_config SET is_valid = false WHERE property = 'LOG_LEVEL' AND is_valid = true";
-        queryNew = " UPDATE kit_config SET is_valid = true WHERE property = 'LOG_LEVEL' AND value = $1";
+        kit_log(KIT_LOG_INFO, "updating log level with value", params[:log_level].to_s);
+        queryNew = "UPDATE kit_config SET is_valid = true WHERE property = 'LOG_LEVEL' AND value = $1 ;";
+        query = " UPDATE kit_config SET is_valid = false WHERE property = 'LOG_LEVEL' AND is_valid = true ;";
         begin
-            kit_log(KIT_LOG_DEBUG, "queryOld", queryOld)
-            kit_log(KIT_LOG_DEBUG, "queryNew", queryNew)
-            ret = @@conn.exec(queryOld)
-            ret = @@conn.exec(queryNew)
+            kit_log(KIT_LOG_DEBUG, "updates querys used", query, queryNew)
+            ret = @@conn.exec(query);
+            ret = @@conn.exec(queryNew, [params[:log_level]])
         rescue => e
             kit_log(KIT_LOG_PANIC, "[ERROR]", e, session)
             redirect to('/')
         end
-
-        erb :kit_admin
+        redirect to('/kit_admin')
     end
-
-
 
     def get_kit_log_level
         kit_log(KIT_LOG_INFO, '/get_kit_log_level')
@@ -123,19 +119,27 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "query", query)
             ret = @@conn.exec(query)
         rescue => e
-            kit_log(KIT_LOG_PANIC, "[ERROR]", e, session)
+            kit_log(KIT_LOG_PANIC, "[ERROR]", e, session, query)
             redirect to('/')
         end
         kit_log(KIT_LOG_VERBOSE, "ret.fields", ret.fields)
         kit_log(KIT_LOG_DEBUG, "ret.values", ret.values)
-        #ret.each do |level|
-        @kit_log_level = ret.first["value"].to_s;
-        #end
 
-        kit_log(KIT_LOG_DEBUG, "@kit_log_level", @kit_log_level)
-        if @kit_log_level == "KIT_LOG_DEBUG"
-            return KIT_LOG_DEBUG
+        @kit_log_level = ret.first["value"].to_s;
+
+        if @kit_log_level == 'KIT_LOG_DEBUG'
+            $logging_level = KIT_LOG_DEBUG
+        elsif @kit_log_level == 'KIT_LOG_VERBOSE'
+            $logging_level = KIT_LOG_VERBOSE
+        elsif @kit_log_level == 'KIT_LOG_INFO'
+            $logging_level = KIT_LOG_INFO
+        elsif @kit_log_level == 'KIT_LOG_ERROR'
+            $logging_level = KIT_LOG_ERROR
+        elsif @kit_log_level == 'KIT_LOG_PANIC'
+            $logging_level = KIT_LOG_PANIC
         end
+
+        kit_log(KIT_LOG_VERBOSE, "@kit_log_level value", @kit_log_level)
     end
 
     def get_distinct_log_level

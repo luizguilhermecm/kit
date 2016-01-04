@@ -8,30 +8,50 @@ KIT_LOG_PANIC   = 0 # loga o mínimo possível
 # end logging levels
 
 class Kit < Sinatra::Base
-def do_logging(msg, *params)
-    print "[LOG] "
-    puts msg.to_s
-    params.each_with_index do |p, i|
-        if(i == 0 and params.size == 1)
-            #puts "[LOG] params: "
-        end
-        if (p.respond_to?(:each))
-            p.each_with_index do |e, k|
-                puts "-\t[#{k.to_s}] = #{e.to_s} "
-            end
-        else
-            puts "-\t[#{i.to_s}] = #{p.to_s} "
-        end
-    end
-end
 
-def kit_log(log_level, msg, *params)
-    begin
-    if($logging_level >= log_level)
-        do_logging(msg, *params)
+    def get_log_head_string
+        if $logging_level == KIT_LOG_DEBUG
+            return "[LOG:48] "
+        elsif $logging_level == KIT_LOG_VERBOSE
+            return "[LOG:40] "
+        elsif $logging_level == KIT_LOG_INFO
+            return "[LOG:32] "
+        elsif $logging_level == KIT_LOG_ERROR
+            return "[LOG:16] "
+        elsif $logging_level == KIT_LOG_PANIC
+            return "[LOG:0] "
+        else
+            return "[LOG:-1] "
+        end
     end
-    rescue => e
-        puts e
+
+    def do_logging(msg, *params)
+        log_string = get_log_head_string
+        log_string += msg.to_s
+        params.each_with_index do |p, i|
+            if(i == 0 and params.size == 1)
+                #puts "[LOG] params: "
+            end
+            if (p.respond_to?(:each))
+                p.each_with_index do |e, k|
+                    log_string += "\n-\t[#{k.to_s}] = #{e.to_s} "
+                end
+            else
+                log_string += "\n-\t[#{i.to_s}] = #{p.to_s} "
+            end
+        end
+
+        puts log_string
+        open("./log.txt", 'a') { |f| f << log_string << "\n"}
     end
-end
+
+    def kit_log(log_level, msg, *params)
+        begin
+            if($logging_level >= log_level)
+                do_logging(msg, *params)
+            end
+        rescue => e
+            puts e
+        end
+    end
 end

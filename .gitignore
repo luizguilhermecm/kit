@@ -3,3 +3,4 @@ sqls.sql
 .DS_Store
 nohup.out
 uploads/**
+log.txt
