@@ -74,11 +74,11 @@
                     <a href="/bijqc" class="list-group-item">bijqc</a>
                     <a href="/player/index.html" class="list-group-item">GPlayer</a>
                 </div>
-                <% end %>
+                <div class="list-group">
+                    <a href="/kit_files" class="list-group-item">kit files</a>
+                </div>
+            <% end %>
                 <% if session[:uid].to_i == 1 %>
-                    <div class="list-group">
-                        <a href="/kit_files" class="list-group-item">kit files</a>
-                    </div>
                     <div class="list-group">
                         <a href="/git_pull" class="list-group-item">git pull</a>
                         <a href="/sinatra_log" class="list-group-item">Sinatra Log</a>
