@@ -61,7 +61,6 @@ class Kit < Sinatra::Base
 
     get '/kit_files/download/:filename' do |filename|
         kit_log(KIT_LOG_INFO, 'get /kit_files/download/:filename', filename)
-        session!
         send_file "./uploads/#{session[:username]}/#{filename}",
             :filename => filename, :type => 'Application/octet-stream'
     end
