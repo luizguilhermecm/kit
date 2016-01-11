@@ -318,7 +318,7 @@ class Kit < Sinatra::Base
         rescue => e
             kit_log(KIT_LOG_PANIC, "[ERROR] insert_word_into_db ")
             kit_log(KIT_LOG_PANIC, e, session)
-            rediret to('/frase')
+            redirect to('/frase')
         end
     end
 

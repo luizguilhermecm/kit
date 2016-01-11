@@ -82,7 +82,7 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "ret.values", ret.values)
             if ret.first == nil
                 kit_log(KIT_LOG_DEBUG, "The user is not admin, returning false");
-                return false;
+                redirect to('/')
             else
                 kit_log(KIT_LOG_DEBUG, "The user is admin, return true");
                 return true;
