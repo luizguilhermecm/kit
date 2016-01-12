@@ -1,18 +1,7 @@
-<!-- jQuery -->
-<script src="/js/jquery-1.9.1.min.js"></script>
-<script src="/js/jquery.sparkline.min.js"></script>
-<script src="/js/jquery-ui.min.js"></script>
-
-<link rel="stylesheet" href="/js/jquery-ui.min.css">
-<!-- end jQuery -->
-
-<!-- kit javascripts -->
-<script src="/js/todo_tag.js"></script>
-<!-- end kit javascripts -->
 <%= erb :_new_todo_form , layout: false %>
 
 <% @tag_list.each_with_index do |tag, index| %>
-    <a class="tag label label-primary" href="/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+    <a class="tag label label-primary" href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
 <% end if @tag_list%>
 
 <%= erb :_list_at_todos, layout: false %>

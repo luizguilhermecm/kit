@@ -1,4 +1,4 @@
-<form id="new_tag" method="get" action="/new_tag">
+<form id="new_tag" method="get" action="/todo/new_tag">
     <labeL for="tag_name">Tag:</labeL>
     <input name="tag_name" id="tag_name" type="text" size=20 />
     <p/>
@@ -11,13 +11,13 @@
     <% @tag_list.each_with_index do |tag, index| %>
         <tr>
             <td>
-                <a href="/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+                <a href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
             </td>
             <td>
                 <%= tag[:description] %>
             </td>
             <td>
-                <a href="/rm_tag?id=<%=tag[:id]%>">X</a>
+                <a href="/todo/rm_tag?id=<%=tag[:id]%>">X</a>
             </td>
         </tr>
         </div>

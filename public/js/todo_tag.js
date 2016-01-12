@@ -1,3 +1,20 @@
+
+
+$(document).ready(function() {
+    key('g+t', function(e) {
+        window.location = $("#todo_link").attr("href");
+    });
+    key('g+l', function(e) {
+        window.location = $("#todo_list_link").attr("href");
+    });
+    key('k+f', function(e) {
+        window.location = $("#kit_files_link").attr("href");
+    });
+    key('k+f', function(e) {
+        window.location = $("#kit_files_link").attr("href");
+    });
+});
+
 function update_flag_do_it(flag_do_it_p, todo_id) {
     var todo_id = todo_id
 
@@ -9,7 +26,7 @@ function update_flag_do_it(flag_do_it_p, todo_id) {
 
 
    $.ajax({
-        url: "/update_todo_flag_do_it/",
+        url: "/todo/update_todo_flag_do_it/",
         type: "GET",
         data: {
             "flag_do_it": flag_do_it,
@@ -24,7 +41,7 @@ function update_tag_id(tag_id, todo_id) {
     var todo_id = todo_id
 
    $.ajax({
-        url: "/update_todo_tag/",
+        url: "/todo/update_todo_tag/",
         type: "GET",
         data: {
             "tag_id": tag_id,

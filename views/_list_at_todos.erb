@@ -2,6 +2,9 @@
     <% @todos.each_with_index do |todo, index| %>
         <tr>
             <td>
+                <% todo[:todo_tag_list].each do |tag| %>
+                    <a style="font-size:30%;" class="tag label label-primary" href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+                <% end if todo[:todo_tag_list]%>
                 <% if todo[:flag_do_it] == 't' %>
                     <strong class="tag label label-danger" >doit</strong>
                 <% end %>
@@ -23,9 +26,11 @@
                 <%= todo[:created_at] %>
             </td>
             <td>
-                <a href="/rm_todo?id=<%=todo[:id]%>">X</a>
+                <a href="/todo/set_todo_done?id=<%=todo[:id]%>">v/</a>
+            </td>
+            <td>
+                <a href="/todo/rm_todo?id=<%=todo[:id]%>">X</a>
             </td>
         </tr>
-        </div>
     <% end if @todos%>
 </table>

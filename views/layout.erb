@@ -5,11 +5,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom CSS -->
-        <link href="css/freelancer.css" rel="stylesheet">
+        <link href="/css/freelancer.css" rel="stylesheet">
 
+<!-- jQuery -->
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery.sparkline.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/keymaster.js"></script>
+<link rel="stylesheet" href="/js/jquery-ui.min.css">
+<!-- end jQuery -->
+
+<!-- kit javascripts -->
+<script src="/js/todo_tag.js"></script>
+<!-- end kit javascripts -->
 
 
         <meta name="robots" content="noindex" />
@@ -59,15 +70,15 @@
                     <%end%>
                     <% if session? %>
                         <div class="list-group">
-                            <a href="/todo" class="list-group-item">ToDo</a>
-                            <a href="/todo_list" class="list-group-item">ToDo List</a>
-                            <a href="/todo_tag" class="list-group-item">ToDo Tags</a>
-                            <a href="/logout" class="list-group-item">Logout</a>
+                            <a id="todo_link" href="/todo" class="list-group-item">ToDo</a>
+                            <a id="todo_list_link" href="/todo/todo_list" class="list-group-item">ToDo List</a>
+                            <a id="todo_tag_link" href="/todo/todo_tag" class="list-group-item">ToDo Tags</a>
+                            <a id="logout_link" href="/logout" class="list-group-item">Logout</a>
                         </div>
                         <% if session[:uid].to_i == 1 %>
                             <div class="list-group">
-                                <a href="/frase" class="list-group-item">Frases</a>
-                                <a href="/words" class="list-group-item">Palavras</a>
+                                <a id="frase_link" href="/frase" class="list-group-item">Frases</a>
+                                <a id="words_link" href="/words" class="list-group-item">Palavras</a>
                             </div>
                             <div class="list-group">
                                 <a href="/bijqc" class="list-group-item">bijqc</a>
@@ -76,14 +87,14 @@
                         <% end %>
                         <% if session[:uid] != 0 %>
                             <div class="list-group">
-                                <a href="/kit_files" class="list-group-item">kit files</a>
+                                <a id="kit_files_link" href="/kit_files" class="list-group-item">kit files</a>
                             </div>
                         <% end %>
                         <% if session[:uid].to_i == 1 %>
                             <div class="list-group">
-                                <a href="/git_pull" class="list-group-item">git pull</a>
-                                <a href="/sinatra_log" class="list-group-item">Sinatra Log</a>
-                                <a href="/kit_admin" class="list-group-item">kit admin</a>
+                                <a id="git_pull_link" href="/git_pull" class="list-group-item">git pull</a>
+                                <a id="sinatra_log_link" href="/sinatra_log" class="list-group-item">Sinatra Log</a>
+                                <a id="kit_admin_link" href="/kit_admin" class="list-group-item">kit admin</a>
                             </div>
                         <% end %>
                     <% end %>
