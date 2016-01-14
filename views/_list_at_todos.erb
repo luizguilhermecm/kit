@@ -3,7 +3,7 @@
         <tr>
             <td>
                 <% todo[:todo_tag_list].each do |tag| %>
-                    <a style="font-size:30%;" class="tag label label-primary" href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+                    <a style="font-size:80%;" class="tag label label-primary" href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
                 <% end if todo[:todo_tag_list]%>
                 <% if todo[:flag_do_it] == 't' %>
                     <strong class="tag label label-danger" >doit</strong>
