@@ -18,6 +18,7 @@ require_relative 'kit_frase'
 require_relative 'bijqc'
 require_relative 'kit_admin'
 require_relative 'kit_files'
+#require_relative 'kit_daily'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
@@ -150,6 +151,9 @@ class Kit < Sinatra::Base
         redirect to('/')
     end
 
+    get '/kit_mae' do
+        kit_log(KIT_LOG_PANIC, "kit_mae", request)
+    end
 
     def logging e
         puts "***************************"
