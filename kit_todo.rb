@@ -1,7 +1,14 @@
 class Kit < Sinatra::Base
 
+    attr_accessor :feedback
+    #feedback = "feedback"
+
     get '/todo' do
         session!
+        crazy_log(feedback)
+        feedback = "setted at todo"
+        crazy_log(feedback)
+        puts feedback
 
         @tag_list = []
 
@@ -80,7 +87,7 @@ class Kit < Sinatra::Base
             redirect to('/')
         end
 
-        redirect to('/todo_tag')
+        redirect to('/todo/todo_tag')
     end
 
 
@@ -198,7 +205,7 @@ class Kit < Sinatra::Base
             puts "***************************"
         end
 
-        redirect "/todo_list"
+        redirect "/todo/todo_list"
     end
 
 
@@ -219,7 +226,7 @@ class Kit < Sinatra::Base
             puts "***************************"
         end
 
-        redirect "/todo_list"
+        redirect "/todo/todo_list"
     end
 
     get '/todo/update_todo_flag_do_it/' do
@@ -247,34 +254,39 @@ class Kit < Sinatra::Base
 
 
     get '/todo/update_todo_tag/' do
+        kit_log(KIT_LOG_INFO, 'get /todo/update_todo_tag/')
         session!
 
         tag_id = params[:tag_id]
         todo_id = params[:todo_id]
+
+        kit_log(KIT_LOG_DEBUG, 'updating tag of todo', "tag_id = #{tag_id}", "todo_id = #{todo_id}")
 
         #query = " UPDATE todo_list SET tag_id = $1 WHERE id = $2 AND uid = $3";
         query_insert = " INSERT INTO todo_tags (todo_id, tag_id) VALUES ($1, $2); ";
 
         query_delete = " DELETE FROM todo_tags WHERE id = $1; ";
 
-        query_exist = " SELECT id FROM todo_tags WHERE todo_id = $1 AND tag_id = $2; ";
+        query_exist = " SELECT id FROM todo_tags WHERE todo_id = $1 AND tag_id = $2 ; ";
 
         begin
+            kit_log(KIT_LOG_DEBUG, "checking if its already exists")
+            kit_log(KIT_LOG_DEBUG, "SQL", query_exist, todo_id, tag_id)
             ret = @@conn.exec_params(query_exist , [todo_id, tag_id])
 
             if ret.first
+                kit_log(KIT_LOG_DEBUG, "yes, it exists, deleting tag")
+                kit_log(KIT_LOG_DEBUG, "SQL", query_delete)
                 @@conn.exec_params(query_delete, [ret.first["id"]])
             else
+                kit_log(KIT_LOG_DEBUG, "no, it does not exists, inserting tag")
+                kit_log(KIT_LOG_DEBUG, "SQL", query_insert)
                 @@conn.exec_params(query_insert, [todo_id, tag_id])
             end
 
         rescue => e
-            puts "***************************"
-            puts session[:username]
-            puts session[:uid]
-            puts request.ip
-            puts e
-            puts "***************************"
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
         end
 
     end
@@ -282,11 +294,24 @@ class Kit < Sinatra::Base
     get '/todo/todo_tag' do
         session!
 
+        begin
+
+            puts "Instance method show invoked for '#{self}'"
+
+        crazy_log("checking at tag")
+        crazy_log(feedback)
+        feedback = "setted at tag"
+        crazy_log(feedback)
         @tag_list = []
 
         @tag_list = get_todo_tags
 
         erb :todo_tag
+
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+        end
     end
 
 

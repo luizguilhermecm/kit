@@ -38,7 +38,8 @@ class Kit < Sinatra::Base
     #KIT_LOG_ERROR = 16
     #KIT_LOG_PANIC = 0 # loga o mínimo possível
 
-    $logging_level = KIT_LOG_PANIC
+    #$logging_level = KIT_LOG_PANIC
+    $logging_level = KIT_LOG_DEBUG
 
     @@wum_conn = PG.connect(:host => settings.host, :dbname => settings.db_wum, :user => settings.user, :password => settings.password)
     @@conn = PG.connect(:host => settings.host, :dbname => settings.dbname, :user => settings.user, :password => settings.password)
@@ -47,7 +48,6 @@ class Kit < Sinatra::Base
 
     set :session_fail, '/login'
     set :session_secret, 'whatThisMean?'
-
 
     set :dump_errors, false
 

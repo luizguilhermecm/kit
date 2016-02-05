@@ -36,8 +36,12 @@ function update_flag_do_it(flag_do_it_p, todo_id) {
     });
 }
 
-function update_tag_id(tag_id, todo_id) {
-    var tag_id = tag_id.value;
+function update_tag_id(tag_id, todo_id, flag) {
+    if (flag == null) {
+        var tag_id = tag_id.value;
+    } else {
+        var tag_id = tag_id;
+    }
     var todo_id = todo_id
 
    $.ajax({

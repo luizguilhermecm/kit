@@ -51,7 +51,36 @@ class Kit < Sinatra::Base
                 do_logging(msg, *params)
             end
         rescue => e
+            puts "*[LOG_ERROR] error while logging the follow param"
+            puts "-\t[log_level] = #{log_level}"
+            puts "-\t[msg] = #{msg}"
+            puts "-\t[printing error object]"
             puts e
         end
+    end
+
+    def crazy_log(*params)
+        log_string = "."
+        params.each_with_index do |p, i|
+            if(i == 0 and params.size == 1)
+                #puts "[LOG] params: "
+            end
+            if (p.respond_to?(:each))
+                p.each_with_index do |e, k|
+                    log_string += "\n-\t[#{k.to_s}] = #{e.to_s} "
+                end
+            else
+                log_string += "\n-\t[#{i.to_s}] = #{p.to_s} "
+            end
+        end
+
+        puts "*********"
+        puts "\n\n\n"
+        puts "*********"
+        puts log_string
+        puts "*********"
+        puts "\n\n\n"
+        puts "*********"
+
     end
 end
