@@ -161,6 +161,7 @@ class Kit < Sinatra::Base
     end
 
     get '/kit_mae' do
+        session_start!
         kit_log(KIT_LOG_INFO, "get /kit_mae")
         query = " INSERT INTO kit_mae (text) VALUES ($1); ";
 
@@ -177,11 +178,13 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_VERBOSE, "request.ip", request.ip)
             kit_log(KIT_LOG_VERBOSE, "Your IP address is #{ @env['REMOTE_ADDR'] }")
 
-            ret = @@conn.exec_params(query, [text.to_s])
+            @@conn.exec_params(query, [text.to_s])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-kit-mae]", e, request)
+            session_end!
             erb :kit_mae, layout: false
         end
+        session_end!
         erb :kit_mae, layout: false
     end
 
