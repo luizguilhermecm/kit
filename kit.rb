@@ -50,6 +50,7 @@ class Kit < Sinatra::Base
     set :session_secret, 'whatThisMean?'
 
     set :dump_errors, false
+    set :show_exceptions, :after_handler
 
     configure :production do
         use Rack::Session::Pool
@@ -57,7 +58,12 @@ class Kit < Sinatra::Base
     end
 
     not_found do
+        kit_log(KIT_LOG_PANIC, "[ERROR-not-found]")
         erb :error
+    end
+
+    error do
+        'Sorry there was a nasty error - ' + env['sinatra.error'].message
     end
 
     get '/' do
@@ -153,6 +159,14 @@ class Kit < Sinatra::Base
 
     get '/kit_mae' do
         kit_log(KIT_LOG_PANIC, "kit_mae", request)
+        query = "UPDATE kit_config SET value=value::int + 1, updated_at = now() WHERE property = 'MAE';"
+        begin
+            ret = @@conn.exec(query)
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR-kit-mae]", e, request)
+            erb :kit_mae, layout: false
+        end
+        erb :kit_mae, layout: false
     end
 
     def logging e

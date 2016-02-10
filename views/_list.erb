@@ -1,5 +1,19 @@
 <table class="table" >
-    <% @list.each_with_index do |item, index| %>
+    <% @dirs.each_with_index do |item, index| %>
+        <tr>
+            <td>
+                <a href="/kit_files/<%=session[:username]%>/<%=item%>"><%=item%></a>
+            </td>
+            <td>
+                <a href="/kit_files/<%=session[:username]%>/<%= item %>">public link</a>
+            </td>
+            <td>
+                <a href="/kit_files/delete/<%= item %>">delete file</a>
+            </td>
+        </tr>
+    <% end if @dirs %>
+
+    <% @files.each_with_index do |item, index| %>
         <tr>
             <td>
                 <%= item %>
@@ -11,5 +25,5 @@
                 <a href="/kit_files/delete/<%= item %>">delete file</a>
             </td>
         </tr>
-    <% end if @list %>
+    <% end if @files %>
 </table>
