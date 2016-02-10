@@ -166,8 +166,15 @@ class Kit < Sinatra::Base
 
         kit_log(KIT_LOG_PANIC, "params", params)
 
+        if params.first and params.first.at(1)
+            text = params.first.at(1).to_s
+        else
+            text = 'keep_alive'
+        end
+
+
         begin
-            ret = @@conn.exec_params(query, [params.first.at(1).to_s])
+            ret = @@conn.exec_params(query, [text.to_s])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-kit-mae]", e, request)
             erb :kit_mae, layout: false
