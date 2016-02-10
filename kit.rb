@@ -162,7 +162,7 @@ class Kit < Sinatra::Base
 
     get '/kit_mae' do
         session_start!
-        kit_log(KIT_LOG_INFO, "get /kit_mae")
+        kit_log(KIT_LOG_INFO, "get /kit_mae", Time.now)
         query = " INSERT INTO kit_mae (text) VALUES ($1); ";
 
         kit_log(KIT_LOG_PANIC, "params", params)
@@ -173,6 +173,86 @@ class Kit < Sinatra::Base
             text = 'keep_alive'
         end
 
+        t = %w[text/css text/html application/javascript]
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.accept              '
+        puts request.accept
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.accept? "text/xml"  '
+        puts request.accept? 'text/xml'
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.preferred_type(t)   '
+        puts request.preferred_type(t)
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.body                '
+        puts request.body
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.scheme              '
+        puts request.scheme
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.script_name         '
+        puts request.script_name
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.path_info           '
+        puts request.path_info
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.port                '
+        puts request.port
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.request_method      '
+        puts request.request_method
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.query_string        '
+        puts request.query_string
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.content_length      '
+        puts request.content_length
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.media_type          '
+        puts request.media_type
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.host                '
+        puts request.host
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.get?                '
+        puts request.get?
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.form_data?          '
+        puts request.form_data?
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request["some_param"]       '
+        puts request["some_param"]
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.referrer            '
+        puts request.referrer
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.user_agent          '
+        puts request.user_agent
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.cookies             '
+        puts request.cookies
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.xhr?                '
+        puts request.xhr?
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.url                 '
+        puts request.url
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.path                '
+        puts request.path
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.ip                  '
+        puts request.ip
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.secure?             '
+        puts request.secure?
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.forwarded?          '
+        puts request.forwarded?
+        puts "\n\n\t\t\t# # # # ******* \n\n"
+        print ' request.env                 '
+        puts request.env
+        puts "\n\n\t\t\t# # # # ******* \n\n"
 
         begin
             kit_log(KIT_LOG_VERBOSE, "request.ip", request.ip)
