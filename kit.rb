@@ -175,6 +175,7 @@ class Kit < Sinatra::Base
 
         begin
             kit_log(KIT_LOG_VERBOSE, "request.ip", request.ip)
+            kit_log(KIT_LOG_VERBOSE, "Your IP address is #{ @env['REMOTE_ADDR'] }")
 
             ret = @@conn.exec_params(query, [text.to_s])
         rescue => e
