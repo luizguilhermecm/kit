@@ -49,11 +49,13 @@ class Kit < Sinatra::Base
     set :session_fail, '/login'
     set :session_secret, 'whatThisMean?'
 
-    set :raise_errors, true
-    set :dump_errors, false
-    set :show_exceptions, false
+    configure do
 
-    configure :production do
+        set :raise_errors, true
+        set :dump_errors, true
+        set :show_exceptions, true
+
+
         use Rack::Session::Pool
         set :erb, :trim => '-'
     end
@@ -159,10 +161,13 @@ class Kit < Sinatra::Base
     end
 
     get '/kit_mae' do
-        kit_log(KIT_LOG_PANIC, "kit_mae", request)
-        query = "UPDATE kit_config SET value=value::int + 1, updated_at = now() WHERE property = 'MAE';"
+        kit_log(KIT_LOG_INFO, "get /kit_mae")
+        query = " INSERT INTO kit_mae (text) VALUES ($1); ";
+
+        kit_log(KIT_LOG_PANIC, "params", params)
+
         begin
-            ret = @@conn.exec(query)
+            ret = @@conn.exec_params(query, [params.first.at(1).to_s])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-kit-mae]", e, request)
             erb :kit_mae, layout: false
