@@ -166,6 +166,60 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_ERROR, "[ERROR-kit-mae]", e, request)
             erb :kit_mae, layout: false
         end
+
+  t = %w[text/css text/html application/javascript]
+  print "  t "
+puts  t
+  print "  request.accept              "
+puts  request.accept              # ['text/html', '*/*']
+  print "  request.accept? text/xml  "
+puts    request.accept? 'text/xml'  # true
+  print "  request.preferred_type(t)   "
+puts  request.preferred_type(t)   # 'text/html'
+  print "  request.body                "
+puts  request.body                # request body sent by the client (see below)
+  print "  request.scheme              "
+puts  request.scheme              # "http"
+  print "  request.script_name         "
+puts  request.script_name         # "/example"
+  print "  request.path_info           "
+puts  request.path_info           # "/foo"
+  print "  request.port                "
+puts  request.port                # 80
+  print "  request.request_method      "
+puts  request.request_method      # "GET"
+  print "  request.query_string        "
+puts  request.query_string        # ""
+  print "  request.content_length      "
+puts  request.content_length      # length of request.body
+  print "  request.media_type          "
+puts  request.media_type          # media type of request.body
+  print "  request.host                "
+puts  request.host                # "example.com"
+  print "  request.get?                "
+puts  request.get?                # true (similar methods for other verbs)
+  print "  request.form_data?          "
+puts  request.form_data?          # false
+  print "  request.referrer            "
+puts  request.referrer            # the referrer of the client or '/'
+  print "  request.user_agent          "
+puts  request.user_agent          # user agent (used by :agent condition)
+  print "  request.cookies             "
+puts  request.cookies             # hash of browser cookies
+  print "  request.xhr?                "
+puts  request.xhr?                # is this an ajax request?
+  print "  request.url                 "
+puts  request.url                 # "http://example.com/example/foo"
+  print "  request.path                "
+puts  request.path                # "/example/foo"
+  print "  request.ip                  "
+puts  request.ip                  # client IP address
+  print "  request.secure?             "
+puts  request.secure?             # false (would be true over ssl)
+  print "  request.forwarded?          "
+puts  request.forwarded?          # true (if running behind a reverse proxy)
+  print "  request.env "
+puts  request.env
         erb :kit_mae, layout: false
     end
 
