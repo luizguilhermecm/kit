@@ -174,12 +174,13 @@ class Kit < Sinatra::Base
 
 
         begin
+            kit_log(KIT_LOG_VERBOSE, "request.ip", request.ip)
+
             ret = @@conn.exec_params(query, [text.to_s])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-kit-mae]", e, request)
             erb :kit_mae, layout: false
         end
-        puts request.ip
         erb :kit_mae, layout: false
     end
 
