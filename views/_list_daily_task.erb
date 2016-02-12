@@ -1,0 +1,29 @@
+<table class="table" >
+    <% @daily_tasks.each_with_index do |task, index| %>
+        <tr <% if task[:done] == 't' %> style="background-color:#90EE90;" <% end %>>
+            <td>
+                <%= task[:text] %>
+            </td>
+            <td>
+                <strong> |_ </strong>
+                <input type="checkbox" name="task_done" onchange="update_task_checkbox(this,<%= task[:id]%>, 'done')" value="true"<%= "checked" if task[:done] == 't' %>>
+                done
+                <strong> _|_ </strong>
+                <input type="checkbox" name="task_do_not_apply" onchange="update_task_checkbox(this,<%= task[:id]%>, 'do_not_apply')" value="true"<%= "checked" if task[:do_not_apply] == 't' %>>
+                do not apply
+                <strong> _|_ </strong>
+                <input type="checkbox" name="task_will_not_do_it" onchange="update_task_checkbox(this,<%= task[:id]%>, 'will_not_do_it')" value="true"<%= "checked" if task[:will_not_do_it] == 't' %>>
+                will not do it
+                <strong> _| </strong>
+                <a href="/kit_daily/rm_daily_task?id=<%=task[:id]%>">X</a>
+                <br>
+                <input name="task_journal_text" id="text_daily_journal_<%= task[:id] %>" type="text" size=30 value="<%= task[:journal_text]%>"
+                onblur="update_daily_task_journal_text(<%= task[:id] %>)" />
+                <input type="button" value="ok" onclick="update_daily_task_journal_text(<%= task[:id] %>)" >
+            </td>
+            <td>
+                [<%= task[:id] %>]_[<%= task[:journal_task_id] %>]
+            </td>
+        </tr>
+    <% end if @daily_tasks != nil%>
+</table>

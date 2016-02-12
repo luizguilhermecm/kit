@@ -70,7 +70,9 @@
                             <a id="todo_link" href="/todo" class="list-group-item">ToDo</a>
                             <a id="todo_list_link" href="/todo/todo_list" class="list-group-item">ToDo List</a>
                             <a id="todo_tag_link" href="/todo/todo_tag" class="list-group-item">ToDo Tags</a>
-                            <a id="logout_link" href="/logout" class="list-group-item">Logout</a>
+                        </div>
+                        <div class="list-group">
+                            <a id="kit_daily_link" href="/kit_daily" class="list-group-item">daily</a>
                         </div>
                         <% if session[:uid].to_i == 1 %>
                             <div class="list-group">
@@ -94,6 +96,10 @@
                                 <a id="kit_admin_link" href="/kit_admin" class="list-group-item">kit admin</a>
                             </div>
                         <% end %>
+
+                        <div class="list-group">
+                            <a id="logout_link" href="/logout" class="list-group-item">Logout</a>
+                        </div>
                     <% end %>
                 </div>
 

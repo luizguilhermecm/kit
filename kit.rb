@@ -18,7 +18,7 @@ require_relative 'kit_frase'
 require_relative 'bijqc'
 require_relative 'kit_admin'
 require_relative 'kit_files'
-#require_relative 'kit_daily'
+require_relative 'kit_daily'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
@@ -54,7 +54,6 @@ class Kit < Sinatra::Base
         set :raise_errors, true
         set :dump_errors, true
         set :show_exceptions, true
-
 
         use Rack::Session::Pool
         set :erb, :trim => '-'

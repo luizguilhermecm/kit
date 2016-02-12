@@ -1,0 +1,9 @@
+<% if @error  %>
+    <div class="alert alert-danger" role="alert"><%= @error %></div>
+<%end%>
+<p>kit_daily</p>
+
+<%= erb :_new_daily_task_form, layout: false %>
+
+<%= erb :_list_daily_task, layout: false %>
+
