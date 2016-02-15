@@ -107,13 +107,13 @@ class Kit < Sinatra::Base
 
         query  = "\n UPDATE daily_task_journal "
         query += "\n    set updated_at = now() , "
-        query += "\n      #{action} = $2 "
+        query += "\n      #{action} = NOT #{action} "
         query += "\n      WHERE  created_at::date = now()::date "
         query += "\n                      AND daily_task_id = $1 ; "
 
         begin
             kit_log(KIT_LOG_DEBUG, "query", query)
-            @@conn.exec_params(query, [task_id, value])
+            @@conn.exec_params(query, [task_id])
             kit_log(KIT_LOG_DEBUG, "ok")
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-kd-vkdx2]", e, session)
