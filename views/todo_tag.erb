@@ -17,6 +17,9 @@
                 <%= tag[:description] %>
             </td>
             <td>
+                <input type="checkbox" name="is_listed" onchange="update_is_listed(this,<%= tag[:id]%>)" value="true"<%= "checked" if tag[:is_listed] == 't' %>>
+            </td>
+            <td>
                 <a href="/todo/rm_tag?id=<%=tag[:id]%>">X</a>
             </td>
         </tr>

@@ -1,18 +1,11 @@
 class Kit < Sinatra::Base
 
-    attr_accessor :feedback
-    #feedback = "feedback"
-
     get '/todo' do
         session!
-        crazy_log(feedback)
-        feedback = "setted at todo"
-        crazy_log(feedback)
-        puts feedback
-
         @tag_list = []
 
         @tag_list = get_todo_tags
+
         if params[:insert] != nil and params[:insert] != ""
 
             query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at, tag_id FROM todo_list where id = $1 and uid = $2";
@@ -57,12 +50,8 @@ class Kit < Sinatra::Base
             ret = @@conn.exec_params(query_tag, [id["id"], tag_id.to_i])
 
         rescue => e
-            puts "***************************"
-            puts session[:username]
-            puts session[:uid]
-            puts request.ip
-            puts e
-            puts "***************************"
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/')
         end
 
@@ -102,10 +91,12 @@ class Kit < Sinatra::Base
 
 
         if tag_id != 0
+            # list one tag only
             query += " AND id IN (SELECT DISTINCT todo_id FROM todo_tags WHERE tag_id = $2) "
         elsif insert != 0
             query += " AND id = #{insert} "
         else
+            query += get_is_listed_tags
             query += " AND flag_done = 'false' "
         end
 
@@ -159,8 +150,29 @@ class Kit < Sinatra::Base
         erb :todo_list
     end
 
+    def get_is_listed_tags
+        query = " SELECT id FROM todo_tag WHERE user_id = $1 AND is_listed = true  ";
+        begin
+            ret = @@conn.exec_params(query, [session[:uid]])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            redirect to('/')
+        end
+        query = " AND id IN (SELECT DISTINCT todo_id FROM todo_tags WHERE tag_id IN ( "
+        ret.each do |tag|
+            query += tag["id"]
+            query += ","
+        end
+        # normalization of comma, add -1
+        query += " -1)) "
+
+        kit_log(KIT_LOG_DEBUG, query)
+        return query
+    end
+
     def get_todo_tags
-        query = " SELECT id, tag, description FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
+        query = " SELECT id, tag, description, is_listed FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
         begin
             ret = @@conn.exec_params(query, [session[:uid]])
         rescue => e
@@ -180,6 +192,7 @@ class Kit < Sinatra::Base
                 :id => t["id"],
                 :tag => t["tag"],
                 :description => t["description"],
+                :is_listed => t["is_listed"],
             }
 
         end
@@ -295,19 +308,9 @@ class Kit < Sinatra::Base
         session!
 
         begin
-
-            puts "Instance method show invoked for '#{self}'"
-
-        crazy_log("checking at tag")
-        crazy_log(feedback)
-        feedback = "setted at tag"
-        crazy_log(feedback)
-        @tag_list = []
-
-        @tag_list = get_todo_tags
-
-        erb :todo_tag
-
+            @tag_list = []
+            @tag_list = get_todo_tags
+            erb :todo_tag
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
@@ -315,4 +318,21 @@ class Kit < Sinatra::Base
     end
 
 
+    get '/todo/update_is_listed' do
+        kit_log(KIT_LOG_INFO, 'get /todo/update_is_listed/')
+        session!
+
+        tag_id = params[:tag_id]
+        value = params[:value]
+
+        query= " update todo_tag set is_listed = $1 WHERE id = $2; ";
+
+        begin
+            kit_log(KIT_LOG_DEBUG, "SQL", query, tag_id, value)
+            @@conn.exec_params(query, [value, tag_id])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+        end
+    end
 end

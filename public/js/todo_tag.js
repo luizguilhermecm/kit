@@ -122,12 +122,6 @@ function update_word_cognato(flag_is_cognato, word_id, frase_id, target_table) {
 function update_task_checkbox(checkbox, task_id, attr) {
     console.log("function update_task_checkbox(checkbox, task_id, attr)");
 
-    // if (checkbox.checked) {
-    //     var value = true;
-    // } else {
-    //     var value = false;
-    // }
-
    $.ajax({
         url: "/kit_daily/update_task_checkbox",
         type: "GET",
@@ -152,6 +146,26 @@ function update_daily_task_journal_text(task_id) {
         data: {
             "text": text,
             "task_id": task_id,
+        }
+    }).done( function(res) {
+    });
+}
+
+function update_is_listed(checkbox, tag_id) {
+    console.log("function update_is_listed(checkbox, tag_id)");
+
+    if (checkbox.checked) {
+        var value = true;
+    } else {
+        var value = false;
+    }
+
+    $.ajax({
+        url: "/todo/update_is_listed",
+        type: "GET",
+        data: {
+            "tag_id": tag_id,
+            "value": value,
         }
     }).done( function(res) {
     });
