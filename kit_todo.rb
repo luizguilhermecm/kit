@@ -97,9 +97,9 @@ class Kit < Sinatra::Base
             query += " AND id = #{insert} "
         else
             query += get_is_listed_tags
-            query += " AND flag_done = 'false' "
         end
 
+        query += " AND flag_done = false "
         query += " ORDER BY flag_do_it is true DESC, created_at DESC ";
 
         begin
@@ -201,24 +201,24 @@ class Kit < Sinatra::Base
     end
 
     get '/todo/set_todo_done' do
+        kit_log(KIT_LOG_INFO,'get /todo/set_todo_done')
         session!
 
         id = params[:id]
 
         query = " UPDATE todo_list SET flag_done = 't', done_at = (SELECT now()) WHERE id = $1 AND uid = $2";
 
+        kit_log(KIT_LOG_DEBUG, query, id);
         begin
             @@conn.exec_params(query , [id, session[:uid]])
         rescue => e
-            puts "***************************"
-            puts session[:username]
-            puts session[:uid]
-            puts request.ip
-            puts e
-            puts "***************************"
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
         end
 
-        redirect "/todo/todo_list"
+        #puts JSON.pretty_generate(request.env)
+        redirect request.referer
+        #redirect "/todo/todo_list"
     end
 
 
