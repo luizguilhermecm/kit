@@ -133,6 +133,8 @@ function update_task_checkbox(checkbox, task_id, attr) {
     }).done( function(res) {
         console.log("done")
     });
+
+    window.location.reload()
 }
 
 function update_daily_task_journal_text(task_id) {
