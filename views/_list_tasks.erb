@@ -1,0 +1,47 @@
+<div class="row equal">
+
+  <div class="col-md-4" style="display:list-item;"id="tasks_new" ondrop="drop0(event)" ondragover="allowDrop(event)">
+
+    <% @tasks_0.each_with_index do |task, index| %>
+        <div  id="<%= task[:id] %>" draggable="true" ondragstart="drag(event)" >
+            <div class="well well-sm">
+                <input type="checkbox" aria-label="...">
+                <%= task[:text] %>
+                <% task[:task_tags].each do |tag| %>
+                    <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
+                <% end if task[:task_tags]%>
+            </div>
+        </div>
+    <% end if @tasks_0%>
+  </div>
+  <div class="col-md-4" style="display:list-item;" id="txd3" ondrop="drop1(event)" ondragover="allowDrop(event)">
+
+    <% @tasks_1.each_with_index do |task, index| %>
+        <div  id="<%= task[:id] %>" draggable="true" ondragstart="drag(event)" >
+            <div class="well well-sm">
+                <input type="checkbox" aria-label="...">
+                <%= task[:text] %>
+                <% task[:task_tags].each do |tag| %>
+                    <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
+                <% end if task[:task_tags]%>
+            </div>
+        </div>
+    <% end if @tasks_1%>
+  </div>
+
+  <div class="col-md-4" style="display:list-item;"id="td2" ondrop="drop2(event)" ondragover="allowDrop(event)">
+    <% @tasks_0.each_with_index do |task, index| %>
+        <div  id="<%= task[:id] %>" draggable="true" ondragstart="drag(event)" >
+            <div class="well well-sm">
+                <input type="checkbox" aria-label="...">
+                <%= task[:text] %>
+                <% task[:task_tags].each do |tag| %>
+                    <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
+                <% end if task[:task_tags]%>
+            </div>
+        </div>
+    <% end if @tasks_0%>
+
+  </div>
+
+  </div>

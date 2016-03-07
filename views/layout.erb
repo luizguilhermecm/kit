@@ -20,6 +20,9 @@
         <script src="/js/todo_tag.js"></script>
         <!-- end kit javascripts -->
 
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/js/select2.min.js"></script>
+
 
         <meta name="robots" content="noindex" />
         <title>keep it</title>
@@ -41,13 +44,56 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li>
-                            <a href="/logout">Logout</a>
-                        </li>
+                        <% if session? %>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ToDo <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a id="todo_link" href="/todo">ToDo</a></li>
+                                    <li><a id="todo_list_link" href="/todo/todo_list">ToDo List</a></li>
+                                    <li><a id="todo_tag_link" href="/todo/todo_tag">ToDo Tags</a></li>
+                                </ul>
+                            </li>
+                            <li><a id="kit_daily_link" href="/kit_daily" >daily</a></li>
+                            <% if session[:uid].to_i == 1 %>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Frases <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a id="frase_link" href="/frase" >Frases</a></li>
+                                        <li><a id="words_link" href="/words" >Palavras</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">qc <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="/bijqc" >bijqc</a></li>
+                                        <li><a href="/player/index.html" >GPlayer</a></li>
+                                    </ul>
+                                </li>
+                            <% end %>
+                            <% if session[:uid] != 0 %>
+                                <li><a id="kit_files_link" href="/kit_files" >kit files</a></li>
+                                <li><a id="kit_task_man_link" href="/kit_task_man" >kit tasks</a></li>
+                            <% end %>
+                            <% if session[:uid].to_i == 1 %>
+                                <li class="qc">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a id="git_pull_link" href="/git_pull" >git pull</a></li>
+                                        <li><a id="sinatra_log_link" href="/sinatra_log" >Sinatra Log</a></li>
+                                        <li><a id="kit_admin_link" href="/kit_admin" >kit admin</a></li>
+                                    </ul>
+                                </li>
+                            <% end %>
+                        <% end %>
                     </ul>
-                </div>
-                <!-- /.navbar-collapse -->
-            </div>
+                </li>
+                <li><a href="/logout">Logout</a></li>
+
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
             <!-- /.container -->
         </nav>
 
@@ -58,62 +104,13 @@
 
         <div class="container">
 
-            <div class="row">
-
-                <div class="col-md-2">
-                    <% if session? %>
-                        <p class="lead">keep it <%=session[:username]%></p>
-                    <%else%>
-                        <p class="lead">keep it </p>
-                    <%end%>
-                    <% if session? %>
-                        <div class="list-group">
-                            <a id="todo_link" href="/todo" class="list-group-item">ToDo</a>
-                            <a id="todo_list_link" href="/todo/todo_list" class="list-group-item">ToDo List</a>
-                            <a id="todo_tag_link" href="/todo/todo_tag" class="list-group-item">ToDo Tags</a>
-                        </div>
-                        <div class="list-group">
-                            <a id="kit_daily_link" href="/kit_daily" class="list-group-item">daily</a>
-                        </div>
-                        <% if session[:uid].to_i == 1 %>
-                            <div class="list-group">
-                                <a id="frase_link" href="/frase" class="list-group-item">Frases</a>
-                                <a id="words_link" href="/words" class="list-group-item">Palavras</a>
-                            </div>
-                            <div class="list-group">
-                                <a href="/bijqc" class="list-group-item">bijqc</a>
-                                <a href="/player/index.html" class="list-group-item">GPlayer</a>
-                            </div>
-                        <% end %>
-                        <% if session[:uid] != 0 %>
-                            <div class="list-group">
-                                <a id="kit_files_link" href="/kit_files" class="list-group-item">kit files</a>
-                            </div>
-                        <% end %>
-                        <% if session[:uid].to_i == 1 %>
-                            <div class="list-group">
-                                <a id="git_pull_link" href="/git_pull" class="list-group-item">git pull</a>
-                                <a id="sinatra_log_link" href="/sinatra_log" class="list-group-item">Sinatra Log</a>
-                                <a id="kit_admin_link" href="/kit_admin" class="list-group-item">kit admin</a>
-                            </div>
-                        <% end %>
-
-                        <div class="list-group">
-                            <a id="logout_link" href="/logout" class="list-group-item">Logout</a>
-                        </div>
-                    <% end %>
-                </div>
-
-                <div class="col-md-10">
                     <% if @kmsg %>
                         <div class="alert alert-danger" role="alert"><%= @kmsg %></div>
                     <% end %>
 
                     <%= yield %>
 
-                </div>
 
-            </div>
         </div>
 
 

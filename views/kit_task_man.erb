@@ -1,0 +1,81 @@
+<% if @error  %>
+    <div class="alert alert-danger" role="alert"><%= @error %></div>
+<%end%>
+<p>kit_task_man</p>
+
+<script>
+    function allowDrop(ev) {
+        console.log("allow");
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        console.log("drag");
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop0(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+        update_status(data, 0);
+    }
+
+
+    function drop1(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+        update_status(data, 1);
+    }
+
+
+    function drop2(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+        update_status(data, 2);
+    }
+
+    function drop2edit(ev) {
+        console.log("drop2edit ")
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        document.getElementById('edit_text').value = data
+    }
+
+
+
+    function update_status(id, status) {
+        console.log("function update_status(id)");
+
+        $.ajax({
+            url: "/kit_task_man/update_status",
+            type: "GET",
+            data: {
+                "id": id,
+                "status": status,
+            }
+        }).done( function(res) {
+        });
+    }
+</script>
+
+<style>
+.equal, .equal > div[class*='col-'] {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      flex:1 0 auto;
+      border:1px solid;
+  }
+</style>
+
+<%= erb :_new_task_form, layout: false %>
+
+
+<%= erb :_list_tasks, layout: false %>
+
+

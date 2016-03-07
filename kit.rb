@@ -19,6 +19,7 @@ require_relative 'bijqc'
 require_relative 'kit_admin'
 require_relative 'kit_files'
 require_relative 'kit_daily'
+require_relative 'kit_task_man'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
