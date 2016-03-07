@@ -89,6 +89,19 @@ function update_sub_done(checkbox, id) {
     }).done( function(res) {
     });
 }
+
+function update_task_do_it(id) {
+    console.log("function update_task_do_it(id)");
+
+    $.ajax({
+        url: "/kit_task_man/update_task_do_it",
+        type: "GET",
+        data: {
+            "id": id,
+        }
+    }).done( function(res) {
+    });
+}
 </script>
 
 <style>

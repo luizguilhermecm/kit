@@ -8,18 +8,18 @@
                     <div class="progress" style="float:left;width:70%;height:5px;margin:5">
                         <div class="progress-bar progress-bar-success" role="progressbar"  style="height:5px; width: <%= task[:progress] %>%"> </div>
                     </div>
+                    <input type="checkbox" onchange="update_task_do_it(<%= task[:id] %>)" <%= "checked" if task[:flag_do_it] == 't' %> >
                     <button type="button" style="float:right;" onclick="edit_task(<%= task[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                     <br>
-                                <%= task[:text] %>
+                    <%= task[:text] %>
                 <% task[:task_tags].each do |tag| %>
-                    <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
+                    <a href="/kit_task_man?tag_id=<%= tag[:id] %>"style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
                 <% end if task[:task_tags]%>
                 <% task[:task_subs].each do |sub| %>
                     <br><input type="checkbox" onchange="update_sub_done(this, <%= sub[:id] %>)" <%= "checked" if sub[:done] == 't' %>> <%= sub[:text] %>
                 <% end if task[:task_subs]%>
             </div>
         </div>
-
 
     <% end if @tasks_0%>
   </div>
@@ -31,11 +31,12 @@
                     <div class="progress" style="float:left;width:70%;height:5px;margin:5">
                         <div class="progress-bar progress-bar-success" role="progressbar"  style="height:5px; width: <%= task[:progress] %>%"> </div>
                     </div>
+                    <input type="checkbox" onchange="update_task_do_it(<%= task[:id] %>)" <%= "checked" if task[:flag_do_it] == 't' %> >
                     <button type="button" style="float:right;" onclick="edit_task(<%= task[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                     <br>
-                                <%= task[:text] %>
+                    <%= task[:text] %>
                 <% task[:task_tags].each do |tag| %>
-                    <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
+                    <a href="/kit_task_man?tag_id=<%= tag[:id] %>"style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
                 <% end if task[:task_tags]%>
                 <% task[:task_subs].each do |sub| %>
                     <br><input type="checkbox" onchange="update_sub_done(this, <%= sub[:id] %>)" <%= "checked" if sub[:done] == 't' %>> <%= sub[:text] %>
@@ -53,11 +54,12 @@
                     <div class="progress" style="float:left;width:70%;height:5px;margin:5">
                         <div class="progress-bar progress-bar-success" role="progressbar"  style="height:5px; width: <%= task[:progress] %>%"> </div>
                     </div>
+                    <input type="checkbox" onchange="update_task_do_it(<%= task[:id] %>)" <%= "checked" if task[:flag_do_it] == 't' %> >
                     <button type="button" style="float:right;" onclick="edit_task(<%= task[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                     <br>
-                                <%= task[:text] %>
+                    <%= task[:text] %>
                 <% task[:task_tags].each do |tag| %>
-                    <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
+                    <a href="/kit_task_man?tag_id=<%= tag[:id] %>"style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
                 <% end if task[:task_tags]%>
                 <% task[:task_subs].each do |sub| %>
                     <br><input type="checkbox" onchange="update_sub_done(this, <%= sub[:id] %>)" <%= "checked" if sub[:done] == 't' %>> <%= sub[:text] %>

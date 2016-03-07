@@ -3,14 +3,15 @@ class Kit < Sinatra::Base
     get '/kit_task_man' do
         kit_log(KIT_LOG_INFO, 'get /kit_task_man')
         session!
+        tag_id = params[:tag_id].to_i
         @tasks_0 = []
-        @tasks_0 = get_list 0
+        @tasks_0 = get_list 0, tag_id
 
         @tasks_1 = []
-        @tasks_1 = get_list 1
+        @tasks_1 = get_list 1, tag_id
 
         @tasks_2 = []
-        @tasks_2 = get_list 2
+        @tasks_2 = get_list 2, tag_id
 
         @tag_list = []
         @tag_list = get_tag_list
@@ -28,7 +29,7 @@ class Kit < Sinatra::Base
 
         query_task = ' update task_main set updated_at = (select now()), text = $1, progress = $3, color = $4 where id = $2'
         begin
-            ret = @@conn.exec_params(query_task, [text.to_s, id, progress, color])
+            @@conn.exec_params(query_task, [text.to_s, id, progress, color])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
@@ -128,12 +129,19 @@ class Kit < Sinatra::Base
     end
 
     #get '/kit_task_man/list_task' do
-    def get_list status
+    def get_list status, tag_id
         kit_log(KIT_LOG_INFO, 'get /kit_task_man/list_task')
         session!
         begin
-            query = 'SELECT * FROM task_main WHERE uid = $1 AND status = $2 order by updated_at desc;'
-            ret = @@conn.exec_params(query, [session[:uid], status])
+            if tag_id != 0
+                kit_log(KIT_LOG_DEBUG, "tag_id not null", tag_id)
+                query = 'SELECT task_main.* FROM task_main inner join task_tag_task on task_tag_task.task_id = task_main.id WHERE task_main.uid = $1 AND task_main.status = $2 AND task_tag_task.tag_id = $3 order by flag_do_it is TRUE desc, updated_at desc;'
+                ret = @@conn.exec_params(query, [session[:uid], status, tag_id])
+            else
+                kit_log(KIT_LOG_DEBUG, "tag_id null")
+                query = 'SELECT * FROM task_main WHERE uid = $1 AND status = $2 order by flag_do_it is true DESC,  updated_at desc;'
+                ret = @@conn.exec_params(query, [session[:uid], status])
+            end
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
@@ -144,13 +152,12 @@ class Kit < Sinatra::Base
         query_sub_list = "SELECT * FROM task_sub WHERE task_id = $1 ;"
 
         todos = []
-
         ret.each_with_index do |t, i|
             task_tags = []
             tags = @@conn.exec_params(query_tag_list, [t["id"]])
             tags.each do |tag|
                 task_tags << {
-                    :id => tag["id"],
+                    :id => tag["tag_id"],
                     :tag => tag["tag"]
                 }
             end
@@ -164,9 +171,9 @@ class Kit < Sinatra::Base
                     :done => sub["done"],
                 }
             end
-
             todos << {
                 :id => t["id"],
+                :flag_do_it => t["flag_do_it"],
                 :progress => t["progress"],
                 :color => t["color"],
                 :text => t["text"],
@@ -176,6 +183,7 @@ class Kit < Sinatra::Base
             }
         end
 
+        crazy_log(todos)
         return todos
     end
 
@@ -213,22 +221,12 @@ class Kit < Sinatra::Base
         status = params[:status]
         begin
             query = 'update task_main set status = $3 where uid = $1 and id = $2;'
-            ret = @@conn.exec_params(query, [session[:uid], id, status])
+            @@conn.exec_params(query, [session[:uid], id, status])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
             redirect to('/')
         end
-
-        if request.xhr? # XHR is the X in AJAX, so this is the AJAX call
-            crazy_log('if')
-            @stock = "testes"
-            #
-            #halt 200, {stock: @stock}.to_json
-        else
-            crazy_log('else')
-        end
-
     end
 
     get '/kit_task_man/get_task_info' do
@@ -248,7 +246,7 @@ class Kit < Sinatra::Base
         tag_name = params[:tag_name]
 
         begin
-            ret = @@conn.exec_params(' INSERT INTO task_tag(tag, uid) VALUES($1, $2) returning id', [tag_name.to_s, session[:uid]])
+            @@conn.exec_params(' INSERT INTO task_tag(tag, uid) VALUES($1, $2) returning id', [tag_name.to_s, session[:uid]])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
@@ -278,12 +276,8 @@ class Kit < Sinatra::Base
             task_tags = []
             tags = @@conn.exec_params(query_tag_list, [t["id"]])
             tags.each do |tag|
-                crazy_log(tag)
                 task_tags.push tag["tag_id"]
             end
-            crazy_log(task_tags)
-            crazy_log(task_tags.include? '2')
-
             task_subs = []
             subs = @@conn.exec_params(query_sub_list, [t["id"]])
             subs.each do |sub|
@@ -308,9 +302,12 @@ class Kit < Sinatra::Base
     end
 
     get '/kit_task_man/update_sub_done' do
+        kit_log(KIT_LOG_INFO, "get '/kit_task_man/update_sub_done' ", params);
         id = params[:id]
+        query = ' update task_sub set done = NOT done where id = $1'
         begin
-            @@conn.exec_params(' update task_sub set done = NOT done where id = $1', [id])
+            kit_log(KIT_LOG_DEBUG, query)
+            @@conn.exec_params(query, [id])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)
@@ -318,10 +315,26 @@ class Kit < Sinatra::Base
         end
     end
 
-    get '/kit_task_man/delete_task' do
+    get '/kit_task_man/update_task_do_it' do
+        kit_log(KIT_LOG_INFO, "get '/kit_task_man/update_task_do_it'", params)
         id = params[:id]
+        query = ' update task_main set flag_do_it = NOT flag_do_it where id = $1'
         begin
-            @@conn.exec_params(' delete from task_main where id = $1', [id])
+            kit_log(KIT_LOG_DEBUG, query)
+            @@conn.exec_params(query, [id])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            redirect to('/')
+        end
+    end
+    get '/kit_task_man/delete_task' do
+        kit_log(KIT_LOG_INFO, "get '/kit_task_man/delete_task'", params)
+        id = params[:id]
+        query = ' delete from task_main where id = $1'
+        begin
+            kit_log(KIT_LOG_DEBUG, query)
+            @@conn.exec_params(query, [id])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR]")
             kit_log(KIT_LOG_ERROR, e, session)

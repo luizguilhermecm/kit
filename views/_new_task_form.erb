@@ -1,25 +1,25 @@
 <div class="row">
 
     <div class="col-md-7">
-<form id="new_task"  method="get" action="/kit_task_man/new_task">
-    <labeL for="text">task:</labeL>
-    <input name="text" id="text" type="text" size=50 />
-   <select class="col-md-2" name="tags[]" id="tags" multiple="multiple">
-        <% if @tag_list %>
-            <% @tag_list.each do |b| %>
-                <option value="<%= b[:id] %>"><%= b[:tag] %></option>
-            <% end %>
-        <% end %>
-    </select>
-    <script type="text/javascript">
-        $('#tags').select2();
-    </script>
+        <form id="new_task"  method="get" action="/kit_task_man/new_task">
+            <labeL for="text">task:</labeL>
+            <input name="text" id="text" type="text" size=50 />
+            <select class="col-md-2" name="tags[]" id="tags" multiple="multiple">
+                <% if @tag_list %>
+                    <% @tag_list.each do |b| %>
+                        <option value="<%= b[:id] %>"><%= b[:tag] %></option>
+                    <% end %>
+                <% end %>
+            </select>
+            <script type="text/javascript">
+                $('#tags').select2();
+            </script>
 
 
-    <input type="submit" value="go">
-</form>
+            <input type="submit" value="go">
+        </form>
 
-</div>
+    </div>
 
     <div class="col-md-3">
         <form id="new_tag" method="get" action="/kit_task_man/new_tag">
@@ -29,5 +29,10 @@
         </form>
     </div>
 </div>
+<% if @tag_list %>
+    <% @tag_list.each do |tag| %>
+        <a href="/kit_task_man?tag_id=<%= tag[:id] %>" class="tag label label-primary" ><%= tag[:tag] %></a>
+    <% end %>
+<% end %>
 </div>
 
