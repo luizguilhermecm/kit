@@ -1,47 +1,73 @@
 <div class="row equal">
 
-  <div class="col-md-4" style="display:list-item;"id="tasks_new" ondrop="drop0(event)" ondragover="allowDrop(event)">
+  <div class="col-md-4" style="display:list-item;margin-left:20px;"id="tasks_new" ondrop="drop0(event)" ondragover="allowDrop(event)">
 
     <% @tasks_0.each_with_index do |task, index| %>
         <div  id="<%= task[:id] %>" draggable="true" ondragstart="drag(event)" >
-            <div class="well well-sm">
-                <input type="checkbox" aria-label="...">
-                <%= task[:text] %>
+            <div class="well well-sm" style="background-color:rgb(<%= task[:color] %>);">
+                    <div class="progress" style="float:left;width:70%;height:5px;margin:5">
+                        <div class="progress-bar progress-bar-success" role="progressbar"  style="height:5px; width: <%= task[:progress] %>%"> </div>
+                    </div>
+                    <button type="button" style="float:right;" onclick="edit_task(<%= task[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                    <br>
+                                <%= task[:text] %>
                 <% task[:task_tags].each do |tag| %>
                     <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
                 <% end if task[:task_tags]%>
+                <% task[:task_subs].each do |sub| %>
+                    <br><input type="checkbox" onchange="update_sub_done(this, <%= sub[:id] %>)" <%= "checked" if sub[:done] == 't' %>> <%= sub[:text] %>
+                <% end if task[:task_subs]%>
             </div>
         </div>
+
+
     <% end if @tasks_0%>
   </div>
   <div class="col-md-4" style="display:list-item;" id="txd3" ondrop="drop1(event)" ondragover="allowDrop(event)">
 
     <% @tasks_1.each_with_index do |task, index| %>
         <div  id="<%= task[:id] %>" draggable="true" ondragstart="drag(event)" >
-            <div class="well well-sm">
-                <input type="checkbox" aria-label="...">
-                <%= task[:text] %>
+            <div class="well well-sm" style="background-color:rgb(<%= task[:color] %>);">
+                    <div class="progress" style="float:left;width:70%;height:5px;margin:5">
+                        <div class="progress-bar progress-bar-success" role="progressbar"  style="height:5px; width: <%= task[:progress] %>%"> </div>
+                    </div>
+                    <button type="button" style="float:right;" onclick="edit_task(<%= task[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                    <br>
+                                <%= task[:text] %>
                 <% task[:task_tags].each do |tag| %>
                     <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
                 <% end if task[:task_tags]%>
+                <% task[:task_subs].each do |sub| %>
+                    <br><input type="checkbox" onchange="update_sub_done(this, <%= sub[:id] %>)" <%= "checked" if sub[:done] == 't' %>> <%= sub[:text] %>
+                <% end if task[:task_subs]%>
             </div>
         </div>
+
     <% end if @tasks_1%>
   </div>
 
   <div class="col-md-4" style="display:list-item;"id="td2" ondrop="drop2(event)" ondragover="allowDrop(event)">
-    <% @tasks_0.each_with_index do |task, index| %>
+    <% @tasks_2.each_with_index do |task, index| %>
         <div  id="<%= task[:id] %>" draggable="true" ondragstart="drag(event)" >
-            <div class="well well-sm">
-                <input type="checkbox" aria-label="...">
-                <%= task[:text] %>
+            <div class="well well-sm" style="background-color:rgb(<%= task[:color] %>);">
+                    <div class="progress" style="float:left;width:70%;height:5px;margin:5">
+                        <div class="progress-bar progress-bar-success" role="progressbar"  style="height:5px; width: <%= task[:progress] %>%"> </div>
+                    </div>
+                    <button type="button" style="float:right;" onclick="edit_task(<%= task[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                    <br>
+                                <%= task[:text] %>
                 <% task[:task_tags].each do |tag| %>
                     <a style="font-size:60%;" class="tag label label-primary" ><%= tag[:tag] %></a>
                 <% end if task[:task_tags]%>
+                <% task[:task_subs].each do |sub| %>
+                    <br><input type="checkbox" onchange="update_sub_done(this, <%= sub[:id] %>)" <%= "checked" if sub[:done] == 't' %>> <%= sub[:text] %>
+                <% end if task[:task_subs]%>
             </div>
         </div>
-    <% end if @tasks_0%>
+    <% end if @tasks_2%>
 
   </div>
 
   </div>
+  <div id="tasks_new" > </div>
+

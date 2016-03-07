@@ -1,0 +1,124 @@
+
+<script>
+    $(document).ready(function() {
+        var max_fields      = 10; //maximum input boxes allowed
+        var wrapper         = $(".input_fields_wrap"); //Fields wrapper
+        var add_button      = $(".add_field_button"); //Add button ID
+
+        var x = 1; //initlal text box count
+        $(add_button).click(function(e){ //on add input button click
+            e.preventDefault();
+            if(x < max_fields){ //max input box allowed
+                x++; //text box increment
+                $(wrapper).append('<div><input type="text" name="subtasks[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            }
+        });
+
+        $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+            e.preventDefault(); $(this).parent('div').remove(); x--;
+        })
+    });
+
+</script>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Edit Task</h4>
+            </div>
+            <div class="modal-body">
+
+                <% if @task_info %>
+                    <% @task_info.each do |task| %>
+                        <form id="new_task"  method="get" action="/kit_task_man/edit_task">
+                            <input name="id" id="id" type="hidden" value="<%= task[:id] %>"/>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <labeL>id:</labeL>
+                                    </td>
+                                    <td><%= task[:id] %> </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <labeL for="text">task:</labeL>
+                                    </td>
+                                    <td>
+                                        <textarea name="text" id="text" type="text" cols="50" value=""><%= task[:text] %></textarea>
+                                    </td>
+                                    <td>
+                                        <select name="tags[]" id="tags_info" multiple="multiple">
+                                            <% if @tag_list %>
+                                                <% @tag_list.each do |b| %>
+                                                    <option value="<%= b[:id] %>" <% if task[:task_tags].include? b[:id] %> selected <% end %> ><%= b[:tag] %></option>
+                                                <% end %>
+                                            <% end %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <labeL>progress:</labeL>
+                                    </td>
+                                    <td><%= task[:progress] %>
+                                    <input name="progress" id="progress" type="range" min="0" max="100" value="<%= task[:progress] %>" />
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="table">
+                            <tr>
+                                <td style="background-color: rgb(128, 216, 255);" >
+                                    <input type="radio" name="color" value="128, 216, 255" > </td>
+                                <td style="background-color: rgb(207, 216, 220);" >
+                                    <input type="radio" name="color" value="207, 216, 220" ></td>
+                                <td style="background-color: rgb(255, 138, 128);" >
+                                    <input type="radio" name="color" value="255, 138, 128" ></td>
+                                <td style="background-color: rgb(255, 209, 128);" >
+                                    <input type="radio" name="color" value="255, 209, 128" ></td>
+                                <td style="background-color: rgb(255, 255, 141);" >
+                                    <input type="radio" name="color" value="255, 255, 141" ></td>
+                                <td style="background-color: rgb(207, 216, 220);" >
+                                    <input type="radio" name="color" value="207, 216, 220" ></td>
+                                <td style="background-color: rgb(167, 255, 235);" >
+                                    <input type="radio" name="color" value="167, 255, 235" ></td>
+                                <td style="background-color: rgb(204, 255, 144);" >
+                                    <input type="radio" name="color" value="204, 255, 144" ></td>
+                                <td style="background-color: rgb(250, 250, 250);" >
+                                    <input type="radio" name="color" value="250, 250, 250" ></td>
+                            </tr>
+                        </table>
+
+                        <div class="input_fields_wrap">
+                            <labeL for="subtasks">sub-task:</labeL>
+                            <button class="add_field_button">+</button>
+                            <% task[:task_subs].each do |sub| %>
+                                <div><input type="text" name="subtasks[]" value="<%= sub[:text] %>"></div>
+                                <% end if task[:task_subs]%>
+
+                                <div><input type="text" name="subtasks[]"></div>
+                            </div>
+                            <br>
+                            <br>
+
+
+                            <input type="submit" value="go">
+                        </form>
+
+                        <hr>
+
+                        <a href="/kit_task_man/delete_task?id=<%= task[:id] %>" > delete </a>
+                    <% end %>
+                <% end %>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Send message</button>
+            </div>
+        </div>
+    </div>
+</div>
+

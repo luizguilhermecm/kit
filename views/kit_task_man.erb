@@ -35,6 +35,7 @@
         var data = ev.dataTransfer.getData("text");
         ev.target.appendChild(document.getElementById(data));
         update_status(data, 2);
+
     }
 
     function drop2edit(ev) {
@@ -44,7 +45,21 @@
         document.getElementById('edit_text').value = data
     }
 
-
+    function edit_task(id) {
+        console.log("id: " + id)
+        $.ajax({
+            url: "/kit_task_man/get_task_info",
+            type: "GET",
+            //accepts: "application/json",
+            //dataType: "json",
+            data: {
+                "id": id,
+            }
+        }).done( function(json) {
+            $('#tasks_new').html(json);
+            $("#exampleModal").modal()
+        });
+    }
 
     function update_status(id, status) {
         console.log("function update_status(id)");
@@ -52,13 +67,28 @@
         $.ajax({
             url: "/kit_task_man/update_status",
             type: "GET",
+            //accepts: "application/json",
+            //dataType: "json",
             data: {
                 "id": id,
                 "status": status,
             }
-        }).done( function(res) {
+        }).done( function(json) {
         });
     }
+
+function update_sub_done(checkbox, id) {
+    console.log("function update_sub_done(checkbox, id)");
+
+    $.ajax({
+        url: "/kit_task_man/update_sub_done",
+        type: "GET",
+        data: {
+            "id": id,
+        }
+    }).done( function(res) {
+    });
+}
 </script>
 
 <style>
@@ -74,7 +104,6 @@
 </style>
 
 <%= erb :_new_task_form, layout: false %>
-
 
 <%= erb :_list_tasks, layout: false %>
 
