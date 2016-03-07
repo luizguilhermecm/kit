@@ -335,4 +335,26 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_ERROR, e, session)
         end
     end
+    get '/todo/rm_tag' do
+        session!
+
+        id = params[:id]
+        query = " delete from todo_tag where id = $1 and user_id = $2";
+
+        begin
+            @@conn.exec_params(query , [id, session[:uid]])
+        rescue => e
+            puts "***************************"
+            puts session[:username]
+            puts session[:uid]
+            puts request.ip
+            puts e
+            puts "***************************"
+        end
+
+        redirect "/todo/todo_list"
+    end
+
+
+
 end
