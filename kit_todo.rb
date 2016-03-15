@@ -85,6 +85,7 @@ class Kit < Sinatra::Base
 
         tag_id = params[:tag_id].to_i
         insert = params[:insert].to_i
+        list_all = params[:list_all].to_i
 
         query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, flag_do_it "
         query += " FROM todo_list WHERE flag_deleted = 'false' and uid = $1 "
@@ -95,7 +96,10 @@ class Kit < Sinatra::Base
             query += " AND id IN (SELECT DISTINCT todo_id FROM todo_tags WHERE tag_id = $2) "
         elsif insert != 0
             query += " AND id = #{insert} "
+        elsif list_all != 0
+            # without filter
         else
+            # todo list without params will list only tags checked to be listed
             query += get_is_listed_tags
         end
 

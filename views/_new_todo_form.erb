@@ -1,13 +1,19 @@
 <form id="new_todo"  method="get" action="/todo/new_todo">
     <labeL for="text">ToDo:</labeL>
     <input name="text" id="text" type="text" size=100 />
-    <select name="tag_id" id="tag_id">
+    <select
+        name="tags[]"
+        id="formtag"
+        multiple="multiple"
+        >
         <% if @tag_list %>
             <% @tag_list.each do |b| %>
-                <option value="<%= b[:id] %>" <%= "selected='true'" if b[:tag] == 'TODO' %>><%= b[:tag] %></option>
+                <option value="<%= b[:id] %>"><%= b[:tag] %></option>
             <% end %>
         <% end %>
     </select>
+
+
     <input type="checkbox" name="flag_do_it" value="true">doit
     <input type="submit" value="go">
 </form>

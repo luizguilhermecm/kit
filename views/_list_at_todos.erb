@@ -10,14 +10,37 @@
                 <% end %>
                 <%= todo[:text] %>
             </td>
-            <td>
-                <select onchange="update_tag_id(this,<%= todo[:id]%>)">
+            <td  class="col-xs-2" style="min-width:85px" >
+                <select class="form-control input-sm"
+                    name="tags[]"
+                    id="tags"
+                    multiple="multiple"
+                    placeholder=".input-sm"
+                    onchange="update_tag_id(this, <%=todo[:id]%>)"
+                    >
                 <% if @tag_list %>
                     <% @tag_list.each do |b| %>
-                        <option value="<%= b[:id] %>" <%= "selected='true'" if b[:id] == todo[:tag_id] %>><%= b[:tag] %></option>
+                        <option value="<%= b[:id] %>"><%= b[:tag] %></option>
                     <% end %>
                 <% end %>
-                </select>
+            </select>
+<style>
+    .select2-selection__choice {
+        font-size:30%;
+    }
+</style>
+
+
+<script type="text/javascript">
+    $('select').select2(
+        {
+            tags: true,
+            theme: "classic",
+        }
+    );
+</script>
+
+
             </td>
             <td>
             <input type="checkbox" name="flag_do_it" onchange="update_flag_do_it(this,<%= todo[:id]%>)" value="true"<%= "checked" if todo[:flag_do_it] == 't' %>>

@@ -36,23 +36,22 @@ function update_flag_do_it(flag_do_it_p, todo_id) {
     });
 }
 
-function update_tag_id(tag_id, todo_id, flag) {
-    if (flag == null) {
-        var tag_id = tag_id.value;
-    } else {
-        var tag_id = tag_id;
-    }
-    var todo_id = todo_id
-
-   $.ajax({
-        url: "/todo/update_todo_tag/",
-        type: "GET",
-        data: {
-            "tag_id": tag_id,
-            "todo_id": todo_id,
+function update_tag_id(tags, todo_id) {
+    for (i = 0; i < tags.options.length; i++) {
+        if (tags[i].selected)  {
+            console.log("updating " + tags[i].value)
+            console.log("of todo_id " + todo_id)
+            $.ajax({
+                url: "/todo/update_todo_tag/",
+                type: "GET",
+                data: {
+                    "tag_id": tags[i].value,
+                    "todo_id": todo_id,
+                }
+            }).done( function(res) {
+            });
         }
-    }).done( function(res) {
-    });
+    }
 }
 
 function update_frase(frase_id, target_table) {
