@@ -171,3 +171,15 @@ function update_is_listed(checkbox, tag_id) {
     }).done( function(res) {
     });
 }
+
+function update_priority(todo_id, letter) {
+    $.ajax({
+        url: "/todo/update_priority",
+        type: "GET",
+        data: {
+            "todo_id": todo_id,
+            "prio": letter,
+        }
+    }).done( function(res) {
+    });
+}

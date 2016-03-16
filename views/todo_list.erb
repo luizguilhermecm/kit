@@ -3,7 +3,7 @@
 <%= erb :_new_todo_form , layout: false %>
 
 <% @tag_list.each_with_index do |tag, index| %>
-    <a class="tag label label-primary" href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+    <a class="tag label <%=tag[:label]%>" href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %>&nbsp&nbsp<span class="label label-default label-as-badge"><%=tag[:count]%></span></a>
 <% end if @tag_list%>
 <a class="tag label label-info" href="/todo/todo_list?list_all=1">ALL</a>
 

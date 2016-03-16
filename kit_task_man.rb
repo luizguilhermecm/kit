@@ -183,7 +183,6 @@ class Kit < Sinatra::Base
             }
         end
 
-        crazy_log(todos)
         return todos
     end
 

@@ -69,6 +69,13 @@ class Kit < Sinatra::Base
         'Sorry there was a nasty error - ' + env['sinatra.error'].message
     end
 
+    before do
+        if session[:kmsg]
+            @kmsg = session[:kmsg]
+            session[:kmsg] = nil
+        end
+    end
+
     get '/' do
         if session?
             redirect to('/todo')

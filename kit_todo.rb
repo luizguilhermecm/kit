@@ -1,7 +1,18 @@
 class Kit < Sinatra::Base
 
+    module Priority
+        A = 'btn-danger'
+        B = 'btn-warning'
+        C = 'btn-info'
+        D = 'btn-success'
+        E = 'btn-primary'
+    end
+
+
+
     get '/todo' do
         session!
+
         @tag_list = []
 
         @tag_list = get_todo_tags
@@ -87,8 +98,8 @@ class Kit < Sinatra::Base
         insert = params[:insert].to_i
         list_all = params[:list_all].to_i
 
-        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, flag_do_it "
-        query += " FROM todo_list WHERE flag_deleted = 'false' and uid = $1 "
+        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, flag_do_it, "
+        query += " priority FROM todo_list WHERE flag_deleted = 'false' and uid = $1 "
 
 
         if tag_id != 0
@@ -104,7 +115,7 @@ class Kit < Sinatra::Base
         end
 
         query += " AND flag_done = false "
-        query += " ORDER BY flag_do_it is true DESC, created_at DESC ";
+        query += " ORDER BY flag_do_it is true DESC, priority, created_at DESC ";
 
         begin
             if tag_id != 0
@@ -139,7 +150,7 @@ class Kit < Sinatra::Base
                     :label => tag["label"],
                 }
             end
-
+            letter = get_priority_label t["priority"]
             @todos << {
                 :id => t["id"],
                 :text => t["text"],
@@ -147,6 +158,8 @@ class Kit < Sinatra::Base
                 :created_at => t["data"],
                 :flag_do_it => t["flag_do_it"],
                 :todo_tag_list => todos_tags,
+                :priority_letter => t["priority"],
+                :priority => letter
             }
             #puts t
 
@@ -177,7 +190,8 @@ class Kit < Sinatra::Base
     end
 
     def get_todo_tags
-        query = " SELECT id, tag, description, is_listed, label FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
+        query  = " SELECT id, tag, description, is_listed, label ";
+        query += " FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
         begin
             ret = @@conn.exec_params(query, [session[:uid]])
         rescue => e
@@ -194,12 +208,20 @@ class Kit < Sinatra::Base
 
         todo_tag = []
         ret.each_with_index do |t, i|
+            query  = " SELECT count(*) FROM todo_tags inner join todo_tag ";
+            query += "  on todo_tags.tag_id = todo_tag.id where todo_tag.id = $1 ;";
+            count = @@conn.exec_params(query, [t["id"].to_i])
+            c = 0
+            if count.first
+                c = count.first["count"].to_i
+            end
             todo_tag << {
                 :id => t["id"],
                 :tag => t["tag"],
                 :description => t["description"],
                 :is_listed => t["is_listed"],
                 :label => t["label"],
+                :count => c,
             }
 
         end
@@ -347,9 +369,14 @@ class Kit < Sinatra::Base
         session!
 
         id = params[:id]
+        querySelTag = " select * from todo_tag where todo_tag.id = $1 and todo_tag.user_id = $2";
+        querySel = " select count(*) from todo_tag inner join todo_tags on todo_tag.id = todo_tags.tag_id where todo_tag.id = $1 and todo_tag.user_id = $2";
+
         query = " delete from todo_tag where id = $1 and user_id = $2";
 
         begin
+            tag = @@conn.exec_params(querySelTag , [id, session[:uid]])
+            ret = @@conn.exec_params(querySel , [id, session[:uid]])
             @@conn.exec_params(query , [id, session[:uid]])
         rescue => e
             puts "***************************"
@@ -360,6 +387,21 @@ class Kit < Sinatra::Base
             puts "***************************"
         end
 
+        msg = "msg"
+        if tag.first
+            msg = "A tag '"
+            msg += tag.first["tag"].to_s
+            msg += "', id = "
+            msg += tag.first["id"].to_s
+            msg += " foi deletada com sucesso."
+        end
+        if ret.first
+            msg += "\t"
+            count = ret.first["count"].to_s
+            msg += count
+            msg += ' itens foram deletados.'
+        end
+        session[:kmsg] = msg
         redirect "/todo/todo_list"
     end
 
@@ -397,5 +439,59 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_ERROR, e, session)
         end
 
+    end
+
+    get '/todo/update_priority' do
+        kit_log(KIT_LOG_INFO, "get '/todo/update_priority' do ")
+        session!
+
+        todo_id = params[:todo_id].to_i
+        prio = params[:prio]
+
+        kit_log(KIT_LOG_DEBUG, "todo_id", todo_id)
+        kit_log(KIT_LOG_DEBUG, "prio", prio)
+        query = 'UPDATE todo_list set priority = $1 WHERE id = $2';
+
+
+        begin
+            kit_log(KIT_LOG_DEBUG, "SQL", query, prio, todo_id)
+            @@conn.exec_params(query, [prio, todo_id])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+        end
+
+    end
+    def get_priority_letter p
+
+        if p == Priority::A
+            return 'A'
+        elsif p == Priority::B
+            return 'B'
+        elsif p == Priority::C
+            return 'C'
+        elsif p == Priority::D
+            return 'D'
+        elsif p == Priority::E
+            return 'E'
+        end
+
+    end
+
+    def get_priority_label prio
+        if prio == 'E'
+            label = 'btn-primary'
+        elsif prio == 'D'
+            label = 'btn-success'
+        elsif prio == 'C'
+            label = 'btn-info'
+        elsif prio == 'B'
+            label = 'btn-warning'
+        elsif prio == 'A'
+            label = 'btn-danger'
+        else
+            label = nil
+        end
+        return label
     end
 end

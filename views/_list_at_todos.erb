@@ -1,7 +1,13 @@
 <table class="table" >
     <% @todos.each_with_index do |todo, index| %>
-        <tr>
+        <tr <% if todo[:flag_do_it] == 't' %>class="warning" <% end%>>
+
             <td>
+                <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                    <button type="button" class="btn <%=todo[:priority]%>"><%=todo[:priority_letter]%></button>
+                </div>
+            </td>
+            <td class="col-xs-7">
                 <% todo[:todo_tag_list].each do |tag| %>
                     <a style="font-size:60%;" class="tag label <%=tag[:label]%>" href="/todo/todo_list?tag_id=<%=tag[:id]%>" oncontextmenu="update_tag_id(<%=tag[:id]%>,<%= todo[:id]%>, 'flag');return false;" ><%= tag[:tag] %></a>
                     <% end if todo[:todo_tag_list]%>
@@ -10,7 +16,7 @@
                     <% end %>
                     <%= todo[:text] %>
                 </td>
-                <td  class="col-xs-2" style="min-width:85px" >
+                <td  class="col-xs-1" >
                     <select class="form-control input-sm"
                         name="tags[]"
                         id="tags"
@@ -34,18 +40,29 @@
                     </script>
 
 
+                <!-- </td> -->
+                <!-- <td class="col&#45;xs&#45;1"> -->
                 </td>
-                <td>
-                    <input type="checkbox" name="flag_do_it" onchange="update_flag_do_it(this,<%= todo[:id]%>)" value="true"<%= "checked" if todo[:flag_do_it] == 't' %>>
+
+                <td  >
+                    <div class="btn-group btn-group-xs" role="group" aria-label="..." style="display:inline">
+                        <button type="button" class="btn btn-danger " onclick="update_priority(<%=todo[:id]%>, 'A')">A</button>
+                        <button type="button" class="btn btn-warning" onclick="update_priority(<%=todo[:id]%>, 'B')">B</button>
+                        <button type="button" class="btn btn-info   " onclick="update_priority(<%=todo[:id]%>, 'C')">C</button>
+                        <button type="button" class="btn btn-success" onclick="update_priority(<%=todo[:id]%>, 'D')">D</button>
+                        <button type="button" class="btn btn-primary" onclick="update_priority(<%=todo[:id]%>, 'E')">E</button>
+                    </div>
                 </td>
-                <td  style="min-width:85px" >
-                    <%= todo[:created_at] %>
+                <td  class="col-xs-1" >
+                    <small><%= todo[:created_at] %></small>
                 </td>
-                <td>
+                <td class="col-xs-1">
                     <a href="/todo/set_todo_done?id=<%=todo[:id]%>">v/</a>
-                </td>
-                <td>
+                    &nbsp
                     <a href="/todo/rm_todo?id=<%=todo[:id]%>">X</a>
+                    &nbsp
+                    &nbsp
+                    <input type="checkbox" name="flag_do_it" onchange="update_flag_do_it(this,<%= todo[:id]%>)" value="true"<%= "checked" if todo[:flag_do_it] == 't' %>>
                 </td>
             </tr>
             <% end if @todos%>
