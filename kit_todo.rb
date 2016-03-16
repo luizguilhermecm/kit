@@ -402,7 +402,7 @@ class Kit < Sinatra::Base
             msg += ' itens foram deletados.'
         end
         session[:kmsg] = msg
-        redirect "/todo/todo_list"
+        redirect request.referer
     end
 
     get '/todo/update_tag_label' do
