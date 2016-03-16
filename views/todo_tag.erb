@@ -17,6 +17,8 @@
         <tr>
             <td>
                 <a href="/todo/todo_list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+                <span class="badge"><%= tag[:count] %></span>
+
             </td>
             <td>
                 <%= tag[:description] %>
