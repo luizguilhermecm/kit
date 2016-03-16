@@ -6,7 +6,12 @@
     <input name="tag_desc" id="tag_desc" type="text" size=80 />
     <input type="submit" value="go">
 </form>
-
+<span class="label label-default">Default</span>
+<span class="label label-primary">Primary</span>
+<span class="label label-success">Success</span>
+<span class="label label-info">Info</span>
+<span class="label label-warning">Warning</span>
+<span class="label label-danger">Danger</span>
 <table class="table" >
     <% @tag_list.each_with_index do |tag, index| %>
         <tr>
@@ -16,7 +21,14 @@
             <td>
                 <%= tag[:description] %>
             </td>
-            <td>
+            <td class="col-xs-3">
+                <select name="tag_label"
+                    id="tag_label"
+                    multiple="multiple"
+                    onchange="set_tag_label(this, <%=tag[:id]%>)">
+                    <select>
+            </td>
+            <td >
                 <input type="checkbox" name="is_listed" onchange="update_is_listed(this,<%= tag[:id]%>)" value="true"<%= "checked" if tag[:is_listed] == 't' %>>
             </td>
             <td>
@@ -26,5 +38,40 @@
         </div>
     <% end if @tag_list%>
 </table>
+<script type="text/javascript">
 
+    function set_tag_label(label, tag_id) {
+        label_id = -1
+        for (i = 0; i < label.options.length; i++) {
+            if (label[i].selected) {
+                console.log("selected " + label[i].value)
+                label_id = label[i].value
+            }
+        }
+        $.ajax({
+            url: "/todo/update_tag_label",
+            type: "GET",
+            data: {
+                "tag_id": tag_id,
+                "label_id": label_id
+            }
+        }).done( function(res) {
+        });
+    }
+    var data = [
+        { id: 0, text: 'label-default' },
+        { id: 1, text: 'label-primary' },
+        { id: 2, text: 'label-success' },
+        { id: 3, text: 'label-info'    },
+        { id: 4, text: 'label-warning' },
+        { id: 5, text: 'label-danger'  }
+    ];
+
+    $('select').select2(
+        {
+            data: data,
+            maximumSelectionLength: 1
+        }
+    );
+</script>
 

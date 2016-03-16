@@ -128,7 +128,7 @@ class Kit < Sinatra::Base
 
         @todos = []
 
-        query_tag_list = "SELECT tt.id, tt.tag FROM todo_tags tts LEFT JOIN todo_tag tt ON tts.tag_id = tt.id  WHERE tts.todo_id = $1 ;"
+        query_tag_list = "SELECT tt.id, tt.tag, tt.label FROM todo_tags tts LEFT JOIN todo_tag tt ON tts.tag_id = tt.id  WHERE tts.todo_id = $1 ;"
         ret.each_with_index do |t, i|
             todos_tags = []
             ret_tag_list = @@conn.exec_params(query_tag_list, [t["id"]])
@@ -136,6 +136,7 @@ class Kit < Sinatra::Base
                 todos_tags << {
                     :id => tag["id"],
                     :tag => tag["tag"],
+                    :label => tag["label"],
                 }
             end
 
@@ -176,7 +177,7 @@ class Kit < Sinatra::Base
     end
 
     def get_todo_tags
-        query = " SELECT id, tag, description, is_listed FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
+        query = " SELECT id, tag, description, is_listed, label FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
         begin
             ret = @@conn.exec_params(query, [session[:uid]])
         rescue => e
@@ -189,17 +190,20 @@ class Kit < Sinatra::Base
             redirect to('/')
         end
 
+        kit_log(KIT_LOG_DEBUG, ret)
+
         todo_tag = []
         ret.each_with_index do |t, i|
-
             todo_tag << {
                 :id => t["id"],
                 :tag => t["tag"],
                 :description => t["description"],
                 :is_listed => t["is_listed"],
+                :label => t["label"],
             }
 
         end
+        kit_log(KIT_LOG_DEBUG, todo_tag)
 
         return todo_tag
     end
@@ -359,6 +363,39 @@ class Kit < Sinatra::Base
         redirect "/todo/todo_list"
     end
 
+    get '/todo/update_tag_label' do
+        kit_log(KIT_LOG_INFO, "get '/todo/update_tag_label' do ")
+        session!
 
+        tag_id = params[:tag_id].to_i
+        label_id = params[:label_id].to_i
 
+        kit_log(KIT_LOG_DEBUG, "tag_id", tag_id)
+        kit_log(KIT_LOG_DEBUG, "label_id", label_id)
+        query = 'UPDATE todo_tag set label = $1 WHERE id = $2';
+        if label_id == 0
+            label = 'label-default'
+        elsif label_id == 1
+            label = 'label-primary'
+        elsif label_id == 2
+            label = 'label-success'
+        elsif label_id == 3
+            label = 'label-info'
+        elsif label_id == 4
+            label = 'label-warning'
+        elsif label_id == 5
+            label = 'label-danger'
+        else
+            label = 'label-default'
+        end
+
+        begin
+            kit_log(KIT_LOG_DEBUG, "SQL", query, label, tag_id)
+            @@conn.exec_params(query, [label, tag_id])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+        end
+
+    end
 end
