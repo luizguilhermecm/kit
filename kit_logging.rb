@@ -11,17 +11,17 @@ class Kit < Sinatra::Base
 
     def get_log_head_string
         if $logging_level == KIT_LOG_DEBUG
-            return "[LOG:48] "
+            return "\n[LOG:48] "
         elsif $logging_level == KIT_LOG_VERBOSE
-            return "[LOG:40] "
+            return "\n[LOG:40] "
         elsif $logging_level == KIT_LOG_INFO
-            return "[LOG:32] "
+            return "\n[LOG:32] "
         elsif $logging_level == KIT_LOG_ERROR
-            return "[LOG:16] "
+            return "\n[LOG:16] "
         elsif $logging_level == KIT_LOG_PANIC
-            return "[LOG:0] "
+            return "\n[LOG:0] "
         else
-            return "[LOG:-1] "
+            return "\n[LOG:-1] "
         end
     end
 
@@ -40,10 +40,21 @@ class Kit < Sinatra::Base
                 log_string += "\n-\t[#{i.to_s}] = #{p.to_s} "
             end
         end
-
+        log_string = check_log_hash log_string
         puts log_string
         open("./log.txt", 'a') { |f| f << log_string << "\n"}
     end
+
+    def check_log_hash m
+        hash = Digest::MD5.hexdigest(m)
+        if hash == session[:log_hash]
+            return "..."
+        else
+            session[:log_hash] = hash
+        end
+        return m
+    end
+
 
     def kit_log(log_level, msg, *params)
         begin
@@ -58,6 +69,32 @@ class Kit < Sinatra::Base
             puts e
         end
     end
+
+    def kit_log_breadcrumb(source, requet_params, *params)
+        begin
+            if requet_params.class == Hash
+                kit_log(KIT_LOG_INFO, "source: #{source}",
+                        "detail of params attribute:",
+                        "params.class: #{requet_params.class}",
+                        "params.size #{requet_params.size if requet_params.respond_to? :size}", requet_params, *params)
+            elsif requet_params
+                kit_log(KIT_LOG_INFO, "source: #{source}",
+                        requet_params, *params)
+            else
+                kit_log(KIT_LOG_INFO, "source: #{source}",
+                        *params)
+            end
+
+            rescue => e
+                puts "*[LOG_ERROR] error while logging the follow param"
+                puts "-\t[log_level] = #{log_level}"
+                puts "-\t[msg] = #{msg}"
+            puts "-\t[printing error object]"
+            puts e
+        end
+    end
+
+
 
     def crazy_log(*params)
         log_string = "."
