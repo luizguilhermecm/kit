@@ -1,0 +1,41 @@
+<script>
+jQuery(document).ready(function(){
+        jQuery('#out_button').on('click', function(event) {
+             jQuery('#outcome').toggle('show');
+             jQuery('#income').hide();
+             jQuery('#time_tag').hide();
+        });
+        jQuery('#in_button').on('click', function(event) {
+             jQuery('#outcome').hide();
+             jQuery('#income').toggle('show');
+             jQuery('#time_tag').hide();
+        });
+        jQuery('#time_tag_button').on('click', function(event) {
+             jQuery('#outcome').hide();
+             jQuery('#income').hide();
+             jQuery('#time_tag').toggle('show');
+        });
+    });
+
+
+</script>
+
+<div class="row">
+    <div class="btn-group btn-group-sm" role="group">
+        <button id="out_button" type="button" class="btn btn-danger glyphicon glyphicon-minus">out</button>
+        </div>
+    <div class="btn-group btn-group-sm" role="group">
+        <button id="in_button" type="button" class="btn btn-success glyphicon glyphicon-plus">in</button>
+    </div>
+    <div class="btn-group btn-group-sm" role="group">
+        <button id="time_tag_button" type="button" class="btn btn-info">tags</button>
+    </div>
+</div>
+
+
+<%= erb :"kit_time/form_new_income", layout: false %>
+<%= erb :"kit_time/form_new_outcome", layout: false %>
+<%= erb :"kit_time/form_new_tag", layout: false %>
+    <br>
+    <br>
+    <br>

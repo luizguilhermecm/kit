@@ -1,0 +1,32 @@
+<table class="table" >
+    <% @times.each_with_index do |time, index| %>
+        <tr>
+            <td class="col-xs-1">
+                <% if time[:minus] %>
+                    <a href="/kit_time/time_list" class="tag label label-danger glyphicon glyphicon-minus" > </a>
+                <% else %>
+                    <a href="/kit_time/time_list" class="tag label label-success glyphicon glyphicon-plus" > </a>
+                <% end %>
+            </td>
+            <td class="col-xs-5">
+                <%= time[:text] %>
+            </td>
+            <td class="col-xs-2">
+                <%= time[:value] %>
+            </td>
+
+            <td class="col-xs-1">
+                <% time[:time_tags].each do |tag| %>
+                    <a href="/kit_time/time_list?tag_id=<%= tag[:id] %>"style="font-size:60%;" class="tag label label-<%= tag[:label] %>" ><%= tag[:tag] %></a>
+                <% end if time[:time_tags]%>
+            </td>
+            <td class="col-xs-2">
+                <%= time[:created_at] %>
+            </td>
+            <td class="col-xs-1">
+                <a href="/kit_time/rm_time?time_id=<%= time[:id] %>" class="glyphicon glyphicon-remove" > </a>
+            </td>
+
+        </tr>
+    <% end if @times%>
+</table>

@@ -1,0 +1,65 @@
+<div class="row" id="time_tag" style="display:none;">
+    tags
+    <form id="new_tag" method="get" action="/kit_time/new_tag">
+        <div class="form-group row">
+            <label for="tag" class="col-sm-2 form-control-label">time</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="tag" id="tag" placeholder="tag">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2">label</label>
+            <div class="col-sm-10">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="label" id="label" value="default" checked>
+                        <p class="tag label label-default" >default</p>
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="label" id="label2" value="danger">
+                        <p class="tag label label-danger" >danger</p>
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="label" id="label3" value="warning">
+                        <p class="tag label label-warning" >warning</p>
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="label" id="label4" value="info">
+                        <p class="tag label label-info" >info</p>
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="label" id="label5" value="success">
+                        <p class="tag label label-success" >success</p>
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="label" id="label6" value="primary">
+                        <p class="tag label label-primary" >primary</p>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-secondary">add</button>
+            </div>
+        </div>
+
+    </form>
+    <% if @tag_list %>
+        <% @tag_list.each do |tag| %>
+            <a href="/kit_time/time_list?tag_id=<%= tag[:id] %>" class="tag label label-<%= tag[:label] %>" ><%= tag[:tag] %></a>
+        <% end %>
+    <% end %>
+</div>

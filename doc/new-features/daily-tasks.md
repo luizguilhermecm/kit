@@ -1,4 +1,4 @@
-daily tasks
+daily tasks **DEPRECATED**
 -----------
 
 The idea is having a daily-tasks, a list of things to be done every day.

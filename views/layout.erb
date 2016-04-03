@@ -74,6 +74,7 @@
                             <% if session[:uid] != 0 %>
                                 <li><a id="kit_files_link" href="/kit_files" >kit files</a></li>
                                 <li><a id="kit_task_man_link" href="/kit_task_man" >kit tasks</a></li>
+                                <li><a id="kit_time_link" href="/kit_time" >kit time</a></li>
                             <% end %>
                             <% if session[:uid].to_i == 1 %>
                                 <li class="qc">
@@ -86,9 +87,9 @@
                                 </li>
                             <% end %>
                         <% end %>
+                <li><a href="/logout">Logout</a></li>
                     </ul>
                 </li>
-                <li><a href="/logout">Logout</a></li>
 
             </ul>
         </div>

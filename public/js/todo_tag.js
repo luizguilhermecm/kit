@@ -183,3 +183,21 @@ function update_priority(todo_id, letter) {
     }).done( function(res) {
     });
 }
+function update_time_tag_id(tags, time_id) {
+    for (i = 0; i < tags.options.length; i++) {
+        if (tags[i].selected)  {
+            console.log("updating " + tags[i].value)
+            console.log("of time_id " + time_id)
+            $.ajax({
+                url: "/kit_time/update_time_tag",
+                type: "GET",
+                data: {
+                    "tag_id": tags[i].value,
+                    "time_id": time_id,
+                }
+            }).done( function(res) {
+            });
+        }
+    }
+}
+
