@@ -24,7 +24,7 @@ class Kit < Sinatra::Base
         session!
 
         query = " SELECT time.id, time.uid, time.text, time.value, "
-        query += " time.is_credit, time.charge_date, time.created_at::date "
+        query += " time.charge_date, time.created_at::date "
         query += " FROM time "
         query += " WHERE uid = $1 "
         query += " ORDER BY id desc "
@@ -72,7 +72,6 @@ class Kit < Sinatra::Base
                 :id => t["id"],
                 :text =>  t["text"],
                 :value => t["value"],
-                :is_credit =>  t["is_credit"],
                 :charge_date =>  t["charge_date"],
                 :created_at =>  t["created_at"],
                 :time_tags => time_tags,
