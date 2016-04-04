@@ -15,6 +15,12 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="charge" class="col-sm-2 form-control-label">charge</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="charge" id="charge">
+            </div>
+        </div>
+        <div class="form-group row">
             <label class="col-sm-2">how</label>
             <div class="col-sm-10">
                 <div class="radio">
@@ -48,6 +54,13 @@
             </select>
             <script type="text/javascript">
                 $('#out_tags').select2();
+
+                $('#charge').datepicker({
+                    format: "yyyy-mm-dd",
+                    todayBtn: "linked",
+                    autoclose: true,
+                    todayHighlight: true
+                });
             </script>
         </div>
         <div class="form-group row">

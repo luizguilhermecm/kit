@@ -24,7 +24,7 @@ class Kit < Sinatra::Base
         session!
 
         query = " SELECT time.id, time.uid, time.text, time.value, "
-        query += " time.charge_date, time.created_at::date "
+        query += " time.charge_date, time.charge_date "
         query += " FROM time "
         query += " WHERE uid = $1 "
         query += " ORDER BY id desc "
@@ -119,15 +119,16 @@ class Kit < Sinatra::Base
         value = params[:value].to_f
         payment = params[:payment]
         tags = params[:tags]
+        charge = params[:charge]
 
         if type == 'outcome'
             value = value * -1
         end
 
-        query =  ' INSERT INTO time(text, value, payment, uid) '
-        query += ' VALUES($1, $2, $3, $4) returning id';
+        query =  ' INSERT INTO time(text, value, payment, uid, charge_date) '
+        query += ' VALUES($1, $2, $3, $4, $5) returning id';
         begin
-            ret = @@conn.exec_params(query, [text.to_s, value, payment, session[:uid]])
+            ret = @@conn.exec_params(query, [text.to_s, value, payment, session[:uid], charge])
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-time-xasdf]")
             kit_log(KIT_LOG_ERROR, e, session)
