@@ -201,5 +201,9 @@ class Kit < Sinatra::Base
         puts "***************************"
     end
 
+    get '/contador' do
+        erb :"bij/contador", layout: false
+    end
+
     run! if app_file == $0
 end

@@ -153,11 +153,5 @@ window.onload = function onLoad() {
 	var countdown = new Countdown();
 
 	countdown
-		.add(24,07,2015,8,30, "Copel - Inscrição")
-		.add(24,07,2015,8,30, "TRT15 - Resultado")
-		.add(03,08,2015,8,30, "MPOG - Boleto")
-		.add(21,07,2015,16,00, "Copel - fim Inscrição")
-		.add(30,08,2015,8,30, "MPOG - Prova")
-		.add(27,09,2015,8,30, "Copel - Prova")
-		.add(30,10,2015,8,30, "Copel - Resultado")
+		.add(12,11,2016,6,20, "Guarulhos")
 }
