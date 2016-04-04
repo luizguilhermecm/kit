@@ -1,4 +1,15 @@
+<div class="row">
 kit_time/kit_time.erb
+</div>
+<div class="row">
+    <% if @tag_list %>
+        <% @tag_list.each do |tag| %>
+            <a href="/kit_time/time_list?tag_id=<%= tag[:id] %>" class="tag label label-<%= tag[:label] %>" ><%= tag[:tag] %></a>
+        <% end %>
+    <% end %>
+</div>
+<br>
+
 
 <div class="col-md-12">
 <div class="col-md-8">
