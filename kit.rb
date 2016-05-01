@@ -202,7 +202,7 @@ class Kit < Sinatra::Base
     end
 
     get '/contador' do
-        erb :"bij/contador", layout: false
+        erb :"ate/contador"
     end
 
     run! if app_file == $0

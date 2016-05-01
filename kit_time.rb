@@ -219,6 +219,103 @@ class Kit < Sinatra::Base
         redirect request.referer
     end
 
+    get '/kit_time/get_info_time' do
+        kit_log_breadcrumb('get /kit_time/get_info_time', params)
+        session!
+
+        time_id = params[:time_id]
+
+        @tag_list = get_time_tag_list
+        @time_info = get_time time_id
+        kit_log(KIT_LOG_DEBUG, @time_info)
+        erb :"kit_time/_edit_time"
+    end
+
+
+    def get_time time_id
+        kit_log_breadcrumb('def get_time', time_id)
+
+        query = " SELECT time.id, time.uid, time.text, time.value, "
+        query += " time.charge_date, time.charge_date, time.payment"
+        query += " FROM time "
+        query += " WHERE uid = $1 "
+        query += " and time.id = $2 "
+        query += " ORDER BY id desc "
+
+        begin
+            ret = @@conn.exec_params(query, [session[:uid], time_id])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR-time-xguyv8dj]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            redirect request.referer
+        end
+        times = []
+
+        query_tag_list = " SELECT time_tag_time.tag_id, time_tag.tag, time_tag.label "
+        query_tag_list += " FROM time_tag_time LEFT JOIN time_tag "
+        query_tag_list += " ON time_tag.id = time_tag_time.tag_id  "
+        query_tag_list += " WHERE time_tag_time.time_id = $1 "
+
+        ret.each_with_index do |t, i|
+            time_tags = []
+            tags = @@conn.exec_params(query_tag_list, [t["id"]])
+            tags.each do |tag|
+                time_tags << {
+                    :id => tag["tag_id"],
+                    :tag => tag["tag"],
+                    :label => tag["label"],
+                }
+            end
+
+            if t["value"].to_f > 0
+                plus = true
+                minus = false
+            else
+                plus = false
+                minus = true
+            end
+            #kit_log(KIT_LOG_DEBUG, t)
+            times << {
+                :id => t["id"],
+                :text =>  t["text"],
+                :value => t["value"],
+                :charge_date =>  t["charge_date"],
+                :created_at =>  t["created_at"],
+                :payment =>  t["payment"],
+                :time_tags => time_tags,
+                :plus => plus,
+                :minus => minus,
+            }
+        end
+        return times
+
+    end
+    get '/kit_time/edit_time' do
+        kit_log_breadcrumb("get '/kit_time/edit_time/'", params)
+        session!
+
+        #type = params[:type]
+        id = params[:id]
+        text = params[:text]
+        value = params[:value].to_f
+        payment = params[:payment]
+        #tags = params[:tags]
+        charge = params[:charge]
+
+        query =  ' UPDATE time SET text = $1 , value = $2 , payment = $3, charge_date = $4 '
+        query += ' WHERE id = $5 and uid = $6';
+        begin
+            @@conn.exec_params(query, [text.to_s, value, payment, charge,id, session[:uid]])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR-time-xasdf]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            session[:kmsg] = "ERROR: insert new time failed."
+            redirect request.referer
+        end
+
+        redirect to('/kit_time')
+    end
+
 
 end
 

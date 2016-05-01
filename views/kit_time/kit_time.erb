@@ -1,3 +1,21 @@
+<script>
+        function edit_time(id) {
+        console.log("id: " + id)
+        $.ajax({
+            url: "/kit_time/get_info_time",
+            type: "GET",
+            //accepts: "application/json",
+            //dataType: "json",
+            data: {
+                "time_id": id,
+            }
+        }).done( function(json) {
+            $('#tasks_new').html(json);
+            $("#exampleModal").modal()
+        });
+    }
+</script>
+
 <div class="row">
 kit_time/kit_time.erb
 </div>

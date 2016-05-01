@@ -10,11 +10,22 @@
         <% end %>
     </select>
     <input type="submit" value="go">
-</form>    
+</form>
     <br><br><hr><br><br>
-    
+
     <form id="run_bash_command"  method="get" action="/bash_command">
     <labeL for="cmd">command:</labeL>
     <input name="cmd" type="text" />
     <input type="submit" value="go">
 </form>
+
+
+    <link rel="stylesheet" type="text/css" href="/contador/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="/contador/css/style.css">
+    <link type="javascript" href="/contador/js/script.js">
+    <script src="/contador/js/jquery.min.js"></script>
+    <script src="/contador/js/progressbar.min.js"></script>
+    <script src="/contador/js/countdown.js"></script>
+    <br><br>
+    <div id="contador">
+    </div>

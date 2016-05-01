@@ -26,7 +26,11 @@
             <td class="col-xs-1">
                 <a href="/kit_time/rm_time?time_id=<%= time[:id] %>" class="glyphicon glyphicon-remove" > </a>
             </td>
-
+            <td class="col-xs-1">
+                <button type="button" onclick="edit_time(<%= time[:id] %>)"class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
+            </td>
         </tr>
     <% end if @times%>
 </table>
+
+<div id="tasks_new" > </div>
