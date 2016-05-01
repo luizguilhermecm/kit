@@ -247,7 +247,7 @@ class Kit < Sinatra::Base
             redirect request.referer
         end
 
-        redirect "/todo/todo_list"
+        redirect request.referer
     end
 
     get '/todo/update_todo_flag_do_it/' do
