@@ -17,20 +17,40 @@ class Kit < Sinatra::Base
         erb :"kit_time/kit_time"
     end
 
-    #get '/kit_time/time_list' do
+    get '/kit_time/time_list' do
+        kit_log_breadcrumb('get /kit_time/time_list', params)
+        session!
+        tag_id = params[:tag_id]
+        @tag_list = get_time_tag_list
+        @times = get_time_list tag_id
+
+        erb :"kit_time/kit_time"
+
+    end
+
     def get_time_list tag_id
         #kit_log_breadcrumb('get /kit_time/time_list', params)
         kit_log_breadcrumb('def get_time_list', tag_id)
         session!
 
-        query = " SELECT time.id, time.uid, time.text, time.value, "
-        query += " time.charge_date, time.charge_date "
+        query = " SELECT time.id "
         query += " FROM time "
         query += " WHERE uid = $1 "
         query += " ORDER BY id desc "
 
+        query_tag = " SELECT time.id "
+        query_tag += " FROM time "
+        query_tag += " INNER JOIN time_tag_time ON time_tag_time.time_id = time.id "
+        query_tag += " WHERE uid = $1 "
+        query_tag += " AND time_tag_time.tag_id = $2 "
+        query_tag += " ORDER BY id desc "
+
         begin
-            ret = @@conn.exec_params(query, [session[:uid]])
+            if tag_id
+                ret = @@conn.exec_params(query_tag, [session[:uid], tag_id])
+            else
+                ret = @@conn.exec_params(query, [session[:uid]])
+            end
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-time-xguyv8dj]")
             kit_log(KIT_LOG_ERROR, e, session)
@@ -39,46 +59,10 @@ class Kit < Sinatra::Base
 
         times = []
 
-        query_tag_list = " SELECT time_tag_time.tag_id, time_tag.tag, time_tag.label "
-        query_tag_list += " FROM time_tag_time LEFT JOIN time_tag "
-        query_tag_list += " ON time_tag.id = time_tag_time.tag_id  "
-        query_tag_list += " WHERE time_tag_time.time_id = $1 "
-
-
-        if tag_id
-            query_tag_list += " AND time_tag_time = #{tag_id} "
-        end
-
         ret.each_with_index do |t, i|
-            time_tags = []
-            tags = @@conn.exec_params(query_tag_list, [t["id"]])
-            tags.each do |tag|
-                time_tags << {
-                    :id => tag["tag_id"],
-                    :tag => tag["tag"],
-                    :label => tag["label"],
-                }
-            end
-
-            if t["value"].to_f > 0
-                plus = true
-                minus = false
-            else
-                plus = false
-                minus = true
-            end
-
-            times << {
-                :id => t["id"],
-                :text =>  t["text"],
-                :value => t["value"],
-                :charge_date =>  t["charge_date"],
-                :created_at =>  t["created_at"],
-                :time_tags => time_tags,
-                :plus => plus,
-                :minus => minus,
-            }
+            times.push get_time t["id"]
         end
+
         return times
     end
 
@@ -226,7 +210,8 @@ class Kit < Sinatra::Base
         time_id = params[:time_id]
 
         @tag_list = get_time_tag_list
-        @time_info = get_time time_id
+        @time_info = []
+        @time_info.push  get_time time_id
         kit_log(KIT_LOG_DEBUG, @time_info)
         erb :"kit_time/_edit_time"
     end
@@ -249,23 +234,26 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_ERROR, e, session)
             redirect request.referer
         end
-        times = []
 
         query_tag_list = " SELECT time_tag_time.tag_id, time_tag.tag, time_tag.label "
         query_tag_list += " FROM time_tag_time LEFT JOIN time_tag "
         query_tag_list += " ON time_tag.id = time_tag_time.tag_id  "
         query_tag_list += " WHERE time_tag_time.time_id = $1 "
 
+        times = nil
         ret.each_with_index do |t, i|
             time_tags = []
+            time_tags_id = []
             tags = @@conn.exec_params(query_tag_list, [t["id"]])
             tags.each do |tag|
+                time_tags_id.push tag["tag_id"]
                 time_tags << {
                     :id => tag["tag_id"],
                     :tag => tag["tag"],
                     :label => tag["label"],
                 }
             end
+
 
             if t["value"].to_f > 0
                 plus = true
@@ -274,8 +262,8 @@ class Kit < Sinatra::Base
                 plus = false
                 minus = true
             end
-            #kit_log(KIT_LOG_DEBUG, t)
-            times << {
+            kit_log(KIT_LOG_DEBUG, time_tags)
+            times = {
                 :id => t["id"],
                 :text =>  t["text"],
                 :value => t["value"],
@@ -283,6 +271,7 @@ class Kit < Sinatra::Base
                 :created_at =>  t["created_at"],
                 :payment =>  t["payment"],
                 :time_tags => time_tags,
+                :time_tags_id => time_tags_id,
                 :plus => plus,
                 :minus => minus,
             }
@@ -299,7 +288,7 @@ class Kit < Sinatra::Base
         text = params[:text]
         value = params[:value].to_f
         payment = params[:payment]
-        #tags = params[:tags]
+        tags = params[:tags]
         charge = params[:charge]
 
         query =  ' UPDATE time SET text = $1 , value = $2 , payment = $3, charge_date = $4 '
@@ -311,6 +300,29 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_ERROR, e, session)
             session[:kmsg] = "ERROR: insert new time failed."
             redirect request.referer
+        end
+
+        query_delete_tag = ' DELETE FROM time_tag_time WHERE time_id = $1 ;'
+        begin
+            @@conn.exec_params(query_delete_tag, [id])
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            redirect to('/kit_time')
+        end
+
+        query_insert_tag = 'INSERT INTO time_tag_time (time_id, tag_id) VALUES ($1, $2);'
+
+        begin
+            if tags
+                tags.each do |tag|
+                    @@conn.exec_params(query_insert_tag, [id, tag])
+                end
+            end
+        rescue => e
+            kit_log(KIT_LOG_ERROR, "[ERROR]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            redirect to('/kit_time')
         end
 
         redirect to('/kit_time')

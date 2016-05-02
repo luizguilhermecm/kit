@@ -27,7 +27,7 @@ _edit_time.erb
                             <div class="form-group row">
                                 <label for="charge" class="col-sm-2 form-control-label">charge</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" name="charge" id="charge" value="<%= time[:charge_date] %>" >
+                                    <input type="text" class="form-control" name="charge" id="edit_charge" value="<%= time[:charge_date] %>" >
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -53,20 +53,34 @@ _edit_time.erb
                                     </div>
                                 </div>
                             </div>
-                            <input type="submit" value="go">
+                            <div class="form-group row">
+                                <labeL for="edit_tags" class="col-sm-2 form-control-label">tags:</labeL>
+                                <select name="tags[]" id="tags_info" multiple="multiple">
+                                            <% if @tag_list %>
+                                                <% @tag_list.each do |b| %>
+                                                    <option value="<%= b[:id] %>" <% if time[:time_tags_id].include? b[:id] %> selected <% end %> ><%= b[:tag] %></option>
+                                                <% end %>
+                                            <% end %>
+                                        </select>
 
-                            <hr>
+                                <script type="text/javascript">
+                                    $('#edit_charge').datepicker({
+                                        format: "yyyy-mm-dd",
+                                        todayBtn: "linked",
+                                        autoclose: true,
+                                        todayHighlight: true
+                                    });
+                                </script>
+                            </div>
 
-                        <a href="/kit_time_man/delete_time?id=<%= time[:id] %>" > delete </a>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Send message</button>
-            </div>
-                        </form>
-                    <% end %>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Send message</button>
+                        </div>
+                    </form>
                 <% end %>
+            <% end %>
 
 
         </div>
