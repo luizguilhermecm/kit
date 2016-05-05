@@ -1,0 +1,13 @@
+<form id="new_notebook"  method="get" action="/notebook/update">
+    <input name="id" id="id" type="hidden" value="<%= @id %>"/>
+    <labeL for="text">Title: </labeL>
+    <input name="title" id="text" type="text" size=100 value="<%= @title %>"/>
+    <p />
+    <labeL for="text">Notebook: </labeL>
+    <textarea name='text' id='sandbox' rows='20' style='width:100%'> <%= @text %></textarea>
+    <input type="submit" value="go">
+</form>
+<div style='color:red'>Log:</div>
+<div id='log'>
+</div>
+

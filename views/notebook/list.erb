@@ -1,3 +1,6 @@
+
+<!-- kit javascripts -->
+<script src="/js/todo_tag.js"></script>
 <script src="/js/jquery-min.js"></script>
 <script src="/js/jsvim.js"></script>
 
@@ -34,15 +37,20 @@
     }
 </script>
 
-<form id="new_notebook"  method="get" action="/notebook/update">
-    <labeL for="text">Title: </labeL>
-    <input name="title" id="text" type="text" size=100 />
-    <p />
-    <labeL for="text">Notebook: </labeL>
-    <textarea name='text' id='sandbox' rows='20' style='width:100%'> </textarea>
-    <input type="submit" value="go">
-</form>
-<div style='color:red'>Log:</div>
-<div id='log'>
-</div>
 
+<table class="table" >
+    <% @notebooks.each_with_index do |notebook, index| %>
+        <tr>
+            <td><%= notebook[:id] %></td>
+            <td>
+                <%=notebook[:title]%>
+            </td>
+            <td>
+                <a href="/notebook/edit?id=<%= notebook[:id] %>">edit</a>
+            </td>
+            <td>
+                <a href="/notebook/delete?id=<%= notebook[:id] %>">delete</a>
+            </td>
+        </tr>
+    <% end if @notebooks%>
+</table>

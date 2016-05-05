@@ -1,6 +1,3 @@
-
-<!-- kit javascripts -->
-<script src="/js/todo_tag.js"></script>
 <script src="/js/jquery-min.js"></script>
 <script src="/js/jsvim.js"></script>
 
@@ -37,20 +34,4 @@
     }
 </script>
 
-
-<table class="table" >
-    <% @notebooks.each_with_index do |notebook, index| %>
-        <tr>
-            <td><%= notebook[:id] %></td>
-            <td>
-                <%=notebook[:title]%>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <textarea name='text' id='sandbox' rows='20' style='width:100%'><%=notebook[:text]%></textarea>
-            </td>
-        <td><button onclick="save_notebook(<%=notebook[:id]%>)" value="asdf" /> </td>
-        </tr>
-    <% end if @notebooks%>
-</table>
+<%= erb :"notebook/_new_update", layout: false %>
