@@ -1,0 +1,48 @@
+<script src="/js/jquery-min.js"></script>
+<script src="/js/jsvim.js"></script>
+
+<style>
+    #sandbox {
+        font-family: Courier, "Courier New", monospace;
+        font-size: 11px;
+    }
+</style>
+
+
+<script>
+    window.onload = function(){
+        /* create VIM instance for each textarea */
+        var vim = new VIM()
+
+        /* log debug messages */
+        // vim.on_log = function(m){ console.log('VIM: '+m) }
+        vim.on_log = function(m) {
+            var LENGTH = 10
+            var p = $('<div></div>').text( m )
+            $('#log').prepend( p )
+            if ( $('#log').children().length > LENGTH ) {
+                $('#log').children(':last').remove()
+            }
+        }
+
+        var target = document.getElementById('sandbox')
+        if (target !== null) {
+            /* attach vim. this is the only line really needed */
+            vim.attach_to( target )
+            target.focus()
+        }
+    }
+</script>
+
+<form id="new_notebook"  method="get" action="/notebook/update">
+    <labeL for="text">Title: </labeL>
+    <input name="title" id="text" type="text" size=100 />
+    <p />
+    <labeL for="text">Notebook: </labeL>
+    <textarea name='text' id='sandbox' rows='20' style='width:100%'> </textarea>
+    <input type="submit" value="go">
+</form>
+<div style='color:red'>Log:</div>
+<div id='log'>
+</div>
+

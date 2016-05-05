@@ -201,3 +201,20 @@ function update_time_tag_id(tags, time_id) {
     }
 }
 
+function save_notebook(id) {
+    tid = "sandbox_"+id
+    text = document.getElementById('sandbox').value
+
+    //title_id = "sandbox_"+id
+    //title = document.getElementById(title_id).value
+    $.ajax({
+        url: "/notebook/update/",
+        type: "GET",
+        data: {
+            "id": id,
+            //"title": title,
+            "text": text,
+        }
+    }).done( function(res) {
+    });
+}

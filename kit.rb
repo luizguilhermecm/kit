@@ -21,6 +21,7 @@ require_relative 'kit_admin'
 require_relative 'kit_files'
 require_relative 'kit_daily'
 require_relative 'kit_task_man'
+require_relative 'notebook'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
