@@ -10,9 +10,12 @@
                 "time_id": id,
             }
         }).done( function(json) {
+                console.log("done with id: " + id)
             $('#tasks_new').html(json);
+            console.log("get modal to: " + id)
             $("#exampleModal").modal()
         });
+        console.log("end of edit to id: " + id)
     }
 
 </script>
