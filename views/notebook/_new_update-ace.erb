@@ -1,0 +1,35 @@
+
+<style type="text/css" media="screen">
+    #editor {
+        position: absolute;
+        top: 100;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+</style>
+<form id="new_notebook"  method="get" action="/notebook/update">
+
+    <input name="id" id="id" type="hidden" value="<%= @id %>"/>
+
+    <textarea name='editor' id="text" style="display: none;" ></textarea>
+    <div id="editor"><%= @text %></div>
+    <input type="submit" value="go">
+
+
+
+
+</form>
+<script src="/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/github");
+    editor.getSession().setMode("ace/mode/plain_text");
+    editor.getSession().on("change", function () {
+
+    var textarea = $('textarea[name="editor"]');
+    textarea.val(editor.getSession().getValue());
+});
+</script>
+
+

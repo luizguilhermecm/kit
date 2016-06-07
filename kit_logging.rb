@@ -8,6 +8,27 @@ KIT_LOG_PANIC   = 0 # loga o mínimo possível
 # end logging levels
 
 class Kit < Sinatra::Base
+    # inline error logging
+    # params:
+    #   e : exception
+    #   session : sinatra session
+    #   method : name of the method where rescue occured
+    #   redirect : if will be done "redirect request.referer"
+    def kit_rescue e, session, method, redirect
+            kit_log(KIT_LOG_ERROR, "[ERROR] [#{method}]")
+            kit_log(KIT_LOG_ERROR, e, session)
+            if redirect
+                redirect request.referer
+            end
+    end
+
+    def log_request request
+        puts JSON.pretty_generate(request.env).green
+    end
+    def request_log request
+        puts JSON.pretty_generate(request.env).green
+    end
+
 
     def get_log_head_string
         if $logging_level == KIT_LOG_DEBUG
@@ -96,6 +117,10 @@ class Kit < Sinatra::Base
 
 
 
+    def log_crazy(*params)
+        crazy_log params
+    end
+
     def crazy_log(*params)
         log_string = "."
         params.each_with_index do |p, i|
@@ -111,13 +136,13 @@ class Kit < Sinatra::Base
             end
         end
 
-        puts "*********"
+        puts "*********".red
         puts "\n\n\n"
-        puts "*********"
-        puts log_string
-        puts "*********"
+        puts "*********".green
+        puts log_string.yellow
+        puts "*********".green
         puts "\n\n\n"
-        puts "*********"
+        puts "*********".red
 
     end
 end

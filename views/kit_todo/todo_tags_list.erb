@@ -1,0 +1,8 @@
+<small class="row" >kit_todo/todo_tags_list.erb</small>
+<div class="col-md-12">
+    <% @tag_list.each_with_index do |tag, index| %>
+        <a class="tag label <%=tag[:label]%>" href="/kit_todo/list?tag_id=<%=tag[:id]%>"><%= tag[:tag] %></a>
+    <% end if @tag_list%>
+    <a class="tag label label-info" href="/kit_todo/list?list_all=1">ALL</a>
+</div>
+

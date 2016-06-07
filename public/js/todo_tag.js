@@ -26,7 +26,7 @@ function update_flag_do_it(flag_do_it_p, todo_id) {
 
 
    $.ajax({
-        url: "/todo/update_todo_flag_do_it/",
+        url: "/kit_todo/update_todo_flag_do_it/",
         type: "GET",
         data: {
             "flag_do_it": flag_do_it,
@@ -42,7 +42,7 @@ function update_tag_id(tags, todo_id) {
             console.log("updating " + tags[i].value)
             console.log("of todo_id " + todo_id)
             $.ajax({
-                url: "/todo/update_todo_tag/",
+                url: "/kit_todo/update_todo_tag/",
                 type: "GET",
                 data: {
                     "tag_id": tags[i].value,
@@ -162,7 +162,7 @@ function update_is_listed(checkbox, tag_id) {
     }
 
     $.ajax({
-        url: "/todo/update_is_listed",
+        url: "/kit_todo/update_is_listed",
         type: "GET",
         data: {
             "tag_id": tag_id,
@@ -174,7 +174,7 @@ function update_is_listed(checkbox, tag_id) {
 
 function update_priority(todo_id, letter) {
     $.ajax({
-        url: "/todo/update_priority",
+        url: "/kit_todo/update_priority",
         type: "GET",
         data: {
             "todo_id": todo_id,

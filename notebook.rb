@@ -12,43 +12,41 @@ class Kit < Sinatra::Base
         session!
 
         id = params[:id]
-        title = params[:title]
-        text = params[:text]
+        text = params[:editor]
 
-        if title.empty?
+        if text.empty?
             kit_log(KIT_LOG_DEBUG, "title is empty")
-            @title = "REQUIRED"
-            @text = text
+            @text = "REQUIRED"
             erb :"notebook/notebook"
         else
-            kit_log(KIT_LOG_DEBUG, "title not empty", title)
-            insert_update id, title, text
+            kit_log(KIT_LOG_DEBUG, "title not empty", text)
+            insert_update id, text
         end
 
     end
 
-    def insert_update id, title, text
-        kit_log_breadcrumb('def insert_update id, title, text', id, title, text)
+    def insert_update id, text
+        kit_log_breadcrumb('def insert_update id, text', id, text)
 
         if id.empty?
             kit_log(KIT_LOG_DEBUG, "insert")
-            query = " insert into notebook(title, text, uid) "
-            query += " VALUES ($1, $2, $3) returning id;"
+            query = " insert into notebook(text, uid, title) "
+            query += " VALUES ($1, $2, 'asdf') returning id;"
         else
             kit_log(KIT_LOG_DEBUG, "update")
             query = " update notebook set "
-            query += " title = $1, text = $2 "
-            query += " where id = $3 and uid = $4";
+            query += " text = $1 "
+            query += " where id = $2 and uid = $3";
         end
 
         begin
             if id.empty?
                 kit_log(KIT_LOG_DEBUG, "insert")
-                ret = @@conn.exec_params(query, [title, text, session[:uid]])
+                ret = @@conn.exec_params(query, [text, session[:uid]])
                 id = ret.first["id"]
             else
                 kit_log(KIT_LOG_DEBUG, "update")
-                @@conn.exec_params(query, [title, text, id.to_i, session[:uid]])
+                @@conn.exec_params(query, [text, id.to_i, session[:uid]])
             end
         rescue => e
             kit_log(KIT_LOG_ERROR, "[ERROR-note-xguy2v8dj]")
@@ -63,7 +61,7 @@ class Kit < Sinatra::Base
         session!
 
         @notebooks = []
-        query = " SELECT id, title, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM notebook where uid = $1";
+        query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM notebook where uid = $1";
         begin
             notebooks = @@conn.exec_params(query, [session[:uid]])
         rescue => e
@@ -75,8 +73,8 @@ class Kit < Sinatra::Base
         notebooks.each_with_index do |n, i|
             @notebooks << {
                 :id => n["id"],
-                :title => n["title"],
                 :text => n["text"],
+                :title => n["text"].lines.first,
                 :created_at => n["created_at"],
             }
         end
@@ -88,7 +86,7 @@ class Kit < Sinatra::Base
         kit_log_breadcrumb('get /notebook/list', params)
         session!
         id = params[:id].to_i
-        query = " SELECT id, title, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM notebook where uid = $1 and id = $2";
+        query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM notebook where uid = $1 and id = $2";
         begin
             notebook = @@conn.exec_params(query, [session[:uid], id])
         rescue => e
@@ -100,7 +98,6 @@ class Kit < Sinatra::Base
         kit_log(KIT_LOG_DEBUG, notebook.first)
         n = notebook.first
         @id = n["id"]
-        @title = n["title"]
         @text = n["text"]
 
         erb :"notebook/notebook"

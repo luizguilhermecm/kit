@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-9">
+        <form id="new_todo"  method="get" action="/kit_todo/new_todo">
+            <labeL for="text">ToDo:</labeL>
+            <input name="text" id="text" type="text" size=80 />
+            <select
+                name="tags[]"
+                id="formtag"
+                multiple="multiple"
+                >
+                <% if @tag_list %>
+                    <% @tag_list.each do |b| %>
+                        <option value="<%= b[:id] %>"><%= b[:tag] %></option>
+                    <% end %>
+                <% end %>
+            </select>
+
+
+            <input type="checkbox" name="flag_do_it" value="true">doit
+            <input type="submit" value="go">
+        </form>
+    </div>
+
+    <div class="col-md-3">
+        <form id="search_todo"  method="get" action="/kit_todo/search">
+            <labeL for="search">Search:</labeL>
+            <input name="search" id="search" type="text" size=20 />
+            <input type="submit" value="go">
+        </form>
+    </div>
+</div>

@@ -11,16 +11,16 @@ class Kit < Sinatra::Base
 
 
     # main page of kit_todo feature.
-    get '/todo' do
-        kit_log_breadcrumb("get '/todo'", params)
+    get '/kit_todo' do
+        kit_log_breadcrumb(__method__, params)
         session!
-        @tag_list = get_todo_tags
-        redirect to('/todo/todo_list')
+        self.get_todo_tags
+        redirect to('/kit_todo/list')
     end
 
     # method used to insert new todo
-    get '/todo/new_todo' do
-        kit_log_breadcrumb("get '/todo/new_todo'", params)
+    get '/kit_todo/new_todo' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         text = params[:text]
@@ -31,12 +31,9 @@ class Kit < Sinatra::Base
         begin
             ret = @@conn.exec_params(query, [text.to_s, session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR-58cns]")
-            kit_log(KIT_LOG_ERROR, e, session)
             session[:kmsg] = "error in add on table todo_list"
-            redirect request.referer
+            self.kit_rescue e, session, "58cns", true
         end
-
 
             query_tag = "INSERT INTO todo_tags (todo_id, tag_id) VALUES ($1, $2);"
             kit_log(KIT_LOG_DEBUG, "query of insert tags of todo", query_tag)
@@ -48,18 +45,16 @@ class Kit < Sinatra::Base
             end
 
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR-5888dcns]")
-            kit_log(KIT_LOG_ERROR, e, session)
             session[:kmsg] = "error in add on table todo_tags"
-            redirect request.referer
+            self.kit_rescue e, session, "83bcus", true
         end
 
-        redirect "/todo/todo_list?insert=#{id["id"]}"
+        redirect "/kit_todo/list?insert=#{id["id"]}"
     end
 
     # method used to create new tags
-    get '/todo/new_tag' do
-        kit_log_breadcrumb("get '/todo/new_tag'", params)
+    get '/kit_todo/new_tag' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         tag_name = params[:tag_name]
@@ -72,34 +67,105 @@ class Kit < Sinatra::Base
         begin
             @@conn.exec_params(q, [tag_name.to_s, tag_desc.to_s, session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "38cswhsA", true
         end
 
-        redirect to('/todo/todo_tag')
+        redirect to('/kit_todo/todo_tag')
     end
 
 
-    get '/todo/todo_list' do
-        kit_log_breadcrumb("get '/todo/todo_list'", params)
+    get '/kit_todo/list' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         tag_id = params[:tag_id].to_i
         insert = params[:insert].to_i
         list_all = params[:list_all].to_i
 
-        query = " SELECT id, text, to_char(created_at, 'DD-MM-YY') as data, flag_do_it, "
-        query += " priority FROM todo_list WHERE flag_deleted = 'false' and uid = $1 "
+        if tag_id != 0
+            # list one tag only
+            list_by_tag tag_id
+        elsif insert != 0
+        elsif list_all != 0
+            # without filter
+        else
+            # todo list without params will list only tags checked to be listed
+            list_by_tag 0
+        end
 
+        self.render_kit_todo_list
+
+    end
+
+    def get_todo_by_id id
+        # kit_log_breadcrumb(__method__, id)
+        query = " SELECT "
+        query += " id, "
+        query += " text, "
+        query += " to_char(created_at, 'DD-MM-YY') as data, "
+        query += " flag_do_it, "
+        query += " priority "
+        query += " FROM todo_list "
+        query += " WHERE 1 = 1 "
+        query += " AND flag_deleted = 'false' "
+        query += " AND uid = $1 "
+        query += " AND id = $2 ;"
+
+        begin
+            ret = @@conn.exec_params(query, [session[:uid], id])
+        rescue => e
+            self.kit_rescue e, session, __method__, true
+        end
+
+        t = ret.first
+        todos_tags = []
+        todos_tags = get_tags_of_todo id
+        letter = get_priority_label t["priority"]
+        todo = {
+            :id => t["id"],
+            :text => t["text"],
+            :tag_id => t["tag_id"],
+            :created_at => t["data"],
+            :flag_do_it => t["flag_do_it"],
+            :todo_tag_list => todos_tags,
+            :priority_letter => t["priority"],
+            :priority => letter
+        }
+
+        kit_log(KIT_LOG_DEBUG, "todo", todo)
+        return todo
+    end
+
+    def get_tags_of_todo id
+        # kit_log_breadcrumb(__method__, id)
+
+        query_tag_list = "SELECT tt.id, tt.tag, tt.label FROM todo_tags tts LEFT JOIN todo_tag tt ON tts.tag_id = tt.id  WHERE tts.todo_id = $1 ;"
+        begin
+            tags = @@conn.exec_params(query_tag_list, [id])
+        rescue => e
+            self.kit_rescue e, session, __method__, true
+        end
+
+        todos_tags = []
+        tags.each do |tag|
+            todos_tags << {
+                :id => tag["id"],
+                :tag => tag["tag"],
+                :label => tag["label"],
+            }
+        end
+
+        return todos_tags
+    end
+
+    def list_by_tag tag_id
+        kit_log_breadcrumb(__method__, tag_id)
+
+        query = " SELECT id FROM todo_list WHERE flag_deleted = 'false' and uid = $1 "
 
         if tag_id != 0
             # list one tag only
             query += " AND id IN (SELECT DISTINCT todo_id FROM todo_tags WHERE tag_id = $2) "
-        elsif insert != 0
-            query += " AND id = #{insert} "
-        elsif list_all != 0
-            # without filter
         else
             # todo list without params will list only tags checked to be listed
             query += get_is_listed_tags
@@ -115,53 +181,28 @@ class Kit < Sinatra::Base
                 ret = @@conn.exec_params(query, [session[:uid]])
             end
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, __method__, true
         end
 
-        @tag_list = []
 
-        @tag_list = get_todo_tags
+        self.set_at_todos ret
+    end
 
+    def set_at_todos ret
+        kit_log_breadcrumb(__method__, nil)
         @todos = []
-
-        query_tag_list = "SELECT tt.id, tt.tag, tt.label FROM todo_tags tts LEFT JOIN todo_tag tt ON tts.tag_id = tt.id  WHERE tts.todo_id = $1 ;"
         ret.each_with_index do |t, i|
-            todos_tags = []
-            ret_tag_list = @@conn.exec_params(query_tag_list, [t["id"]])
-            ret_tag_list.each do |tag|
-                todos_tags << {
-                    :id => tag["id"],
-                    :tag => tag["tag"],
-                    :label => tag["label"],
-                }
-            end
-            letter = get_priority_label t["priority"]
-            @todos << {
-                :id => t["id"],
-                :text => t["text"],
-                :tag_id => t["tag_id"],
-                :created_at => t["data"],
-                :flag_do_it => t["flag_do_it"],
-                :todo_tag_list => todos_tags,
-                :priority_letter => t["priority"],
-                :priority => letter
-            }
+            @todos.push get_todo_by_id t["id"]
         end
-
-        erb :todo_list
     end
 
     def get_is_listed_tags
-        kit_log_breadcrumb("def get_is_listed_tags", nil)
+        kit_log_breadcrumb(__method__, nil)
         query = " SELECT id FROM todo_tag WHERE user_id = $1 AND is_listed = true  ";
         begin
             ret = @@conn.exec_params(query, [session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "bvsCsx", true
         end
         query = " AND id IN (SELECT DISTINCT todo_id FROM todo_tags WHERE tag_id IN ( "
         ret.each do |tag|
@@ -176,15 +217,13 @@ class Kit < Sinatra::Base
     end
 
     def get_todo_tags
-        kit_log_breadcrumb("def get_todo_tags", nil)
+        kit_log_breadcrumb(__method__, nil)
         query  = " SELECT id, tag, description, is_listed, label ";
         query += " FROM todo_tag WHERE user_id = $1 ORDER BY tag ASC ";
         begin
             ret = @@conn.exec_params(query, [session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "bdLdw", true
         end
 
         todo_tag = []
@@ -206,11 +245,11 @@ class Kit < Sinatra::Base
             }
 
         end
-        return todo_tag
+        @tag_list = todo_tag
     end
 
-    get '/todo/set_todo_done' do
-        kit_log_breadcrumb("get '/todo/set_todo_done'", params)
+    get '/kit_todo/set_todo_done' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         id = params[:id]
@@ -221,19 +260,17 @@ class Kit < Sinatra::Base
         begin
             @@conn.exec_params(query , [id, session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "adCs832D", true
         end
 
         #puts JSON.pretty_generate(request.env)
         redirect request.referer
-        #redirect "/todo/todo_list"
+        #redirect "/kit_todo/todo_list"
     end
 
 
-    get '/todo/rm_todo' do
-        kit_log_breadcrumb("get '/todo/rm_todo'", params)
+    get '/kit_todo/rm_todo' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         id = params[:id]
@@ -242,16 +279,14 @@ class Kit < Sinatra::Base
         begin
             @@conn.exec_params(query , [id, session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "as232cds", true
         end
 
         redirect request.referer
     end
 
-    get '/todo/update_todo_flag_do_it/' do
-        kit_log_breadcrumb("get '/todo/update_todo_flag_do_it/'", params)
+    get '/kit_todo/update_todo_flag_do_it/' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         flag_do_it = params[:flag_do_it]
@@ -264,16 +299,14 @@ class Kit < Sinatra::Base
         begin
             @@conn.exec_params(query , [todo_id, session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "asd234asv*", true
         end
 
     end
 
 
-    get '/todo/update_todo_tag/' do
-        kit_log_breadcrumb("get '/todo/update_todo_tag/'", params)
+    get '/kit_todo/update_todo_tag/' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         tag_id = params[:tag_id]
@@ -304,30 +337,26 @@ class Kit < Sinatra::Base
             end
 
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, "lsicnei", true
         end
 
     end
 
-    get '/todo/todo_tag' do
-        kit_log_breadcrumb("get '/todo/todo_tag'", params)
+    get '/kit_todo/todo_tag' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         begin
-            @tag_list = []
-            @tag_list = get_todo_tags
-            erb :todo_tag
+            self.get_todo_tags
+            erb :"kit_todo/todo_tag"
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            self.kit_rescue e, session, __method__, false
         end
     end
 
 
-    get '/todo/update_is_listed' do
-        kit_log_breadcrumb("get '/todo/update_is_listed'", params)
+    get '/kit_todo/update_is_listed' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         tag_id = params[:tag_id]
@@ -339,14 +368,12 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "SQL", query, tag_id, value)
             @@conn.exec_params(query, [value, tag_id])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, __method__, true
         end
     end
 
-    get '/todo/rm_tag' do
-        kit_log_breadcrumb("get '/todo/rm_tag'", params)
+    get '/kit_todo/rm_tag' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         id = params[:id]
@@ -360,9 +387,7 @@ class Kit < Sinatra::Base
             ret = @@conn.exec_params(querySel , [id, session[:uid]])
             @@conn.exec_params(query , [id, session[:uid]])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, __method__, true
         end
 
         msg = "msg"
@@ -383,8 +408,8 @@ class Kit < Sinatra::Base
         redirect request.referer
     end
 
-    get '/todo/update_tag_label' do
-        kit_log_breadcrumb("get '/todo/update_tag_label'", params)
+    get '/kit_todo/update_tag_label' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         tag_id = params[:tag_id].to_i
@@ -413,15 +438,13 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "SQL", query, label, tag_id)
             @@conn.exec_params(query, [label, tag_id])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
-            redirect request.referer
+            self.kit_rescue e, session, __method__, false
         end
 
     end
 
-    get '/todo/update_priority' do
-        kit_log_breadcrumb("get '/todo/update_priority'", params)
+    get '/kit_todo/update_priority' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         todo_id = params[:todo_id].to_i
@@ -436,14 +459,13 @@ class Kit < Sinatra::Base
             kit_log(KIT_LOG_DEBUG, "SQL", query, prio, todo_id)
             @@conn.exec_params(query, [prio, todo_id])
         rescue => e
-            kit_log(KIT_LOG_ERROR, "[ERROR]")
-            kit_log(KIT_LOG_ERROR, e, session)
+            self.kit_rescue e, session, __method__, false
         end
 
     end
 
     def get_priority_letter p
-        kit_log_breadcrumb("def get_priority_letter p", p)
+        kit_log_breadcrumb(__method__, p)
 
         if p == Priority::A
             return 'A'
@@ -459,7 +481,7 @@ class Kit < Sinatra::Base
     end
 
     def get_priority_label prio
-        kit_log_breadcrumb("def get_priority_label prio", prio)
+        # kit_log_breadcrumb(__method__, prio)
 
         if prio == 'E'
             label = 'btn-primary'
@@ -476,4 +498,29 @@ class Kit < Sinatra::Base
         end
         return label
     end
+
+    get '/kit_todo/search' do
+        kit_log_breadcrumb(__method__, params)
+        session!
+
+        search = params[:search]
+
+        query = " SELECT id FROM todo_list WHERE lower(text) like lower('%#{search}%') and uid = $1;"
+
+        begin
+            ret = @@conn.exec_params(query, [session[:uid]])
+        rescue => e
+            self.kit_rescue e, session, __method__, true
+        end
+
+        self.set_at_todos ret
+
+        self.render_kit_todo_list
+    end
+
+    def render_kit_todo_list
+        self.get_todo_tags
+        erb :"kit_todo/list"
+    end
+
 end

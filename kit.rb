@@ -8,6 +8,7 @@ require 'rubygems'
 require 'pg'
 require 'json'
 require 'digest/md5'
+require 'colorize'
 require "i18n"
 
 require './kit_config'
@@ -63,7 +64,7 @@ class Kit < Sinatra::Base
     end
 
     not_found do
-        kit_log(KIT_LOG_PANIC, "[ERROR-not-found]")
+        log_request(request)
         erb :error
     end
 
@@ -80,7 +81,7 @@ class Kit < Sinatra::Base
 
     get '/' do
         if session?
-            redirect to('/todo')
+            redirect to('/kit_todo')
         else
             erb :index
         end
@@ -98,7 +99,7 @@ class Kit < Sinatra::Base
     post '/login' do
         puts "/login"
         if session?
-            redirect to('/todo')
+            redirect to('/kit_todo')
         else
             query = " SELECT id FROM users WHERE username = $1 AND passwd = $2 "
             begin
