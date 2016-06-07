@@ -8,7 +8,6 @@ require 'rubygems'
 require 'pg'
 require 'json'
 require 'digest/md5'
-require 'colorize'
 require "i18n"
 
 require './kit_config'

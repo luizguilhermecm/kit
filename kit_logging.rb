@@ -23,10 +23,10 @@ class Kit < Sinatra::Base
     end
 
     def log_request request
-        puts JSON.pretty_generate(request.env).green
+        puts JSON.pretty_generate(request.env)
     end
     def request_log request
-        puts JSON.pretty_generate(request.env).green
+        puts JSON.pretty_generate(request.env)
     end
 
 
@@ -136,13 +136,13 @@ class Kit < Sinatra::Base
             end
         end
 
-        puts "*********".red
+        puts "*********"
         puts "\n\n\n"
-        puts "*********".green
-        puts log_string.yellow
-        puts "*********".green
+        puts "*********"
+        puts log_string
+        puts "*********"
         puts "\n\n\n"
-        puts "*********".red
+        puts "*********"
 
     end
 end
