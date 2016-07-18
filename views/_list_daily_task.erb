@@ -1,4 +1,4 @@
-<table class="table" >
+<table class="table table-condensed" >
     <% @daily_tasks.each_with_index do |task, index| %>
         <tr <% if task[:done] == 't' %> style="background-color:#90EE90;" <% end %>>
             <td class="col-md-4">

@@ -1,5 +1,5 @@
 <small class="row" >kit_todo/_todo_list.erb</small>
-<table class="table" >
+<table class="table table-condensed" >
     <% @todos.each_with_index do |todo, index| %>
         <tr <% if todo[:flag_do_it] == 't' %>class="warning" <% end%>>
 
