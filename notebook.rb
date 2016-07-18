@@ -7,8 +7,8 @@ class Kit < Sinatra::Base
         erb :"notebook/notebook"
     end
 
-    get '/notebook/update' do
-        kit_log_breadcrumb('get /notebook/save_notebook', params)
+    post '/notebook/update' do
+        kit_log_breadcrumb('post /notebook/save_notebook', params)
         session!
 
         id = params[:id]
@@ -82,8 +82,8 @@ class Kit < Sinatra::Base
         erb :"notebook/list"
     end
 
-    get '/notebook/edit' do
-        kit_log_breadcrumb('get /notebook/list', params)
+    post '/notebook/edit' do
+        kit_log_breadcrumb('post /notebook/list', params)
         session!
         id = params[:id].to_i
         query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM notebook where uid = $1 and id = $2";
