@@ -22,6 +22,9 @@ $(document).ready(function() {
     key(';+g+shift+T', function(e) {
         window.location = $("#notebook_link").attr("href");
     });
+     key(';+g+a', function(e) {
+        window.location = $("#kit_admin_link").attr("href");
+    });
     key('h', function(e) {
         $("#help").toggle();
     });
