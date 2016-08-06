@@ -5,3 +5,4 @@ nohup.out
 uploads/**
 log.txt
 db-backup.sh
+kit_db_conf.rb
