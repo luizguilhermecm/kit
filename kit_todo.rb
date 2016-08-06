@@ -49,7 +49,8 @@ class Kit < Sinatra::Base
             self.kit_rescue e, session, "83bcus", true
         end
 
-        redirect "/kit_todo/list?insert=#{id["id"]}"
+        #redirect "/kit_todo/list?insert=#{id["id"]}"
+        redirect request.referer
     end
 
     # method used to create new tags
