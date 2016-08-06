@@ -13,14 +13,14 @@ $(document).ready(function() {
     key(';+n+f', function(e) {
         window.location = $("#kit_files_link").attr("href");
     });
-    key(';+g+n', function(e) {
+    key(';+g+l', function(e) {
         window.location = $("#notebook_list_link").attr("href");
     });
     key(';+n+n', function(e) {
         window.location = $("#notebook_link").attr("href");
     });
     key(';+g+shift+T', function(e) {
-        window.location = $("#notebook_link").attr("href");
+        window.location = $("#kit_time_link").attr("href");
     });
      key(';+g+a', function(e) {
         window.location = $("#kit_admin_link").attr("href");
