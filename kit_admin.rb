@@ -110,14 +110,33 @@ class Kit < Sinatra::Base
         end
         redirect to('/kit_admin')
     end
-    
+
+
+     get '/database_backup' do
+         kit_log(KIT_LOG_INFO, '/database_backup')
+        is_admin
+        session!
+
+        cmd = "kitbkp"
+
+        begin
+            kit_log(KIT_LOG_DEBUG, "terminal command", cmd)
+            `#{cmd}`
+        rescue => e
+            kit_log(KIT_LOG_PANIC, "[ERROR]", e, session)
+            redirect to('/')
+        end
+        redirect to('/kit_admin')
+
+     end
+
      get '/bash_command' do
         kit_log(KIT_LOG_INFO, '/bash_command')
         is_admin
         session!
-        
+
         cmd = params["cmd"]
-        
+
         begin
             kit_log(KIT_LOG_DEBUG, "terminal command", cmd)
             `#{cmd}`
@@ -127,7 +146,6 @@ class Kit < Sinatra::Base
         end
         redirect to('/kit_admin')
     end
-    
 
     def get_kit_log_level
         kit_log(KIT_LOG_INFO, '/get_kit_log_level')

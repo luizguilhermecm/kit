@@ -1,14 +1,14 @@
 class Kit < Sinatra::Base
 
     get '/notebook' do
-        kit_log_breadcrumb('get /notebook', params)
+        kit_log_breadcrumb(__method__, params)
         session!
 
         erb :"notebook/notebook"
     end
 
-    post '/notebook/update' do
-        kit_log_breadcrumb('post /notebook/save_notebook', params)
+    get '/notebook/update' do
+        kit_log_breadcrumb(__method__, params)
         session!
 
         id = params[:id]
@@ -26,7 +26,7 @@ class Kit < Sinatra::Base
     end
 
     def insert_update id, text
-        kit_log_breadcrumb('def insert_update id, text', id, text)
+        kit_log_breadcrumb(__method__, id, text)
 
         if id.empty?
             kit_log(KIT_LOG_DEBUG, "insert")
@@ -57,7 +57,7 @@ class Kit < Sinatra::Base
     end
 
     get '/notebook/list' do
-        kit_log_breadcrumb('get /notebook/list', params)
+        kit_log_breadcrumb(__method__, params)
         session!
 
         @notebooks = []
@@ -82,8 +82,8 @@ class Kit < Sinatra::Base
         erb :"notebook/list"
     end
 
-    post '/notebook/edit' do
-        kit_log_breadcrumb('post /notebook/list', params)
+    get '/notebook/edit' do
+        kit_log_breadcrumb(__method__, params)
         session!
         id = params[:id].to_i
         query = " SELECT id, text, to_char(created_at, '[DD/MM/YYYY]') as created_at FROM notebook where uid = $1 and id = $2";
@@ -104,7 +104,7 @@ class Kit < Sinatra::Base
     end
 
     get '/notebook/delete' do
-        kit_log_breadcrumb('get /notebook/delete', params)
+        kit_log_breadcrumb(__method__, params)
         session!
         id = params[:id].to_i
         query = " DELETE FROM notebook where uid = $1 and id = $2";
