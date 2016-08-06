@@ -117,7 +117,7 @@ class Kit < Sinatra::Base
         is_admin
         session!
 
-        cmd = "kitbkp"
+        cmd = "./db-backup.sh"
 
         begin
             kit_log(KIT_LOG_DEBUG, "terminal command", cmd)
