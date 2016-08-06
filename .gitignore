@@ -4,3 +4,4 @@ sqls.sql
 nohup.out
 uploads/**
 log.txt
+kit_db_conf.rb

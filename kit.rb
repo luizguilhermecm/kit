@@ -11,7 +11,7 @@ require 'digest/md5'
 require "i18n"
 
 #require './kit_config'
-require_relative 'kit_config'
+require_relative 'kit_db_conf'
 require_relative 'kit_logging'
 
 require_relative 'kit_time'
