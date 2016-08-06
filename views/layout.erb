@@ -10,9 +10,9 @@
 
         <!-- jQuery -->
         <!-- <script src="/js/jquery-1.9.1.min.js"></script>-->
-        
+
         <script src="/js/jquery-1.12.4.min.js"></script>
-        
+
         <script src="/js/jquery.sparkline.min.js"></script>
         <script src="/js/jquery-ui.min.js"></script>
         <script src="/js/keymaster.js"></script>
@@ -74,20 +74,13 @@
                                         <li><a href="/player/index.html" >GPlayer</a></li>
                                     </ul>
                                 </li>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">notebook<span class="caret"></span></a>
-                                    <ul class="dropdown-menu">
-                                        <li role="separator" class="divider"></li>
-                                        <li><a href="/notebook" >notebook</a></li>
-                                        <li><a href="/notebook/list" >notebook list</a></li>
-                                    </ul>
-                                </li>
-                            <% end %>
+                           <% end %>
                             <% if session[:uid] != 0 %>
                                 <li><a id="kit_files_link" href="/kit_files" >kit files</a></li>
                                 <li><a id="kit_task_man_link" href="/kit_task_man" >kit tasks</a></li>
                                 <li><a id="kit_time_link" href="/kit_time" >kit time</a></li>
                                 <li><a id="notebook_link" href="/notebook" >notebook</a></li>
+                                <li><a id="notebook_list_link" href="/notebook/list" >ntbk list</a></li>
                             <% end %>
                             <% if session[:uid].to_i == 1 %>
                                 <li class="qc">
@@ -130,6 +123,7 @@
 
 
 
+        <%= erb :help, layout: false %>
     </body>
 </html>
 

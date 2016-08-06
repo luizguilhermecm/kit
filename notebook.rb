@@ -25,6 +25,24 @@ class Kit < Sinatra::Base
 
     end
 
+    post '/notebook/update' do
+        kit_log_breadcrumb(__method__, params)
+        session!
+
+        id = params[:id]
+        text = params[:editor]
+
+        if text.empty?
+            kit_log(KIT_LOG_DEBUG, "title is empty")
+            @text = "REQUIRED"
+            erb :"notebook/notebook"
+        else
+            kit_log(KIT_LOG_DEBUG, "title not empty", text)
+            insert_update id, text
+        end
+
+    end
+
     def insert_update id, text
         kit_log_breadcrumb(__method__, id, text)
 

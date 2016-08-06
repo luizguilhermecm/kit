@@ -1,17 +1,29 @@
 
 
 $(document).ready(function() {
-    key('g+t', function(e) {
+    key(';+g+t', function(e) {
         window.location = $("#todo_link").attr("href");
     });
-    key('g+l', function(e) {
-        window.location = $("#todo_list_link").attr("href");
+     key(';+n+t', function(e) {
+        window.location = $("#todo_link").attr("href");
     });
-    key('k+f', function(e) {
+    key(';+g+f', function(e) {
         window.location = $("#kit_files_link").attr("href");
     });
-    key('k+f', function(e) {
+    key(';+n+f', function(e) {
         window.location = $("#kit_files_link").attr("href");
+    });
+    key(';+g+n', function(e) {
+        window.location = $("#notebook_list_link").attr("href");
+    });
+    key(';+n+n', function(e) {
+        window.location = $("#notebook_link").attr("href");
+    });
+    key(';+g+shift+T', function(e) {
+        window.location = $("#notebook_link").attr("href");
+    });
+    key('h', function(e) {
+        $("#help").toggle();
     });
 });
 

@@ -41,9 +41,11 @@
 <table class="table" >
     <% @notebooks.each_with_index do |notebook, index| %>
         <tr>
-            <td><%= notebook[:id] %></td>
             <td>
-                <%=notebook[:title]%>
+                <a href="/notebook/edit?id=<%= notebook[:id] %>"><%= notebook[:id] %></a>
+            </td>
+            <td>
+                <a href="/notebook/edit?id=<%= notebook[:id] %>"><%=notebook[:title]%></a>
             </td>
             <td>
                 <a href="/notebook/edit?id=<%= notebook[:id] %>">edit</a>
