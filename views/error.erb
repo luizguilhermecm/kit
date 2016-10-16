@@ -69,3 +69,8 @@ Caused by: java.lang.SecurityException
     at javax.security.auth.login.LoginContext.invoke(LoginContext.java:871)
     ... 64 more
     </pre>
+    <% if @not_found %>
+        <div class="alert alert-danger" role="alert"><%= @not_found%></div>
+    <% end %>
+
+

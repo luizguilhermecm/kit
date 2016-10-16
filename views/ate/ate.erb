@@ -1,0 +1,12 @@
+<div class="col-xs-10">
+<ul class="nav nav-pills nav-stacked">
+    <% @erbs.each_with_index do |item, index| %>
+        <li role="presentation" class="active">
+            <a href="/ate/render?file=<%= item %>"><%= item %></a>
+        </li>
+    <% end if @erbs %>
+</ul>
+</div>
+
+
+

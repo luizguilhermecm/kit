@@ -9,11 +9,13 @@ require 'pg'
 require 'json'
 require 'digest/md5'
 require "i18n"
+require 'sinatra/partial'
 
 #require './kit_config'
 require_relative 'kit_db_conf'
 require_relative 'kit_logging'
 
+require_relative 'kit_ate'
 require_relative 'kit_time'
 require_relative 'kit_todo'
 require_relative 'kit_frase'
@@ -26,6 +28,8 @@ require_relative 'notebook'
 
 class Kit < Sinatra::Base
     register Sinatra::Session
+    register Sinatra::Partial
+
     set :bind, '0.0.0.0'
     set :port, 80 # to deploy on tcp port 80, sudo needed
     set :environment, :production
@@ -58,6 +62,7 @@ class Kit < Sinatra::Base
         set :raise_errors, true
         set :dump_errors, true
         set :show_exceptions, true
+        set :partial_template_engine, :erb
 
         use Rack::Session::Pool
         set :erb, :trim => '-'
@@ -65,6 +70,7 @@ class Kit < Sinatra::Base
 
     not_found do
         log_request(request)
+        @not_found = JSON.pretty_generate(request.env)
         erb :error
     end
 
@@ -80,6 +86,7 @@ class Kit < Sinatra::Base
     end
 
     get '/' do
+        kit_log_breadcrumb(__method__, params)
         if session?
             redirect to('/kit_todo')
         else
@@ -88,11 +95,13 @@ class Kit < Sinatra::Base
     end
 
     get '/logout' do
+        kit_log_breadcrumb(__method__, params)
         session_end!
         redirect to('/')
     end
 
     get '/login' do
+        kit_log_breadcrumb(__method__, params)
         erb :index
     end
 
@@ -132,7 +141,6 @@ class Kit < Sinatra::Base
                 session[:uid] = 0
 
                 redirect to('/')
-                #erb :error , layout: false
             end
             #puts ret.first
 
@@ -140,6 +148,7 @@ class Kit < Sinatra::Base
     end
 
     get '/git_pull' do
+        kit_log_breadcrumb(__method__, params)
         session!
         if session[:uid] != 0
             `git pull`
@@ -148,6 +157,7 @@ class Kit < Sinatra::Base
     end
 
     get '/sinatra_log' do
+        kit_log_breadcrumb(__method__, params)
         session!
         if session[:uid] != 0
             #@output = IO.read('nohup.out')
@@ -159,11 +169,13 @@ class Kit < Sinatra::Base
     end
 
     get '/sinatra_log/:filename' do |filename|
+        kit_log_breadcrumb(__method__, params)
         session!
         send_file "./#{filename}", :filename => filename, :type => 'Application/octet-stream'
     end
 
     get '/set_log_level/:log_level' do |log_level|
+        kit_log_breadcrumb(__method__, params)
         session!
         kit_log(KIT_LOG_PANIC, "new log level", log_level)
         $logging_level = log_level
@@ -171,6 +183,7 @@ class Kit < Sinatra::Base
     end
 
     get '/kit_mae' do
+        kit_log_breadcrumb(__method__, params)
         session_start!
         kit_log(KIT_LOG_INFO, "get /kit_mae", Time.now)
         query = " INSERT INTO kit_mae (text) VALUES ($1); ";
@@ -201,10 +214,6 @@ class Kit < Sinatra::Base
         puts request.ip
         puts e
         puts "***************************"
-    end
-
-    get '/contador' do
-        erb :"ate/contador"
     end
 
     run! if app_file == $0
