@@ -9,7 +9,6 @@ class Kit < Sinatra::Base
     end
 
 
-
     # main page of kit_todo feature.
     get '/kit_todo' do
         kit_log_breadcrumb(__method__, params)
@@ -102,10 +101,11 @@ class Kit < Sinatra::Base
         # kit_log_breadcrumb(__method__, id)
         query = " SELECT "
         query += " id, "
+        query += " EXTRACT(DAY FROM (now() - created_at)) ttl,  "
         query += " text, "
         query += " to_char(created_at, 'DD-MM-YY') as data, "
         query += " flag_do_it, "
-        query += " priority "
+        query += " priority"
         query += " FROM todo_list "
         query += " WHERE 1 = 1 "
         query += " AND flag_deleted = 'false' "
@@ -129,8 +129,10 @@ class Kit < Sinatra::Base
             :created_at => t["data"],
             :flag_do_it => t["flag_do_it"],
             :todo_tag_list => todos_tags,
+            :ttl => t["ttl"],
             :priority_letter => t["priority"],
-            :priority => letter
+            :priority => letter,
+
         }
 
         kit_log(KIT_LOG_DEBUG, "todo", todo)

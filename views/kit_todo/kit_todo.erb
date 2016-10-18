@@ -1,8 +1,10 @@
-<small class="row" >kit_todo/todo_tags_list.erb</small>
+<!--  ERB principal do caso de uso kit_todo -->
 
+<div class="col-xs-11">
+<!--  ERB renderiza o form de inclusao e campo de busca -->
 <%= erb :"kit_todo/new_form" , layout: false %>
 
+<!-- -->
 <%= erb :"kit_todo/todo_tags_list", layout: false %>
 
 <%= erb :"kit_todo/_todo_list", layout: false %>
-

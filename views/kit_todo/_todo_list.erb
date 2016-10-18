@@ -65,6 +65,10 @@
                     &nbsp
                     <input type="checkbox" name="flag_do_it" onchange="update_flag_do_it(this,<%= todo[:id]%>)" value="true"<%= "checked" if todo[:flag_do_it] == 't' %>>
                 </td>
+                <td  class="col-xs-1" >
+                    <small><%= todo[:ttl] %></small>
+                </td>
+
             </tr>
             <% end if @todos%>
         </table>
