@@ -25,10 +25,14 @@
 
 </form>
 <script src="/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/ace-builds/src-min-noconflict/keybinding-vim.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
+    editor.setKeyboardHandler("vim");
+    editor.setKeyboardHandler("ace/keyboard/vim");
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/plain_text");
+
     editor.getSession().on("change", function () {
 
     var textarea = $('textarea[name="editor"]');
