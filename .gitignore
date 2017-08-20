@@ -8,3 +8,4 @@ db-backup.sh
 kit_db_conf.rb
 *.backup
 logs/
+kit_env.rb
