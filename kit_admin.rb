@@ -118,7 +118,7 @@ class Kit < Sinatra::Base
         session!
 
         # kit_env.rb file keep the vars SCRIPT_DIR e SCRIPT_DB_BACKUP_FILENAME
-        cmd = SCRIPT_DIR + SCRIPT_DB_BACKUP_FILENAM
+        cmd = SCRIPT_DIR + SCRIPT_DB_BACKUP_FILENAME
 
         begin
             kit_log(KIT_LOG_DEBUG, "terminal command", cmd)
