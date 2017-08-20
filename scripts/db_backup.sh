@@ -1,0 +1,15 @@
+KIT_HOME="/Users/snk/testes/sinatra/kit"
+BACKUP_DIR="/" # na raiz msm, KIT_HOME 
+DB_USER="snk"
+DB_PORT="5432"
+TIMESTAMP_BACKUP="$(date '+%Y%m%d_%H%M%S')"
+DBNAME="kit"
+BACKUP_EXT=".backup"
+BACKUP_FILENAME="$TIMESTAMP_BACKUP"_"$DBNAME""$BACKUP_EXT"
+BACKUP_FILE_PATH="$KIT_HOME""$BACKUP_DIR""$BACKUP_FILENAME"
+KIT_LOG_DIR="/logs/"
+KIT_LOG_BACKUP_FILENAME="db_backup.log"
+KIT_LOG_BACKUP_PATH="$KIT_HOME""$KIT_LOG_DIR""$KIT_LOG_BACKUP_FILENAME"
+HOST="localhost"
+
+pg_dump  --host "$HOST" --port "$DB_PORT" --username "$DB_USER" --format custom --verbose --file "$BACKUP_FILE_PATH" --dbname "$DBNAME" >> "$KIT_LOG_BACKUP_PATH"

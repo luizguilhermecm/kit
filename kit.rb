@@ -12,6 +12,8 @@ require "i18n"
 require 'sinatra/partial'
 
 #require './kit_config'
+require_relative 'kit_env'
+
 require_relative 'kit_db_conf'
 require_relative 'kit_logging'
 

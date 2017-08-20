@@ -117,17 +117,18 @@ class Kit < Sinatra::Base
         is_admin
         session!
 
-        cmd = "./db-backup.sh"
+        # kit_env.rb file keep the vars SCRIPT_DIR e SCRIPT_DB_BACKUP_FILENAME
+        cmd = SCRIPT_DIR + SCRIPT_DB_BACKUP_FILENAM
 
         begin
             kit_log(KIT_LOG_DEBUG, "terminal command", cmd)
             `#{cmd}`
         rescue => e
-            kit_log(KIT_LOG_PANIC, "[ERROR]", e, session)
-            redirect to('/')
+            self.kit_rescue e, session, __method__, false
+            redirect request.referer
         end
-        redirect to('/kit_admin')
-
+            session[:kmsg] = "[DONE] Backup"
+            redirect request.referer
      end
 
      get '/bash_command' do
