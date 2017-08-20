@@ -10,3 +10,4 @@ kit_db_conf.rb
 logs/
 kit_env.rb
 scripts/db_update.sh
+public/txt
