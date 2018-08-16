@@ -67,6 +67,8 @@ class Kit < Sinatra::Base
         set :partial_template_engine, :erb
 
         use Rack::Session::Pool
+        enable :cross_origin
+
         set :erb, :trim => '-'
     end
 
@@ -81,10 +83,18 @@ class Kit < Sinatra::Base
     end
 
     before do
+        response.headers['Access-Control-Allow-Origin'] = '*'
         if session[:kmsg]
             @kmsg = session[:kmsg]
             session[:kmsg] = nil
         end
+    end
+
+    options "*" do
+        response.headers["Allow"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, X-User-Email, X-Auth-Token"
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        200
     end
 
     get '/' do

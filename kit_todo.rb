@@ -187,7 +187,6 @@ class Kit < Sinatra::Base
             self.kit_rescue e, session, __method__, true
         end
 
-
         self.set_at_todos ret
     end
 
@@ -524,6 +523,15 @@ class Kit < Sinatra::Base
     def render_kit_todo_list
         self.get_todo_tags
         erb :"kit_todo/list"
+    end
+
+    get '/kit_api/tags' do
+        kit_log_breadcrumb(__method__, params)
+        session_start!
+        # content_type :json
+        self.get_todo_tags
+        kit_log(KIT_LOG_DEBUG, "json ret:", @tag_list)
+        @tag_list.to_json
     end
 
 end
